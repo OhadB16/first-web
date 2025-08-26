@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>README – SKY Jet Store</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body{font-family:Arial,Segoe UI,Inter,sans-serif;background:linear-gradient(180deg,#0f2027,#203a43,#2c5364);color:#eef2f6;margin:0;padding:24px}
+    .card{max-width:980px;margin:0 auto;background:rgba(255,255,255,.08);border-radius:14px;padding:20px;box-shadow:0 10px 24px rgba(0,0,0,.35);backdrop-filter:blur(10px)}
+    h1,h2{margin:0 0 12px}
+    h1{font-size:28px}
+    h2{font-size:22px;margin-top:18px}
+    code,pre{font-family:ui-monospace,SFMono-Regular,Consolas,Menlo,monospace}
+    pre{background:rgba(0,0,0,.35);padding:12px;border-radius:8px;overflow:auto}
+    ul{margin:8px 0 12px}
+    .small{opacity:.9}
+    a{color:#9bd1ff}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>README – SKY Jet Store</h1>
+    <p class="small">This file was prepared individually. Reach it at <code>/readme.html</code>. &nbsp;|&nbsp; LLM page: <a href="/llm.html">/llm.html</a></p>
+
+    <h2>Store name</h2>
+    <p><strong>sky</strong></p>
+
+    <h2>What am I selling?</h2>
+    <p>Luxury jets that look like spaceships — at surprisingly good prices.</p>
+
+    <h2>Additional pages and how to use them</h2>
+    <ul>
+      <li><strong>Contact page</strong> – submit requests to the company.
+        <ul>
+          <li><em>Admin view</em>: browse all submitted requests and mark/handle/delete them. Data persists in <code>server/data/messages.json</code>.</li>
+          <li><em>Customer view</em>: submit a new request through the form.</li>
+        </ul>
+      </li>
+      <li><strong>FAQ page</strong> – previously asked questions to save time before contacting support.</li>
+      <li><strong>Reviews page</strong> – customers can post a review (appears instantly). Admin can delete reviews that are not appropriate (removes them from the JSON as well).</li>
+      <li><strong>About page</strong> – background about the people and how the company operates.</li>
+    </ul>
+    <p><strong>How to operate:</strong> open the top menu (☰ Menu) and select Contact / FAQ / Reviews / About. Use <code>admin / admin</code> to see admin capabilities.</p>
+
+    <h2>What was hard?</h2>
+    <p>Understanding the interaction between all the moving parts. Once I got that, everything flowed better. I also note the code could be structured even more cleanly; I’ll improve that next time when I have more time.</p>
+
+    <h2>Partner</h2>
+    <p><strong>I worked solo.</strong></p>
+
+    <h2>How I tested</h2>
+    <p>Mainly live UI testing: constantly checking that submissions are persisted correctly and buttons behave as expected in both user and admin modes.</p>
+    <p>There is also an automated API test script: <code>server/test.js</code> (run via <code>npm run test:api</code>).</p>
+    <h2>Role-based access & permissions</h2>
+<p>
+  The app enforces a clear separation between a regular <strong>User</strong> and the <strong>Admin</strong>.
+  UI and API are aligned so admin-only controls are visible only to admin, and the server re-validates every
+  sensitive action.
+</p>
+<ul>
+  <li>
+    <strong>Admin capabilities</strong>:
+    <ul>
+      <li>Contact desk: view all submitted messages, mark/handle, and <em>delete</em> messages.</li>
+      <li>Reviews: remove any review that violates policy.</li>
+      <li>Admin page access (back-office tools).</li>
+    </ul>
+  </li>
+  <li>
+    <strong>User capabilities</strong>:
+    <ul>
+      <li>Browse and purchase items, view “My Items”.</li>
+      <li>Submit contact messages.</li>
+      <li>Post reviews (which appear instantly).</li>
+      <li>No access to admin-only controls (no message inbox, no delete buttons, no admin page).</li>
+    </ul>
+  </li>
+  <li>
+    <strong>UI gating</strong>:
+    Admin-only buttons/links are conditionally rendered in the client (e.g., the delete icon in Reviews,
+    the Messages admin view). Regular users never see these controls.
+  </li>
+  <li>
+    <strong>Server enforcement</strong>:
+    Admin actions require the header <code>X-Username: admin</code> (and CORS allows this header).
+    Admin-only endpoints (<code>GET/DELETE /api/messages</code>, <code>DELETE /api/reviews/:id</code>) refuse non-admin requests.
+    This guarantees permissions even if someone tries to call the API directly.
+  </li>
+</ul>
+<p>
+  In short: there is a precise alignment between the user and admin flows, and the admin has specific
+  capabilities that regular users do not.
+</p>
+
+
+    <h2>All routes supported by the app (server)</h2>
+    <p class="small">Base URL: <code>http://localhost:3001</code></p>
+    <ul>
+      <li><code>GET /readme.html</code>, <code>GET /llm.html</code> – static documentation pages.</li>
+      <li><code>POST /api/register</code> – register a new user.</li>
+      <li><code>POST /api/login</code> – login (supports “Remember me”).</li>
+      <li><code>POST /api/logout</code> – logout.</li>
+      <li><code>GET /api/me</code> – current user info.</li>
+      <li><code>GET /api/products</code> – list of jets.</li>
+      <li><code>GET /api/purchase/:username</code> – purchases per user.</li>
+      <li><code>GET /api/reviews?source=ask-the-aspects</code> – load reviews.</li>
+      <li><code>POST /api/reviews</code> – create a new review.</li>
+      <li><code>DELETE /api/reviews/:id</code> – delete a review (Admin only, via <code>X-Username: admin</code> header).</li>
+      <li><code>GET /api/messages</code> – read contact messages (Admin).</li>
+      <li><code>POST /api/messages</code> – submit a contact message.</li>
+      <li><code>DELETE /api/messages/:id</code> – delete a message (Admin).</li>
+    </ul>
+
+    <h2>Run & test</h2>
+    <ul>
+      <li>Start server: <code>npm run server</code></li>
+      <li>Run API tests: <code>npm run test:api</code> (executes <code>server/test.js</code>)</li>
+    </ul>
+
+    <h2>Submission</h2>
+    <p>Submit without any <code>node_modules</code> folders and with a relevant <code>package.json</code>.</p>
+    <p>Filename format: <code>&lt;yourID&gt;_&lt;firstName&gt;_&lt;lastName&gt;_&lt;partnerFullName&gt;_&lt;partnerId&gt;_FP25.zip</code></p>
+  </div>
+</body>
+</html>

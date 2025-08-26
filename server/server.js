@@ -1,8 +1,10 @@
+// server/server.js
+const path = require('path');
 // Load core libraries
-const express = require('express'); // Web framework to handle HTTP requests and routing
-const cors = require('cors'); // Middleware to allow Cross-Origin requests (e.g., from frontend)
-const cookieParser = require('cookie-parser'); // Middleware to parse cookies from client
-const rateLimit = require('express-rate-limit'); // Middleware to limit number of requests (for security)
+const express = require('express');
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
+const rateLimit = require('express-rate-limit');
 
 // Custom helper functions to persist data to disk
 const { loadJSON, saveJSON } = require('./helpers/persist_module');
@@ -12,41 +14,51 @@ const loginRoutes = require('./routes/login');
 const registerRoutes = require('./routes/register');
 const cartRoutes = require('./routes/cart');
 const purchaseRoutes = require('./routes/purchase');
+const activityRoutes = require('./routes/activity');
 const productsRoutes = require('./routes/products');
 const meRoutes = require('./routes/me');
 const logoutRoutes = require('./routes/logout');
 const reviewsRoutes = require('./routes/reviews');
 const contactRoutes = require('./routes/contact');
 
+const PUBLIC_DIR = path.join(__dirname, 'public');
 
-const app = express(); // Create an Express app instance
+const app = express();
 
 // ======================
 // 🛡️ MIDDLEWARE SETUP
 // ======================
 
-// Allow frontend to make requests to backend with cookies
 app.use(cors({
-  origin: 'http://localhost:3000', // The client address allowed to connect
-  credentials: true, // Required to allow cookies to be sent with requests
+  origin: 'http://localhost:3000',
+  credentials: true,
   allowedHeaders: ['Content-Type', 'X-Username']
 }));
 
-// 🛡️ Rate Limiting to prevent abuse and DoS attacks
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // Time window = 15 minutes
-  max: 100, // Max 100 requests per IP in this window
+  windowMs: 15 * 60 * 1000,
+  max: 100,
   message: 'Too many requests from this IP, please try again later.'
 });
-app.use(limiter); // Register the limiter as middleware
+app.use(limiter);
 
-// 🧠 JSON parsing for POST/PUT body
-app.use(express.json({ limit: '5mb' })); // or even '10mb' if needed
-app.use(cookieParser()); // Enables parsing cookies from requests
+app.use(express.json({ limit: '5mb' }));
+app.use(cookieParser());
+
+// serve everything in /server/public at /public/*
+app.use('/public', express.static(PUBLIC_DIR, { index: false }));
+
+app.get(['/readme', '/readme.html'], (req, res) => {
+  res.sendFile(path.join(PUBLIC_DIR, 'readme.html'));
+});
+
+app.get(['/llm', '/llm.html'], (req, res) => {
+  res.sendFile(path.join(PUBLIC_DIR, 'llm.html'));
+});
+
 
 // ======================
 // 📦 IN-MEMORY DATA STORE
-// (Used like a "fake database")
 // ======================
 let users = [];
 let carts = [];
@@ -59,24 +71,17 @@ let activityLog = [];
 const loadAllData = async () => {
   try {
     const loadedUsers = await loadJSON('users.json');
-    users.splice(0, users.length, ...loadedUsers); // 💡 keep reference
-    // 🛡️ Ensure 'admin' user exists
-    const adminUser = {
-      username: 'admin',
-      email: 'admin@example.com',
-      password: 'admin'
-    };
+    users.splice(0, users.length, ...loadedUsers);
 
-    const adminExists = users.some(
-      u => u.username.toLowerCase() === adminUser.username
-    );
-
+    // Ensure 'admin' user exists
+    const adminUser = { username: 'admin', email: 'admin@example.com', password: 'admin' };
+    const adminExists = users.some(u => u.username.toLowerCase() === adminUser.username);
     if (!adminExists) {
       users.push(adminUser);
       console.log('👑 Admin user added to users.json');
-      await saveJSON('users.json', users); // Save it immediately
+      await saveJSON('users.json', users);
     }
-    
+
     const loadedCarts = await loadJSON('carts.json');
     carts.splice(0, carts.length, ...loadedCarts);
 
@@ -106,38 +111,40 @@ const saveAllData = async () => {
     console.error('Error saving data to disk:', err);
   }
 };
+
 console.log('activityLog is:', typeof activityLog);
+
 // ======================
-// 🛣️ ATTACH ROUTES
+/* 🛣️ ATTACH ROUTES */
 // ======================
 try {
-  // Each route module is passed data it needs and returns an Express Router
-  app.use('/api/login', loginRoutes(users, activityLog ));
-  app.use('/api/register', registerRoutes(users, activityLog, saveAllData));
-  app.use('/api/cart', cartRoutes(carts, activityLog));
-  app.use('/api/purchase', purchaseRoutes(purchases, carts, activityLog, saveAllData));
-  app.use('/api/products', productsRoutes); // No state needed
-  app.use('/api/me', meRoutes(users));
-  app.use('/api/logout', logoutRoutes());
-  app.use('/api/reviews',  reviewsRoutes(loadJSON, saveJSON));
-  app.use('/api/contact', contactRoutes(loadJSON, saveJSON));
+  app.use('/api/login',     loginRoutes(users, activityLog));
+  app.use('/api/register',  registerRoutes(users, activityLog, saveAllData));
+  app.use('/api/cart',      cartRoutes(carts, activityLog));
+  app.use('/api/purchase',  purchaseRoutes(purchases, carts, activityLog, saveAllData));
+  app.use('/api/products', productsRoutes(loadJSON, saveJSON));
+  app.use('/api/admin/activity', activityRoutes(loadJSON));
+  app.use('/api/me',        meRoutes(users));
+  app.use('/api/logout',    logoutRoutes());
+  app.use('/api/reviews',   reviewsRoutes(loadJSON, saveJSON));
+  app.use('/api/contact',   contactRoutes(loadJSON, saveJSON));
 } catch (err) {
-  console.error('Error attaching routes:', err); // Just in case a route import or setup fails
+  console.error('Error attaching routes:', err);
 }
 
 // ======================
 // ⚠️ GLOBAL ERROR HANDLER
 // ======================
 app.use((err, req, res, next) => {
-  console.error('Unhandled error:', err); // Log to backend console
-  res.status(500).json({ error: 'Internal server error' }); // Generic response
+  console.error('Unhandled error:', err);
+  res.status(500).json({ error: 'Internal server error' });
 });
 
+// (Optional) legacy fallback to catch mis-wiring of /api/register:
 app.post('/api/register', (req, res) => {
   console.log('⚠️ Fallback register route hit');
   res.status(500).json({ error: 'Fallback route used. Real route failed to load.' });
 });
-
 
 // ======================
 // 🚀 START SERVER

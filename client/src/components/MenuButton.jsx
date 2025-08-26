@@ -24,6 +24,8 @@ function MenuButton({ user, onNavigate, onLogout }) {
           <button onClick={() => handleClick('reviews')}>⭐ Reviews</button>
           <button type="button" onClick={() => handleClick('faq')} role="menuitem">❓ FAQ</button>
           <button type="button" onClick={() => handleClick('contact')} role="menuitem">✉️ Contact</button>
+          <button onClick={() => window.open('http://localhost:3001/readme.html', '_blank')}>📄 README</button>
+          <button onClick={() => window.open('http://localhost:3001/llm.html', '_blank')}>🤖 LLM Code</button>
 
           {/* ✅ Only show if admin */}
           {user?.username === 'admin' && (

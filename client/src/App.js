@@ -1,5 +1,5 @@
 // src/App.js
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useEffect } from 'react';
 
 // Pages
@@ -124,7 +124,7 @@ function App() {
     }
   };
 
-  const refreshStoreItems = async () => {
+  const refreshStoreItems = useCallback(async () => {
     try {
       const res = await fetch('http://localhost:3001/api/products');
       const backendJets = await res.json();
@@ -132,11 +132,11 @@ function App() {
     } catch (err) {
       console.error('❌ Failed to refresh store items:', err);
     }
-  };
+  }, [jets]);
 
   useEffect(() => {
     refreshStoreItems();
-  }, []);
+  }, [refreshStoreItems]);
 
   const renderWithMenu = (Component, props) => (
     <>
@@ -212,6 +212,7 @@ if (user && view === 'reviews') {
 
   if (user?.username === 'admin' && view === 'admin') {
     return renderWithMenu(AdminPage, {
+      user,
       storeItems,
       setStoreItems,
       onBackToStore: async () => {
