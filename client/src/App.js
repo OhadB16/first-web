@@ -34,6 +34,13 @@ import nimbus300 from './assets/jets/Nimbus300.png';
 import horizon700 from './assets/jets/Horizon700.png';
 import phoenixGT from './assets/jets/PhoeniGT.png';
 
+function getCookie(name) {
+  if (typeof document === 'undefined') return '';
+  const m = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/([$?*|{}\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)'));
+  return m ? decodeURIComponent(m[1]) : '';
+}
+
+
 function App() {
   const [user, setUser] = useState(null);
   const [view, setView] = useState('register');
@@ -48,6 +55,21 @@ function App() {
     const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)')?.matches;
     return prefersDark ? 'dark' : 'light';
   });
+  useEffect(() => {
+  (async () => {
+    try {
+      const res = await fetch('http://localhost:3001/api/me', {
+        credentials: 'include',
+      });
+      if (res.ok) {
+        const u = await res.json();
+        setUser(u);
+        setView('store'); // או השאר את מה שאתה מעדיף כברירת מחדל למשתמש מחובר
+      }
+    } catch {}
+  })();
+}, []);
+
   useEffect(() => {
     localStorage.setItem('ui.theme', theme);
     document.documentElement.setAttribute('data-theme', theme);

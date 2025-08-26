@@ -1,116 +1,98 @@
 import React, { useState } from 'react';
 import './AlreadyReg.css';
 import Logo from '../components/Logo';
-// ========================================
-// 👤 Hardcoded Admin User for Local Testing
-// ========================================
-const adminUser = {
+
+// (אופציונלי לפיתוח בלבד) — fallback כאשר השרת לא זמין
+const DEV_ADMIN = {
   username: 'admin',
   email: 'admin@example.com',
-  password: 'admin'
+  password: 'admin',
 };
 
 function AlreadyReg({ onLogin, onBackToRegister }) {
-  // =========================
-  // 🔧 Component State
-  // =========================
+  // --- State ---
   const [form, setForm] = useState({ identifier: '', password: '' });
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // =========================
-  // 🖊️ Input Change Handler
-  // =========================
+  // --- Handlers ---
   const handleChange = (e) => {
-    const { name, value, checked } = e.target;
-    if (name === 'rememberMe') {
+    const { name, value, checked, type } = e.target;
+    if (name === 'rememberMe' && type === 'checkbox') {
       setRememberMe(checked);
     } else {
-      setForm(prev => ({ ...prev, [name]: value }));
+      setForm((prev) => ({ ...prev, [name]: value }));
     }
-    setError('');
+    if (error) setError('');
   };
 
-  // =========================
-  // 🚀 Login Submit Handler
-  // =========================
+  const adminDevFallback = () => {
+    // קיצור־דרך ל־dev בלבד אם ה־backend לא נגיש
+    const expires = new Date();
+    if (rememberMe) expires.setDate(expires.getDate() + 12); // 12 ימים
+    else expires.setTime(expires.getTime() + 30 * 60000);    // 30 דק'
+    document.cookie = `skyUser=${encodeURIComponent(
+      DEV_ADMIN.username
+    )}; expires=${expires.toUTCString()}; path=/`;
+
+    onLogin({ username: DEV_ADMIN.username, email: DEV_ADMIN.email });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { identifier, password } = form;
 
-    // 1️⃣ Client-side validation
     if (!identifier || !password) {
       setError('Both fields are required.');
       return;
     }
 
-    // 2️⃣ Check if it's the hardcoded admin user
-    const isAdminLogin =
-      (identifier.toLowerCase() === adminUser.username.toLowerCase() ||
-       identifier.toLowerCase() === adminUser.email.toLowerCase()) &&
-      password === adminUser.password;
-
-    if (isAdminLogin) {
-      // Set cookie for session persistence
-      const expires = new Date();
-      if (rememberMe) expires.setDate(expires.getDate() + 12); // 12 days
-      else expires.setTime(expires.getTime() + 30 * 60000);     // 30 min
-
-      document.cookie = `skyUser=${encodeURIComponent(
-        adminUser.username
-      )}; expires=${expires.toUTCString()}; path=/`;
-
-      // Notify App of successful login
-     onLogin({
-        username: adminUser.username,
-        email: adminUser.email
-      });
-    }
-
-    // 3️⃣ Send login request to backend for registered users
+    setIsSubmitting(true);
     try {
+      // תמיד ניגשים לשרת — הוא כבר תומך בזיהוי לפי username או email
       const res = await fetch('http://localhost:3001/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include', // Allows cookies from backend
-        body: JSON.stringify({ username: identifier, password })
+        credentials: 'include', // נחוץ לעוגיות
+        body: JSON.stringify({ username: identifier, password, rememberMe }),
       });
 
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
 
-      // Handle invalid credentials
       if (!res.ok) {
+        // שגיאה כללית — אל תחשוף איזה שדה שגוי
         setError(data.error || 'Login failed');
         return;
       }
 
-      // Set login cookie
-      const expires = new Date();
-      if (rememberMe) expires.setDate(expires.getDate() + 12);
-      else expires.setTime(expires.getTime() + 30 * 60000);
-
-      document.cookie = `skyUser=${encodeURIComponent(
-        data.username
-      )}; expires=${expires.toUTCString()}; path=/`;
-
-      // Let app know user is logged in
+      // אין צורך לכתוב document.cookie ידנית — השרת כבר שם skyUser + username
       onLogin({ username: data.username, email: data.email });
     } catch (err) {
-      console.error(err);
-      setError('Network error. Try again later.');
+      console.error('Login network error:', err);
+
+      // Fallback dev בלבד — במקרה שהשרת למטה ורוצים לבדוק לוקאלית
+      const isAdminCreds =
+        (form.identifier || '').toLowerCase().trim() === DEV_ADMIN.username &&
+        form.password === DEV_ADMIN.password;
+
+      if (isAdminCreds) {
+        adminDevFallback();
+      } else {
+        setError('Network error. Try again later.');
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
-  
 
-  // =========================
-  // 🧱 UI Render
-  // =========================
+  // --- UI ---
   return (
     <div className="alreadyreg-page">
       <div className="login-form">
         <Logo />
-        <form onSubmit={handleSubmit}>
-          {/* Identifier Field */}
+        <form onSubmit={handleSubmit} noValidate>
+          {/* Identifier */}
           <div className="form-group">
             <label htmlFor="identifier">Username or Email</label>
             <input
@@ -121,11 +103,16 @@ function AlreadyReg({ onLogin, onBackToRegister }) {
               placeholder="admin or your email"
               value={form.identifier}
               onChange={handleChange}
+              autoComplete="username email"
+              autoCapitalize="none"
+              autoCorrect="off"
               required
+              autoFocus
+              aria-invalid={!!error && !form.identifier}
             />
           </div>
 
-          {/* Password Field */}
+          {/* Password */}
           <div className="form-group">
             <label htmlFor="password">Password</label>
             <input
@@ -135,7 +122,9 @@ function AlreadyReg({ onLogin, onBackToRegister }) {
               className="input"
               value={form.password}
               onChange={handleChange}
+              autoComplete="current-password"
               required
+              aria-invalid={!!error && !form.password}
             />
           </div>
 
@@ -152,23 +141,28 @@ function AlreadyReg({ onLogin, onBackToRegister }) {
             </label>
           </div>
 
-          {/* Error Message */}
-          {error && <p className="error">{error}</p>}
+          {/* Error */}
+          {error && <p className="error" role="alert">{error}</p>}
 
-          {/* Submit Button */}
-          <button type="submit" className="primary-button">Log In</button>
+          {/* Actions */}
+          <button
+            type="submit"
+            className="primary-button"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Logging in…' : 'Log In'}
+          </button>
 
-
-          {/* Switch to Registration */}
           <p className="switch-link">
             Don’t have an account?{' '}
-          <button
-            type="button"
-            className="link-button primary-button"
-            onClick={onBackToRegister}
-          >
-            Register here
-          </button>
+            <button
+              type="button"
+              className="link-button primary-button"
+              onClick={onBackToRegister}
+              disabled={isSubmitting}
+            >
+              Register here
+            </button>
           </p>
         </form>
       </div>
