@@ -1,6 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import './AdminPage.css';
 import Logo from '../components/Logo';
+import {
+  ResponsiveContainer,
+  BarChart, Bar,
+  CartesianGrid, XAxis, YAxis, Tooltip
+} from 'recharts';
 
 // Helper: Convert File to base64
 function toBase64(file) {
@@ -12,49 +17,81 @@ function toBase64(file) {
   });
 }
 
-function AdminPage({ user, storeItems, setStoreItems, onBackToStore, activityLog = [], setActivityLog }) {
-  const [newItem, setNewItem] = useState({
-    name: '',
-    price: '',
-    imageFile: null,
-    image: '' // base64 image (preview)
-  });
+function AdminPage({ user, storeItems, setStoreItems, onBackToStore }) {
+  // ---------- Products form ----------
+  const [newItem, setNewItem] = useState({ name: '', price: '', imageFile: null, image: '' });
   const fileInputRef = useRef(null);
-  const [filterPrefix, setFilterPrefix] = useState('');
 
-  // ---- NEW: activity from server ----
-  const [serverActivity, setServerActivity] = useState([]);
-  const [actLoading, setActLoading] = useState(false);
-  const [actError, setActError] = useState('');
+  // ---------- Activity & Sales ----------
+  const [logs, setLogs] = useState([]);
+  const [bucket, setBucket] = useState('day');
+  const [salesRows, setSalesRows] = useState([]);
+  const [loadingLogs, setLoadingLogs] = useState(false);
+  const [loadingSales, setLoadingSales] = useState(false);
 
-  const fetchActivity = async () => {
-    if (user?.username !== 'admin') return;
-    setActLoading(true);
-    setActError('');
-    try {
-      const res = await fetch('http://localhost:3001/api/admin/activity', {
-        headers: { 'X-Username': user?.username || '' },
-        credentials: 'include'
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || `Failed to load activity (status ${res.status})`);
-      }
-      const data = await res.json();
-      setServerActivity(Array.isArray(data) ? data : []);
-    } catch (e) {
-      console.error('❌ Activity fetch error:', e);
-      setActError(e.message || 'Failed to load activity');
-      setServerActivity([]);
-    } finally {
-      setActLoading(false);
-    }
-  };
+  // ---------- Filters (per column) ----------
+  const [filters, setFilters] = useState({
+    username: '',
+    activity: '',
+    from: '', // YYYY-MM-DD
+    to: ''    // YYYY-MM-DD
+  });
 
-  useEffect(() => {
-    fetchActivity();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.username]);
+  // ====== Fetch Activity ======
+const fetchLogs = useCallback(async () => {
+  setLoadingLogs(true);
+  try {
+    const res = await fetch('http://localhost:3001/api/admin/activity', {
+      headers: { 'X-Username': user?.username || '' },
+      credentials: 'include'
+    });
+    if (!res.ok) throw new Error('Failed to load activity');
+    const data = await res.json();
+    setLogs(Array.isArray(data) ? data : []);
+  } catch (err) {
+    console.error('❌ fetchLogs error:', err);
+  } finally {
+    setLoadingLogs(false);
+  }
+}, [user?.username]);
+
+const fetchSales = useCallback(async (b) => {
+  setLoadingSales(true);
+  try {
+    const res = await fetch(`http://localhost:3001/api/admin/activity/sales?bucket=${encodeURIComponent(b)}`, {
+      headers: { 'X-Username': user?.username || '' },
+      credentials: 'include'
+    });
+    if (!res.ok) throw new Error('Failed to load sales');
+    const data = await res.json();
+    setSalesRows(Array.isArray(data.rows) ? data.rows : []);
+  } catch (err) {
+    console.error('❌ fetchSales error:', err);
+  } finally {
+    setLoadingSales(false);
+  }
+}, [user?.username]);
+
+useEffect(() => { fetchLogs(); }, [fetchLogs]);
+useEffect(() => { fetchSales(bucket); }, [fetchSales, bucket]);
+
+
+  // ====== Filters ======
+  const filteredLogs = useMemo(() => {
+    return logs.filter(r => {
+      const uname = String(r.username || '').toLowerCase();
+      const act = String(r.activity || '').toLowerCase();
+      const t = new Date(r.datetime).getTime();
+
+      const uOk = filters.username ? uname.includes(filters.username.toLowerCase()) : true;
+      const aOk = filters.activity ? act.includes(filters.activity.toLowerCase()) : true;
+
+      const fromOk = filters.from ? (t >= new Date(filters.from + 'T00:00:00').getTime()) : true;
+      const toOk = filters.to ? (t <= new Date(filters.to + 'T23:59:59').getTime()) : true;
+
+      return uOk && aOk && fromOk && toOk;
+    });
+  }, [logs, filters]);
 
   // =========================
   // Create product (Admin)
@@ -103,23 +140,8 @@ function AdminPage({ user, storeItems, setStoreItems, onBackToStore, activityLog
       setStoreItems(prev => [...prev, normalized]);
       console.log('✅ Product saved to server');
 
-      // Reset UI
       setNewItem({ name: '', price: '', imageFile: null, image: '' });
       if (fileInputRef.current) fileInputRef.current.value = null;
-
-      // Optional client-side activity append
-      if (setActivityLog) {
-        setActivityLog(prev => [
-          ...prev,
-          {
-            datetime: new Date().toLocaleString(),
-            username: 'admin',
-            activity: `Added product: ${normalized.name}`
-          }
-        ]);
-      }
-      // Refresh server activity to reflect latest actions if you log them server-side
-      fetchActivity();
     } catch (err) {
       console.error('❌ Error saving product to server:', err);
       alert(err.message || 'Failed to save product to server.');
@@ -146,24 +168,11 @@ function AdminPage({ user, storeItems, setStoreItems, onBackToStore, activityLog
       } catch (err) {
         console.error('❌ Error deleting product on server:', err);
         alert(err.message || 'Failed to delete product on server.');
-        return; // do not remove locally if server failed
+        return;
       }
     }
 
-    const removedItem = storeItems.find(item => item.id === id);
     setStoreItems(prev => prev.filter(item => item.id !== id));
-
-    if (setActivityLog && removedItem) {
-      setActivityLog(prev => [
-        ...prev,
-        {
-          datetime: new Date().toLocaleString(),
-          username: 'admin',
-          activity: `Deleted product: ${removedItem.name}`
-        }
-      ]);
-    }
-    fetchActivity();
   };
 
   // =========================
@@ -175,33 +184,12 @@ function AdminPage({ user, storeItems, setStoreItems, onBackToStore, activityLog
       return;
     }
     toBase64(file).then(base64 => {
-      setNewItem(prev => ({
-        ...prev,
-        imageFile: file,
-        image: base64
-      }));
+      setNewItem(prev => ({ ...prev, imageFile: file, image: base64 }));
     });
   };
-
-  const handleFileChange = (e) => {
-    const file = e.target.files?.[0];
-    if (file) handleImageUpload(file);
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files?.[0];
-    if (file) handleImageUpload(file);
-  };
-
+  const handleFileChange = (e) => { const f = e.target.files?.[0]; if (f) handleImageUpload(f); };
+  const handleDrop = (e) => { e.preventDefault(); const f = e.dataTransfer.files?.[0]; if (f) handleImageUpload(f); };
   const handleDragOver = (e) => e.preventDefault();
-
-  // ---- filter the **server** activity by prefix
-  const filteredActivity = (serverActivity || []).filter(log =>
-    String(log.username || '')
-      .toLowerCase()
-      .startsWith(filterPrefix.toLowerCase())
-  );
 
   // =========================
   // UI
@@ -209,8 +197,9 @@ function AdminPage({ user, storeItems, setStoreItems, onBackToStore, activityLog
   return (
     <div className="admin-container">
       <Logo />
-      <h2>Manage Products</h2>
 
+      {/* ===== Products management ===== */}
+      <h2>Manage Products</h2>
       <input
         type="text"
         placeholder="Name"
@@ -224,34 +213,18 @@ function AdminPage({ user, storeItems, setStoreItems, onBackToStore, activityLog
         onChange={e => setNewItem(prev => ({ ...prev, price: e.target.value }))}
       />
 
-      <div
-        className="image-drop-area"
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-      >
+      <div className="image-drop-area" onDrop={handleDrop} onDragOver={handleDragOver}>
         <p>Drag & drop an image or choose a file</p>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-        />
-
-        {newItem.imageFile &&
-          typeof newItem.image === 'string' &&
-          newItem.image.startsWith('data:image') && (
-            <div className="image-preview">
-              <img src={newItem.image} alt="Preview" />
-              <button
-                className="remove-image"
-                onClick={() =>
-                  setNewItem(prev => ({ ...prev, imageFile: null, image: '' }))
-                }
-              >
-                ❌
-              </button>
-            </div>
-          )}
+        <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} />
+        {newItem.imageFile && typeof newItem.image === 'string' && newItem.image.startsWith('data:image') && (
+          <div className="image-preview">
+            <img src={newItem.image} alt="Preview" />
+            <button
+              className="remove-image"
+              onClick={() => setNewItem(prev => ({ ...prev, imageFile: null, image: '' }))}
+            >❌</button>
+          </div>
+        )}
       </div>
 
       <button className="add-button" onClick={handleAddItem}>Add Product</button>
@@ -263,56 +236,116 @@ function AdminPage({ user, storeItems, setStoreItems, onBackToStore, activityLog
             <div className="product-details">
               <strong>{item.name}</strong> — ${Number(item.price).toLocaleString()}
             </div>
-            <button className="delete-button" onClick={() => handleRemove(item.id)}>
-              Delete
-            </button>
+            <button className="delete-button" onClick={() => handleRemove(item.id)}>Delete</button>
           </div>
         ))}
       </div>
 
-      <h3>Activity Log</h3>
+      {/* ===== Sales chart ===== */}
+      <div className="card mt">
+        <div className="admin-toolbar">
+          <h3>Sales (from activity log)</h3>
+          <div className="tabs">
+            {['day', 'week', 'month', 'year'].map(b => (
+              <button
+                key={b}
+                className={`tab ${bucket === b ? 'active' : ''}`}
+                onClick={() => setBucket(b)}
+              >
+                {b.toUpperCase()}
+              </button>
+            ))}
+          </div>
+        </div>
 
-      <div className="admin-toolbar">
-        <input
-          type="text"
-          placeholder="Filter by username prefix"
-          value={filterPrefix}
-          onChange={e => setFilterPrefix(e.target.value)}
-          className="filter-input"
-        />
-        <button className="refresh" onClick={fetchActivity} disabled={actLoading}>
-          {actLoading ? 'Loading…' : 'Refresh'}
-        </button>
+        {loadingSales ? (
+          <div className="loading">Loading chart…</div>
+        ) : (
+          <div style={{ width: '100%', height: 280 }}>
+            <ResponsiveContainer>
+              <BarChart data={salesRows}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="bucket" />
+                <YAxis allowDecimals={false} />
+                <Tooltip />
+                <Bar dataKey="units" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        )}
       </div>
 
-      {actError && <div className="form-note err">{actError}</div>}
+      {/* ===== Activity table with per-column filters ===== */}
+      <div className="card mt">
+        <div className="admin-toolbar">
+          <h3>Activity</h3>
+          <button className="refresh" onClick={fetchLogs} disabled={loadingLogs}>
+            {loadingLogs ? 'Refreshing…' : 'Refresh'}
+          </button>
+        </div>
 
-      <table className="activity-table">
-        <thead>
-          <tr>
-            <th>DateTime</th>
-            <th>Username</th>
-            <th>Activity</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredActivity.length === 0 ? (
-            <tr>
-              <td colSpan="3" className="empty">No activity to show</td>
-            </tr>
-          ) : (
-            filteredActivity.map((log, idx) => (
-              <tr key={idx}>
-                <td>{log.datetime}</td>
-                <td>{log.username}</td>
-                <td>{log.activity}</td>
+        <div className="grid-2 gap">
+          <div className="field">
+            <span>Filter by username</span>
+            <input
+              value={filters.username}
+              onChange={e => setFilters(f => ({ ...f, username: e.target.value }))}
+              placeholder="e.g. alon"
+            />
+          </div>
+          <div className="field">
+            <span>Filter by activity text</span>
+            <input
+              value={filters.activity}
+              onChange={e => setFilters(f => ({ ...f, activity: e.target.value }))}
+              placeholder="e.g. completed purchase"
+            />
+          </div>
+          <div className="field">
+            <span>From date</span>
+            <input
+              type="date"
+              value={filters.from}
+              onChange={e => setFilters(f => ({ ...f, from: e.target.value }))}
+            />
+          </div>
+          <div className="field">
+            <span>To date</span>
+            <input
+              type="date"
+              value={filters.to}
+              onChange={e => setFilters(f => ({ ...f, to: e.target.value }))}
+            />
+          </div>
+        </div>
+
+        {loadingLogs ? (
+          <div className="loading">Loading activity…</div>
+        ) : filteredLogs.length === 0 ? (
+          <div className="empty">No activity found.</div>
+        ) : (
+          <table className="activity-table">
+            <thead>
+              <tr>
+                <th>DateTime</th>
+                <th>Username</th>
+                <th>Activity</th>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            </thead>
+            <tbody>
+              {filteredLogs.map((log, idx) => (
+                <tr key={idx}>
+                  <td>{log.datetime}</td>
+                  <td>{log.username}</td>
+                  <td>{log.activity}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
 
-      <button className="back-btn" onClick={onBackToStore}>← Back to Store</button>
+      <button className="back-btn mt" onClick={onBackToStore}>← Back to Store</button>
     </div>
   );
 }

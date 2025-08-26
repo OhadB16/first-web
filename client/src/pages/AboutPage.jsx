@@ -52,16 +52,16 @@ function AboutPage({ onBackToStore }) {
         </div>
       </header>
 
-      {/* Optional side index (decorative). Turn into in-page anchors later if you want */}
+      {/* Demo side index — use buttons instead of <a> without href for accessibility */}
       <aside className="side-index" aria-hidden="true">
-        <a>Aircraft Management</a>
-        <a>Aircraft Sales</a>
-        <a>Charter</a>
-        <a>Completions</a>
-        <a>Government Programs</a>
-        <a>FBO</a>
-        <a>Maintenance</a>
-        <a>Staffing</a>
+        <button type="button" className="linklike">Aircraft Management</button>
+        <button type="button" className="linklike">Aircraft Sales</button>
+        <button type="button" className="linklike">Charter</button>
+        <button type="button" className="linklike">Completions</button>
+        <button type="button" className="linklike">Government Programs</button>
+        <button type="button" className="linklike">FBO</button>
+        <button type="button" className="linklike">Maintenance</button>
+        <button type="button" className="linklike">Staffing</button>
       </aside>
 
       {/* Alternating content slices (image left/right) */}

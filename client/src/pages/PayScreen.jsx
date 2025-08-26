@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import './PayScreen.css';
-import Logo from '../components/Logo';
 
 function getCookie(name) {
   const value = `; ${document.cookie}`;

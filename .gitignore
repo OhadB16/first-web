@@ -1,0 +1,51 @@
+# ----------------------------
+# Root .gitignore (my-online-store)
+# ----------------------------
+
+# Node (בכל התיקיות)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build artifacts
+client/build/
+server/build/
+dist/
+.next/
+.turbo/
+
+# Test coverage
+coverage/
+
+# ESLint cache
+.eslintcache
+
+# Logs
+*.log
+
+# OS / Editor
+.DS_Store
+.vscode/
+.idea/
+
+# קבצי pack/idx מזדמנים
+*.pack
+*.idx
+
+# Env (אבל להשאיר example)
+.env
+.env.*.local
+!.env.example
+
+# ----------------------------
+# Data: מתעלמים מהכול, ומרשים רק את מה שרוצים ב־repo
+# ----------------------------
+server/data/*.json
+!server/data/users.json
+!server/data/carts.json
+!server/data/purchases.json
+!server/data/activity.json
+!server/data/jets.json
+!server/data/products.json
+!server/data/messages.json
