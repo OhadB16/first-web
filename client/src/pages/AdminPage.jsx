@@ -152,29 +152,24 @@ useEffect(() => { fetchSales(bucket); }, [fetchSales, bucket]);
   // Delete product
   // =========================
   const handleRemove = async (id) => {
-    const isServerProduct = typeof id === 'string' && id.startsWith('p'); // products.json
-
-    if (isServerProduct) {
-      try {
-        const res = await fetch(`http://localhost:3001/api/products/${encodeURIComponent(id)}`, {
-          method: 'DELETE',
-          headers: { 'X-Username': user?.username || '' },
-          credentials: 'include'
-        });
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({}));
-          throw new Error(err.error || `Failed to delete product (status ${res.status})`);
-        }
-      } catch (err) {
-        console.error('❌ Error deleting product on server:', err);
-        alert(err.message || 'Failed to delete product on server.');
-        return;
+    try {
+      const res = await fetch(`http://localhost:3001/api/products/${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+        headers: { 'X-Username': user?.username || '' },
+        credentials: 'include'
+      });
+      if (!res.ok && res.status !== 404) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `Failed to delete product (status ${res.status})`);
       }
+    } catch (err) {
+      console.error('❌ Error deleting product on server:', err);
+      alert(err.message || 'Failed to delete product on server.');
+      return;
     }
-
-    setStoreItems(prev => prev.filter(item => item.id !== id));
+    // עדכון מקומי
+    setStoreItems(prev => prev.filter(item => String(item.id) !== String(id)));
   };
-
   // =========================
   // Image handlers
   // =========================

@@ -42,7 +42,7 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-app.use(express.json({ limit: '5mb' }));
+app.use(express.json({ limit: '10mb' }));
 app.use(cookieParser());
 
 // serve everything in /server/public at /public/*

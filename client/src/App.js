@@ -38,6 +38,11 @@ function App() {
   const [cart, setCart] = useState([]);
   const [purchasedItems, setPurchasedItems] = useState([]);
   const [, setActivityLog] = useState([]);
+  const [theme, setTheme] = useState(() => localStorage.getItem('ui.theme') || 'light');
+  <button onClick={() => setTheme(t => t === 'light' ? 'dark' : 'light')}>
+  Toggle Theme
+</button>
+
 
   const jets = useMemo(() => [
     { id: 1, name: 'Falcon',       price: 2500000, imageUrl: falcon,       description: 'High-speed private jet.' },
@@ -51,6 +56,11 @@ function App() {
     { id: 9, name: 'Horizon 700',  price: 3500000, imageUrl: horizon700,   description: 'Long-range luxury.' },
     { id: 10, name: 'Phoenix GT',  price: 2600000, imageUrl: phoenixGT,    description: 'Performance and style.' },
   ], []);
+
+  useEffect(() => {
+  localStorage.setItem('ui.theme', theme);
+  document.documentElement.dataset.theme = theme; // מחבר ל-CSS
+}, [theme]);
 
   const [storeItems, setStoreItems] = useState(jets);
 

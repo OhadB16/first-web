@@ -1,32 +1,44 @@
 // server/helpers/persist_module.js
-const fs = require('fs');
+const fs = require('fs-extra');
 const path = require('path');
 
+const DATA_DIR = path.join(__dirname, '..', 'data');
+
 function resolveDataPath(file) {
-  // If caller passed an absolute path, keep it; otherwise, resolve under /server/data
-  return path.isAbsolute(file) ? file : path.join(__dirname, '..', 'data', file);
+  return path.isAbsolute(file) ? file : path.join(DATA_DIR, file);
 }
 
-function loadJSON(file) {
+/**
+ * טוען JSON מהדיסק בצורה לא-חוסמת.
+ * @param {string} file - שם/נתיב קובץ (יחסי ל-server/data)
+ * @param {*} defaultValue - ערך ברירת מחדל להחזרה בשגיאה/חוסר קובץ (ברירת מחדל: [])
+ */
+async function loadJSON(file, defaultValue = []) {
   const p = resolveDataPath(file);
   try {
-    if (!fs.existsSync(p)) return [];                 // first run: no file yet
-    const txt = fs.readFileSync(p, 'utf8');
-    return txt.trim() ? JSON.parse(txt) : [];
+    const exists = await fs.pathExists(p);
+    if (!exists) return Array.isArray(defaultValue) ? [...defaultValue] : defaultValue;
+    const data = await fs.readJson(p);
+    return (data ?? defaultValue);
   } catch (err) {
     console.error(`❌ Failed to read ${p}:`, err);
-    return [];
+    return Array.isArray(defaultValue) ? [...defaultValue] : defaultValue;
   }
 }
 
-function saveJSON(file, data) {
+/**
+ * שומר JSON לדיסק בצורה לא-חוסמת.
+ * @param {string} file
+ * @param {*} data
+ */
+async function saveJSON(file, data) {
   const p = resolveDataPath(file);
   try {
-    fs.mkdirSync(path.dirname(p), { recursive: true }); // ensure folder exists
-    fs.writeFileSync(p, JSON.stringify(data, null, 2), 'utf8');
+    await fs.ensureDir(path.dirname(p));                // ודא שהתיקיה קיימת
+    await fs.writeJson(p, data, { spaces: 2 });         // שומר עם ריווח יפה
   } catch (err) {
     console.error(`❌ Failed to write ${p}:`, err);
   }
 }
 
-module.exports = { loadJSON, saveJSON };
+module.exports = { loadJSON, saveJSON, resolveDataPath };

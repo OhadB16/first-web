@@ -663,5 +663,165 @@
     "username": "user_703592",
     "activity": "register",
     "datetime": "2025-08-26T08:32:14.883Z"
+  },
+  {
+    "username": "admin",
+    "activity": "login",
+    "datetime": "2025-08-26T09:55:10.901Z"
+  },
+  {
+    "username": "admin",
+    "activity": "login",
+    "datetime": "2025-08-26T09:57:55.317Z"
+  },
+  {
+    "username": "admin",
+    "activity": "login",
+    "datetime": "2025-08-26T10:31:55.460Z"
+  },
+  {
+    "username": "u1",
+    "activity": "register",
+    "datetime": "2025-08-26T10:35:32.369Z"
+  },
+  {
+    "username": "user_1756206143411",
+    "activity": "register",
+    "datetime": "2025-08-26T11:02:23.436Z"
+  },
+  {
+    "username": "user_1756206336038",
+    "activity": "register",
+    "datetime": "2025-08-26T11:05:36.055Z"
+  },
+  {
+    "username": "user_239067",
+    "activity": "register",
+    "datetime": "2025-08-26T11:18:43.494Z"
+  },
+  {
+    "username": "user_922707",
+    "activity": "register",
+    "datetime": "2025-08-26T11:18:43.519Z"
+  },
+  {
+    "username": "user_922707",
+    "activity": "login",
+    "datetime": "2025-08-26T11:18:43.539Z"
+  },
+  {
+    "username": "u_test",
+    "activity": "register",
+    "datetime": "2025-08-26T11:22:45.337Z"
+  },
+  {
+    "username": "admin",
+    "activity": "login",
+    "datetime": "2025-08-26T12:14:45.842Z"
+  },
+  {
+    "username": "alon",
+    "activity": "login",
+    "datetime": "2025-08-26T12:15:36.925Z"
+  },
+  {
+    "username": "alon",
+    "datetime": "8/26/2025, 3:15:52 PM",
+    "activity": "Completed purchase of 1 items"
+  },
+  {
+    "username": "admin",
+    "activity": "login",
+    "datetime": "2025-08-26T12:19:19.383Z"
+  },
+  {
+    "username": "user_237585",
+    "activity": "register",
+    "datetime": "2025-08-26T12:20:53.636Z"
+  },
+  {
+    "username": "user_702875",
+    "activity": "register",
+    "datetime": "2025-08-26T12:20:53.663Z"
+  },
+  {
+    "username": "user_702875",
+    "activity": "login",
+    "datetime": "2025-08-26T12:20:53.687Z"
+  },
+  {
+    "username": "user_41176",
+    "activity": "register",
+    "datetime": "2025-08-26T12:21:01.532Z"
+  },
+  {
+    "username": "admin",
+    "activity": "login",
+    "datetime": "2025-08-26T12:39:14.454Z"
+  },
+  {
+    "username": "user_256697",
+    "activity": "register",
+    "datetime": "2025-08-26T12:41:11.678Z"
+  },
+  {
+    "username": "user_824485",
+    "activity": "register",
+    "datetime": "2025-08-26T12:41:11.707Z"
+  },
+  {
+    "username": "user_824485",
+    "activity": "login",
+    "datetime": "2025-08-26T12:41:11.733Z"
+  },
+  {
+    "username": "user_48004",
+    "activity": "register",
+    "datetime": "2025-08-26T12:46:09.028Z"
+  },
+  {
+    "username": "user_599212",
+    "activity": "register",
+    "datetime": "2025-08-26T12:46:09.056Z"
+  },
+  {
+    "username": "admin",
+    "activity": "login",
+    "datetime": "2025-08-26T13:04:32.226Z"
+  },
+  {
+    "username": "user_679887",
+    "activity": "register",
+    "datetime": "2025-08-26T13:07:11.290Z"
+  },
+  {
+    "username": "user_548658",
+    "activity": "register",
+    "datetime": "2025-08-26T13:07:11.319Z"
+  },
+  {
+    "username": "user_548658",
+    "activity": "login",
+    "datetime": "2025-08-26T13:07:11.344Z"
+  },
+  {
+    "username": "user_261789",
+    "activity": "register",
+    "datetime": "2025-08-26T13:07:39.477Z"
+  },
+  {
+    "username": "user_790377",
+    "activity": "register",
+    "datetime": "2025-08-26T13:07:39.505Z"
+  },
+  {
+    "username": "user_790377",
+    "activity": "login",
+    "datetime": "2025-08-26T13:07:39.528Z"
+  },
+  {
+    "username": "user_274091",
+    "activity": "register",
+    "datetime": "2025-08-26T13:07:57.446Z"
   }
 ]
