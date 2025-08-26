@@ -1,3 +1,4 @@
+// server/routes/products.js
 const express = require('express');
 
 module.exports = function productsRoutes(loadJSON, saveJSON) {
@@ -9,32 +10,27 @@ module.exports = function productsRoutes(loadJSON, saveJSON) {
     return h === 'admin' || c === 'admin';
   };
 
-  // helper: השוואת מזהים כטקסט כדי לתפוס גם 123 וגם "123"
-  const sameId = (a, b) => String(a) === String(b);
-
-  /**
-   * GET /api/products
-   * מקור אמת יחיד: products.json
-   * אם ריק/לא קיים – נזריע (seed) מתוך jets.json פעם אחת ונשמור ל-products.json
-   */
+  // GET /api/products — בסיס + תוספות אדמין פחות חבויים
   router.get('/', async (req, res) => {
     try {
-      let products = await loadJSON('products.json');
-      if (!Array.isArray(products) || products.length === 0) {
-        const seed = await loadJSON('jets.json'); // יכול להיות []
-        products = Array.isArray(seed) ? seed : [];
-        await saveJSON('products.json', products);
-      }
-      res.json(products);
+      const base   = await loadJSON('jets.json');       // []
+      const extra  = await loadJSON('products.json');   // []
+      const hides  = await loadJSON('hides.json');      // [] של IDs שמוחבאים
+
+      const hiddenIds = new Set((Array.isArray(hides) ? hides : []).map(String));
+      const list = [
+        ...(Array.isArray(base) ? base : []),
+        ...(Array.isArray(extra) ? extra : []),
+      ].filter(p => !hiddenIds.has(String(p.id)));
+
+      res.json(list);
     } catch (err) {
       console.error('GET /api/products error:', err);
-      res.json([]); // לא להפיל את האפליקציה
+      res.json([]);
     }
   });
 
-  /**
-   * POST /api/products  (אדמין)
-   */
+  // POST /api/products — יצירת מוצר חדש (אדמין)
   router.post('/', async (req, res) => {
     try {
       if (!isAdmin(req)) return res.status(403).json({ error: 'Forbidden' });
@@ -44,15 +40,15 @@ module.exports = function productsRoutes(loadJSON, saveJSON) {
         id: 'p' + Date.now(),
         name: String(name || title || '').trim().slice(0, 120),
         title: String(title || name || '').trim().slice(0, 120),
-        description: String(description || '').trim().slice(0, 1000),
-        imageUrl: String(imageUrl || '').trim().slice(0, 2000),
+        description: String(description || '').trim(),     // ❌ בלי slice
+        imageUrl: String(imageUrl || '').trim(),          // ❌ בלי slice — חשוב לתמונה!
         price: Number(price) || 0
       };
       if (!clean.title) return res.status(400).json({ error: 'title/name required' });
 
-      const list = await loadJSON('products.json');
-      list.push(clean);
-      await saveJSON('products.json', list);
+      const existing = await loadJSON('products.json');
+      existing.push(clean);
+      await saveJSON('products.json', existing);
 
       res.status(201).json(clean);
     } catch (err) {
@@ -61,29 +57,31 @@ module.exports = function productsRoutes(loadJSON, saveJSON) {
     }
   });
 
-  /**
-   * DELETE /api/products/:id  (אדמין)
-   * מוחק מכל הרשימה היחידה שלנו (products.json)
-   */
+  // DELETE /api/products/:id — מוחק מוצר אדמין או “מחביא” מוצר בסיס
   router.delete('/:id', async (req, res) => {
     try {
       if (!isAdmin(req)) return res.status(403).json({ error: 'Forbidden' });
 
-      const id = req.params.id;
-      const list = await loadJSON('products.json');
-      const before = list.length;
-      const afterList = list.filter(p => !sameId(p.id, id));
-
-      if (afterList.length === before) {
-        // לא נמצא – 404 כדי להיות שקופים
-        return res.status(404).json({ error: 'Not found' });
+      const id = String(req.params.id);
+      if (id.startsWith('p')) {
+        // מוצר אדמין – מחיקה מ־products.json
+        const products = await loadJSON('products.json');
+        const before = products.length;
+        const after = products.filter(p => String(p.id) !== id);
+        if (after.length === before) return res.status(404).json({ error: 'Not found' });
+        await saveJSON('products.json', after);
+        return res.json({ ok: true, removedFrom: 'products.json', id });
+      } else {
+        // מוצר בסיס – הוספה ל־hides.json
+        const hides = await loadJSON('hides.json');
+        const set = new Set((Array.isArray(hides) ? hides : []).map(String));
+        set.add(id);
+        await saveJSON('hides.json', Array.from(set));
+        return res.json({ ok: true, hiddenIn: 'hides.json', id });
       }
-
-      await saveJSON('products.json', afterList);
-      res.status(204).end();
     } catch (err) {
       console.error('DELETE /api/products/:id error:', err);
-      res.status(500).json({ error: 'Failed to delete product' });
+      res.status(500).json({ error: 'Failed to delete/hide product' });
     }
   });
 

@@ -1,4 +1,4 @@
-// server/test.js
+// server/tests/test.js  (או server/test.js)
 /* eslint-disable no-console */
 
 // node-fetch v3 (ESM) טעינה דינמית תחת CommonJS:
@@ -13,14 +13,12 @@ let cookieJar = '';
 function setCookieFromResponse(res) {
   const setCookie = res.headers.get('set-cookie');
   if (!setCookie) return;
-  // שומר רק את שם העוגייה והערך (בלי מאפיינים נוספים)
-  const parts = setCookie.split(';')[0];
+  const parts = setCookie.split(';')[0]; // רק name=value
   cookieJar = cookieJar ? `${cookieJar}; ${parts}` : parts;
 }
 
 async function doFetch(path, opts = {}) {
   const headers = { ...(opts.headers || {}) };
-  // מזריקים עוגיה אם יש
   if (cookieJar) headers['cookie'] = cookieJar;
   const res = await fetch(`${BASE}${path}`, { ...opts, headers });
   setCookieFromResponse(res);
@@ -92,17 +90,18 @@ function randUser() {
     return Array.isArray(j);
   }, 'GET /api/products returns an array');
 
-  // 5) Contact – create public message
+  // 5) Contact – create public message  ✅ תוקן: בודקים id/message ולא ok:true
   const contactSubject = 'Test from test.js ' + Date.now();
+  const contactMessage = 'Hello from automated tests';
   await expect(async () => {
     const res = await doFetch('/api/contact', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      // שדות חובה לפי ה־router: fullName, email, message
+      // שדות חובה לפי ה־router: fullName, email, message (גם אם מחוברים)
       body: JSON.stringify({
         fullName: 'Test Runner',
         email: 'runner@example.com',
-        message: 'Hello from automated tests',
+        message: contactMessage,
         subject: contactSubject,
         preferred: 'Email',
         budget: 'N/A',
@@ -112,7 +111,8 @@ function randUser() {
     });
     if (res.status !== 201) return `status ${res.status}`;
     const j = await res.json();
-    return j?.ok === true;
+    // ה־API מחזיר את הרשומה שנוצרה (עם id, createdAt, וכו') — לא { ok:true }
+    return j && j.id && j.message === contactMessage ? true : 'missing id/message';
   }, 'POST /api/contact creates a message');
 
   // 6) Login as admin (to list & delete contact)
@@ -136,7 +136,6 @@ function randUser() {
     if (!res.ok) return `status ${res.status}`;
     const list = await res.json();
     if (!Array.isArray(list)) return 'not array';
-    // נחפש לפי ה־subject ששלחנו
     const found = list.find(m => m.subject === contactSubject);
     if (found) createdMessageId = found.id;
     return true;
@@ -196,7 +195,7 @@ function randUser() {
     return j?.ok === true;
   }, 'DELETE /api/reviews/:id removes a review (admin)');
 
-  // 12) Purchases – get (will be empty array but should 200)
+  // 12) Purchases – get
   await expect(async () => {
     const res = await doFetch(`/api/purchase/${u.username}`);
     if (!res.ok) return `status ${res.status}`;
@@ -214,14 +213,14 @@ function randUser() {
     return res.ok;
   }, 'Logout route exists (POST or GET)');
 
-  // 14) Products admin CRUD – create
+  // 14) Products admin CRUD — create
   let createdProductId = null;
   await expect(async () => {
     const res = await doFetch('/api/products', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-Username': 'admin', // ← חשוב!
+        'X-Username': 'admin',
       },
       body: JSON.stringify({
         title: 'Test Jet from tests',

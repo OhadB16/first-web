@@ -55,6 +55,7 @@ const fetchLogs = useCallback(async () => {
   }
 }, [user?.username]);
 
+// בתוך AdminPage.jsx – החלף את fetchSales
 const fetchSales = useCallback(async (b) => {
   setLoadingSales(true);
   try {
@@ -64,9 +65,20 @@ const fetchSales = useCallback(async (b) => {
     });
     if (!res.ok) throw new Error('Failed to load sales');
     const data = await res.json();
-    setSalesRows(Array.isArray(data.rows) ? data.rows : []);
+
+    // ✅ תמיכה גם בפורמט החדש וגם בישן
+    let rows = [];
+    if (Array.isArray(data)) {
+      // פורמט ישן: [{ date, count }]
+      rows = data.map(r => ({ bucket: r.date, units: r.count }));
+    } else if (Array.isArray(data.rows)) {
+      // פורמט חדש: { rows: [{ bucket, units }] }
+      rows = data.rows;
+    }
+    setSalesRows(rows);
   } catch (err) {
     console.error('❌ fetchSales error:', err);
+    setSalesRows([]);
   } finally {
     setLoadingSales(false);
   }
@@ -150,26 +162,26 @@ useEffect(() => { fetchSales(bucket); }, [fetchSales, bucket]);
 
   // =========================
   // Delete product
-  // =========================
-  const handleRemove = async (id) => {
-    try {
-      const res = await fetch(`http://localhost:3001/api/products/${encodeURIComponent(id)}`, {
-        method: 'DELETE',
-        headers: { 'X-Username': user?.username || '' },
-        credentials: 'include'
-      });
-      if (!res.ok && res.status !== 404) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || `Failed to delete product (status ${res.status})`);
-      }
-    } catch (err) {
-      console.error('❌ Error deleting product on server:', err);
-      alert(err.message || 'Failed to delete product on server.');
-      return;
+// ... בתוך AdminPage.jsx
+const handleRemove = async (id) => {
+  try {
+    const res = await fetch(`http://localhost:3001/api/products/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+      headers: { 'X-Username': user?.username || '' },
+      credentials: 'include'
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || `Failed to delete/hide product (status ${res.status})`);
     }
-    // עדכון מקומי
+    // מחיקה מקומית אחרי הצלחה מהשרת
     setStoreItems(prev => prev.filter(item => String(item.id) !== String(id)));
-  };
+  } catch (err) {
+    console.error('❌ Error deleting/hiding product:', err);
+    alert(err.message || 'Failed to delete/hide product on server.');
+  }
+};
+
   // =========================
   // Image handlers
   // =========================

@@ -823,5 +823,105 @@
     "username": "user_274091",
     "activity": "register",
     "datetime": "2025-08-26T13:07:57.446Z"
+  },
+  {
+    "username": "user_805629",
+    "activity": "register",
+    "datetime": "2025-08-26T13:27:33.725Z"
+  },
+  {
+    "username": "user_754347",
+    "activity": "register",
+    "datetime": "2025-08-26T13:47:54.355Z"
+  },
+  {
+    "username": "user_754347",
+    "activity": "login",
+    "datetime": "2025-08-26T13:47:54.381Z"
+  },
+  {
+    "username": "admin",
+    "activity": "login",
+    "datetime": "2025-08-26T13:47:54.395Z"
+  },
+  {
+    "username": "user_965472",
+    "activity": "register",
+    "datetime": "2025-08-26T13:48:15.442Z"
+  },
+  {
+    "username": "user_965472",
+    "activity": "login",
+    "datetime": "2025-08-26T13:48:15.469Z"
+  },
+  {
+    "username": "admin",
+    "activity": "login",
+    "datetime": "2025-08-26T13:48:15.481Z"
+  },
+  {
+    "username": "user_292776",
+    "activity": "register",
+    "datetime": "2025-08-26T13:48:27.189Z"
+  },
+  {
+    "username": "user_649380",
+    "activity": "register",
+    "datetime": "2025-08-26T13:48:27.216Z"
+  },
+  {
+    "username": "admin",
+    "activity": "login",
+    "datetime": "2025-08-26T13:55:42.488Z"
+  },
+  {
+    "username": "admin",
+    "activity": "login",
+    "datetime": "2025-08-26T14:03:20.963Z"
+  },
+  {
+    "username": "admin",
+    "activity": "login",
+    "datetime": "2025-08-26T14:10:01.599Z"
+  },
+  {
+    "username": "admin",
+    "activity": "login",
+    "datetime": "2025-08-26T14:13:03.858Z"
+  },
+  {
+    "username": "admin",
+    "activity": "login",
+    "datetime": "2025-08-26T14:13:56.194Z"
+  },
+  {
+    "username": "admin",
+    "activity": "login",
+    "datetime": "2025-08-26T14:15:06.379Z"
+  },
+  {
+    "username": "admin",
+    "datetime": "8/26/2025, 5:15:43 PM",
+    "activity": "Completed purchase of 1 items"
+  },
+  {
+    "username": "user_792032",
+    "activity": "register",
+    "datetime": "2025-08-26T14:36:14.227Z"
+  },
+  {
+    "username": "user_355579",
+    "activity": "register",
+    "datetime": "2025-08-26T14:36:14.257Z"
+  },
+  {
+    "username": "user_355579",
+    "activity": "login",
+    "datetime": "2025-08-26T14:36:14.280Z"
+  },
+  {
+    "username": "user_272733",
+    "activity": "register",
+    "datetime": "2025-08-26T14:36:28.170Z"
   }
 ]

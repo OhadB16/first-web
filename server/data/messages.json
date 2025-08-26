@@ -128,5 +128,31 @@
     "message": "Hello from logged-in test",
     "createdAt": "2025-08-26T13:07:39.533Z",
     "byUser": "user_790377"
+  },
+  {
+    "id": "m1756216107249",
+    "fullName": "user_649380",
+    "company": "",
+    "email": "user_649380@example.com",
+    "phone": "",
+    "preferred": "",
+    "budget": "",
+    "subject": "",
+    "message": "Hello from logged-in test",
+    "createdAt": "2025-08-26T13:48:27.249Z",
+    "byUser": "user_649380"
+  },
+  {
+    "id": "m1756218974290",
+    "fullName": "user_355579",
+    "company": "",
+    "email": "user_355579@example.com",
+    "phone": "",
+    "preferred": "",
+    "budget": "",
+    "subject": "",
+    "message": "Hello from logged-in test",
+    "createdAt": "2025-08-26T14:36:14.290Z",
+    "byUser": "user_355579"
   }
 ]
