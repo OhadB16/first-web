@@ -121,3 +121,58 @@
   border-radius: 12px;
   margin-bottom: 16px;
 }
+/* ==== DARK MODE — Store =============================================== */
+/* מופעל רק אם על <html> יש data-theme="dark" */
+
+:root[data-theme="dark"] .store-screen-page {
+  background:
+    radial-gradient(1000px 420px at 50% -220px, rgba(14, 122, 255, 0.10), transparent 65%),
+    linear-gradient(180deg, #0b1220, #0c1b2a, #0a0f16);
+  color: #eaf2ff;
+}
+
+:root[data-theme="dark"] .navbar {
+  background: linear-gradient(90deg, #0b1220, #0c1b2a, #0a0f16);
+  box-shadow: 0 3px 12px rgba(0,0,0,0.5);
+}
+
+:root[data-theme="dark"] .search-input {
+  background: #0f1b28;
+  color: #eaf2ff;
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: none;
+}
+:root[data-theme="dark"] .search-input::placeholder { color: #9fb3c8; }
+:root[data-theme="dark"] .search-input:focus {
+  background: #0c1520;
+  box-shadow: 0 0 0 3px rgba(14,122,255,0.25);
+}
+
+:root[data-theme="dark"] .cart-button {
+  background: linear-gradient(90deg, #0a2340, #0a6ad8);
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 6px 18px rgba(10,106,216,.28);
+}
+:root[data-theme="dark"] .cart-button:hover {
+  background: linear-gradient(90deg, #0e7aff, #3a8bfd);
+  box-shadow: 0 10px 24px rgba(10,122,255,.35);
+}
+
+/* כפתור החלפת Theme */
+.theme-toggle {
+  height: 40px;
+  padding: 0 14px;
+  font-size: 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+}
+.theme-toggle:hover {
+  transform: translateY(-1px);
+}
+:root[data-theme="dark"] .theme-toggle {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.18);
+}

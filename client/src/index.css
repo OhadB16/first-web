@@ -1,13 +1,96 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* ========== index.css (base only) ======================================= */
+/* Reset עדין שלא שובר עמודים קיימים */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Inter, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* תמונות/וידאו לא שוברים לייאאוט */
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* טפסים יורשים פונט */
+input, button, textarea, select {
+  font: inherit;
+}
+
+/* פוקוס נגיש ולא אגרסיבי */
+:focus-visible {
+  outline: 2px solid rgba(0, 114, 255, .7);
+  outline-offset: 2px;
+}
+
+/* מחלקת נגישות שימושית */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 1px, 1px);
+  white-space: nowrap; border: 0;
+}
+/* ===== Fixed positions for top controls ===== */
+.theme-toggle-anchor {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  left: max(12px, env(safe-area-inset-left));
+  z-index: 1100; /* גבוה מספיק כדי להיות קליקבילי */
+}
+
+/* ממקמים את כפתור התפריט בצד ימין למעלה כדי שלא יחפוף */
+.menu-button-wrapper {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  right: max(12px, env(safe-area-inset-right));
+  z-index: 1200; /* מעט מעל ה-Toggle ליתר ביטחון */
+}
+
+/* אם התפריט נפתח כ-dropdown, ניישר אותו לימין */
+.menu-button-wrapper .dropdown-menu {
+  position: absolute;
+  right: 0;
+  left: auto;
+  margin-top: 8px;
+}
+/* --- Theme toggle anchor & button placement --- */
+.theme-toggle-anchor {
+  position: fixed;   /* עוגן לוויופורט */
+  top: 16px;
+  left: 16px;
+  z-index: 10000;    /* מעל התפריט */
+  pointer-events: none; /* שהעוגן לא יתפוס קליקים - רק הכפתור */
+}
+
+/* הכפתור עצמו כן צריך לקבל קליקים */
+.theme-toggle-anchor .theme-toggle-btn {
+  pointer-events: auto;
+}
+
+/* אפשר ללטש קצת מראה הכפתור, בלי מיקום */
+.theme-toggle-btn {
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.2);
+  background: rgba(255,255,255,.12);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,.25);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.theme-toggle-btn:hover {
+  transform: translateY(-1px);
 }

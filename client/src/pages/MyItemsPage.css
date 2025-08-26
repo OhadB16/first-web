@@ -100,3 +100,40 @@
   font-weight: bold;
   color: #00c6ff;
 }
+/* === THEME OVERRIDES (MyItemsPage) === */
+:root[data-theme="dark"] .items-page-container {
+  background: var(--bg) !important;
+  color: var(--text) !important;
+}
+
+:root[data-theme="dark"] .item-card {
+  background: var(--card-bg) !important;
+  color: var(--card-fg) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: var(--shadow) !important;
+}
+
+:root[data-theme="dark"] .item-image {
+  border-bottom: 1px solid var(--border) !important;
+}
+
+:root[data-theme="dark"] .item-info h3 {
+  color: var(--card-fg) !important;
+  text-shadow: none !important;
+}
+:root[data-theme="dark"] .item-info p {
+  color: var(--muted) !important;
+}
+:root[data-theme="dark"] .item-info .price {
+  color: var(--accent-2) !important;
+}
+
+:root[data-theme="dark"] .back-btn {
+  background: transparent !important;
+  border: 2px solid var(--accent-2) !important;
+  color: var(--accent-2) !important;
+}
+:root[data-theme="dark"] .back-btn:hover {
+  background: var(--accent-2) !important;
+  color: #000 !important;
+}

@@ -1,0 +1,94 @@
+/* ========== theme-over.css (DARK MODE ONLY) ============================= */
+/* הפעלה: document.documentElement.setAttribute('data-theme','dark'); */
+:root[data-theme="dark"] {
+  --bg: #0d141a;          /* רקע כללי כהה */
+  --text: #e6edf3;
+  --muted: #9aa7b3;
+
+  --surface: rgba(255,255,255,0.08);
+  --surface-2: rgba(255,255,255,0.06);
+  --border: rgba(255,255,255,0.18);
+
+  --accent: #60a5fa;      /* כחול בהיר */
+  --accent-2: #22d3ee;    /* תכלת */
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #f87171;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.35);
+  --shadow-md: 0 8px 24px rgba(0,0,0,.5);
+  --shadow-lg: 0 14px 44px rgba(0,0,0,.6);
+}
+
+/* בסיסי — לא פולשני: מי שמחיל .theme-bg יקבל כהה */
+:root[data-theme="dark"] .theme-bg {
+  background: radial-gradient(1200px 500px at 50% -100px, rgba(0, 150, 255, .10), transparent 60%),
+              linear-gradient(180deg, #0f2027, #203a43, #2c5364);
+  color: var(--text);
+}
+:root[data-theme="dark"] .theme-surface {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+/* התאמות לטפסים במצב כהה — מבלי לגעת ב-checkbox/radio */
+:root[data-theme="dark"] input:not([type="checkbox"]):not([type="radio"]),
+:root[data-theme="dark"] textarea,
+:root[data-theme="dark"] select {
+  background: rgba(255,255,255,0.10);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: none;
+}
+:root[data-theme="dark"] ::placeholder {
+  color: rgba(230,237,243,.65);
+}
+
+/* פוקוס כהה נעים */
+:root[data-theme="dark"] :focus-visible {
+  outline: 2px solid rgba(96, 165, 250, .8);
+  outline-offset: 2px;
+}
+
+/* כפתור ראשי במצב כהה (אם משתמשים במחלקה) */
+:root[data-theme="dark"] .btn-primary {
+  background: linear-gradient(90deg, var(--accent-2), var(--accent));
+  color: #0b1220;
+  box-shadow: var(--shadow-md);
+}
+
+/* --- דוגמאות לאזורים שכדאי שיהיו כהים במצב Dark בלבד, בלי לשבור ברירת מחדל --- */
+/* רק אם העמודים הללו קיימים אצלך; כולם scoped ל-dark בלבד */
+:root[data-theme="dark"] .admin-container,
+:root[data-theme="dark"] .contact-page,
+:root[data-theme="dark"] .faq-container,
+:root[data-theme="dark"] .reviews-page,
+:root[data-theme="dark"] .store-screen-page {
+  background: radial-gradient(1200px 500px at 50% -100px, rgba(0, 150, 255, .12), transparent 60%),
+              linear-gradient(180deg, #0f2027, #203a43, #2c5364);
+  color: var(--text);
+}
+
+/* כרטיסים/קופסאות נפוצות בתוך העמודים (אם יש מחלקות כאלה) */
+:root[data-theme="dark"] .card,
+:root[data-theme="dark"] .dropdown-menu {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  color: var(--text);
+}
+
+/* הידור עדין לטבלאות */
+:root[data-theme="dark"] table {
+  color: var(--text);
+}
+:root[data-theme="dark"] th {
+  background: color-mix(in srgb, var(--accent), transparent 40%);
+  color: #fff;
+}
+:root[data-theme="dark"] td {
+  border-bottom: 1px solid var(--border);
+}

@@ -265,3 +265,34 @@
 .contact-form .two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 @media (max-width: 720px){ .contact-form .two { grid-template-columns: 1fr; } }
 
+/* === THEME OVERRIDES (ReviewsPage) === */
+:root[data-theme="dark"] .reviews-page {
+  /* מיפוי המשתנים הפנימיים ל-theme tokens */
+  --ink: var(--text);
+  --muted: var(--muted);
+  --accent: var(--accent);
+  --accent-strong: var(--accent-2);
+  --card: var(--surface);
+  background: var(--bg) !important;
+  color: var(--text) !important;
+}
+
+:root[data-theme="dark"] .toolbar,
+:root[data-theme="dark"] .review-card,
+:root[data-theme="dark"] .review-form {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: var(--shadow) !important;
+}
+
+:root[data-theme="dark"] .review-aspect {
+  background: color-mix(in srgb, var(--accent), transparent 84%) !important;
+  border-color: color-mix(in srgb, var(--accent), transparent 65%) !important;
+  color: var(--accent-2) !important;
+}
+
+:root[data-theme="dark"] .btn-primary {
+  background: linear-gradient(90deg, var(--btn-grad-start), var(--btn-grad-end)) !important;
+  color: var(--btn-fg) !important;
+}

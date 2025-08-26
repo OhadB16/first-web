@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import './MenuButton.css';
 
-function MenuButton({ user, onNavigate, onLogout }) {
+function MenuButton({ user, onNavigate, onLogout, theme = 'light', onToggleTheme = () => {} }) {
   const [open, setOpen] = useState(false);
 
   const handleClick = (target) => {
@@ -12,27 +12,29 @@ function MenuButton({ user, onNavigate, onLogout }) {
 
   return (
     <div className="menu-button-wrapper">
-      <button className="hamburger" onClick={() => setOpen(!open)}>
+      {/* כפתור תפריט */}
+      <button type="button" className="hamburger" onClick={() => setOpen(!open)}>
         ☰ Menu
       </button>
+
       {open && (
-        <div className="dropdown-menu">
-          <button onClick={() => handleClick('store')}>🏪 Store</button>
-          <button onClick={() => handleClick('cart')}>🛒 Cart</button>
-          <button onClick={() => handleClick('myItems')}>🧾 My Items</button>
-          <button onClick={() => handleClick('about')}>ℹ️ About</button>
-          <button onClick={() => handleClick('reviews')}>⭐ Reviews</button>
+        <div className="dropdown-menu" role="menu">
+          <button type="button" onClick={() => handleClick('store')}>🏪 Store</button>
+          <button type="button" onClick={() => handleClick('cart')}>🛒 Cart</button>
+          <button type="button" onClick={() => handleClick('myItems')}>🧾 My Items</button>
+          <button type="button" onClick={() => handleClick('about')}>ℹ️ About</button>
+          <button type="button" onClick={() => handleClick('reviews')}>⭐ Reviews</button>
           <button type="button" onClick={() => handleClick('faq')} role="menuitem">❓ FAQ</button>
           <button type="button" onClick={() => handleClick('contact')} role="menuitem">✉️ Contact</button>
-          <button onClick={() => window.open('http://localhost:3001/readme.html', '_blank')}>📄 README</button>
-          <button onClick={() => window.open('http://localhost:3001/llm.html', '_blank')}>🤖 LLM Code</button>
+          <button type="button" onClick={() => window.open('http://localhost:3001/readme.html', '_blank')}>📄 README</button>
+          <button type="button" onClick={() => window.open('http://localhost:3001/llm.html', '_blank')}>🤖 LLM Code</button>
 
-          {/* ✅ Only show if admin */}
+          {/* ✅ רק לאדמין */}
           {user?.username === 'admin' && (
-            <button onClick={() => handleClick('admin')}>🧑‍💻 Admin</button>
+            <button type="button" onClick={() => handleClick('admin')}>🧑‍💻 Admin</button>
           )}
 
-          <button className="logout" onClick={onLogout}>🚪 Logout</button>
+          <button type="button" className="logout" onClick={onLogout}>🚪 Logout</button>
         </div>
       )}
     </div>

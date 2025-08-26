@@ -1,0 +1,25 @@
+.theme-toggle {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  z-index: 9999;
+  padding: 8px 12px;
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 999px;
+  background: rgba(255,255,255,0.14);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+}
+.theme-toggle:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+/* כשהמצב בהיר כברירת מחדל, נעשה את הכפתור מעט כהה-כהה כדי שייראה גם על רקע לבן */
+:root:not([data-theme="dark"]) .theme-toggle {
+  background: rgba(0,0,0,0.08);
+  color: #0f172a;
+  border-color: rgba(0,0,0,0.15);
+}

@@ -113,3 +113,45 @@ textarea { resize: vertical; }
 @media (max-width: 720px) {
   .grid-2 { grid-template-columns: 1fr; }
 }
+/* === THEME OVERRIDES (ContactPage) === */
+:root[data-theme="dark"] .contact-page {
+  background: var(--bg) !important;
+  color: var(--text) !important;
+}
+
+:root[data-theme="dark"] .field > span {
+  color: var(--text) !important;
+  opacity: .9 !important;
+}
+
+:root[data-theme="dark"] .contact-page input:not([type="checkbox"]):not([type="radio"]),
+:root[data-theme="dark"] .contact-page textarea,
+:root[data-theme="dark"] .contact-page select {
+  background: var(--input-bg) !important;
+  color: var(--input-fg) !important;
+  border: 1px solid var(--input-border) !important;
+  box-shadow: none !important;
+}
+
+:root[data-theme="dark"] .refresh,
+:root[data-theme="dark"] .tab {
+  background: rgba(255,255,255,.08) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+}
+:root[data-theme="dark"] .tab.active {
+  background: color-mix(in srgb, var(--accent), transparent 40%) !important;
+}
+
+:root[data-theme="dark"] .message-item {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
+}
+
+:root[data-theme="dark"] .btn-ok {
+  background: linear-gradient(90deg, var(--accent-3), color-mix(in srgb, var(--accent-3), black 20%)) !important;
+}
+:root[data-theme="dark"] .btn-warn {
+  background: linear-gradient(90deg, #f59e0b, #ea580c) !important;
+}

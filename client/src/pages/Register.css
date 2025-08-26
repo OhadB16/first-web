@@ -158,3 +158,154 @@ button[type="submit"]:hover {
   position: relative;
 }
 
+/* === THEME OVERRIDES (Register) === */
+:root[data-theme="dark"] .register-page {
+  background: var(--bg) !important;
+  color: var(--text) !important;
+}
+
+:root[data-theme="dark"] .register-form {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: var(--shadow) !important;
+}
+
+:root[data-theme="dark"] .register-form h2 {
+  color: var(--text) !important;
+  text-shadow: none !important;
+}
+
+:root[data-theme="dark"] .register-form .form-group label {
+  color: var(--text) !important;
+  opacity: .95;
+}
+
+:root[data-theme="dark"] .register-form input[type="text"],
+:root[data-theme="dark"] .register-form input[type="email"],
+:root[data-theme="dark"] .register-form input[type="password"] {
+  background: var(--input-bg) !important;
+  color: var(--input-fg) !important;
+  border: 1px solid var(--input-border) !important;
+  box-shadow: none !important;
+}
+
+:root[data-theme="dark"] .register-form .checkbox-label {
+  color: var(--muted) !important;
+}
+
+:root[data-theme="dark"] .register-form button[type="submit"] {
+  background: linear-gradient(90deg, var(--btn-grad-start), var(--btn-grad-end)) !important;
+  color: var(--btn-fg) !important;
+}
+
+:root[data-theme="dark"] .register-form .switch-link {
+  color: var(--muted) !important;
+}
+
+:root[data-theme="dark"] .register-form .link-button {
+  color: var(--accent) !important;
+  text-decoration-color: color-mix(in srgb, var(--accent), transparent 40%) !important;
+}
+
+:root[data-theme="dark"] .register-form .error {
+  color: var(--error) !important;
+}
+
+/* ==== Auth card & inputs – LIGHT (default) ======================= */
+.register-page .register-form {
+  background: #ffffff;
+  border: 1px solid #0f172a;
+  border-radius: 16px;
+}
+
+.register-page .register-form input[type="text"],
+.register-page .register-form input[type="email"],
+.register-page .register-form input[type="password"] {
+  background: #ffffff;
+  color: #0f172a;
+  border: 1px solid #0f172a;
+  border-radius: 10px;
+}
+
+.register-page .register-form input[type="text"]:focus,
+.register-page .register-form input[type="email"]:focus,
+.register-page .register-form input[type="password"]:focus {
+  border-color: #0072ff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0,114,255,0.18);
+}
+
+.register-page .register-form input[type="checkbox"] {
+  accent-color: #0072ff;
+}
+
+/* ==== DARK ======================================================= */
+:root[data-theme="dark"] .register-page .register-form {
+  background: rgba(17, 24, 39, 0.82);
+  border: 1px solid rgba(255,255,255,0.18);
+}
+
+:root[data-theme="dark"] .register-page .register-form input[type="text"],
+:root[data-theme="dark"] .register-page .register-form input[type="email"],
+:root[data-theme="dark"] .register-page .register-form input[type="password"] {
+  background: rgba(17, 24, 39, 0.95);
+  color: #e6eef7;
+  border: 1px solid rgba(255,255,255,0.28);
+}
+
+:root[data-theme="dark"] .register-page .register-form input::placeholder {
+  color: #93a4b7;
+}
+
+:root[data-theme="dark"] .register-page .register-form input:focus {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 3px rgba(96,165,250,0.25);
+}
+
+:root[data-theme="dark"] .register-page .register-form input[type="checkbox"] {
+  accent-color: #60a5fa;
+}
+/* ===== DARK MODE – black outlines (override) ===== */
+:root[data-theme="dark"] .register-page .register-form {
+  border: 1.5px solid #000 !important;             /* כרטיס עם קו מתאר שחור */
+  background: rgba(17, 24, 39, 0.9);
+}
+
+:root[data-theme="dark"] .register-page .register-form input[type="text"],
+:root[data-theme="dark"] .register-page .register-form input[type="email"],
+:root[data-theme="dark"] .register-page .register-form input[type="password"] {
+  background: rgba(17, 24, 39, 0.96);
+  color: #e6eef7;
+  border: 1.5px solid #2f323d !important;             /* קו מתאר שחור */
+  box-shadow: 0 0 0 1px #000 inset;
+}
+
+:root[data-theme="dark"] .register-page .register-form input:focus {
+  border-color: #000 !important;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.65) !important;
+}
+
+:root[data-theme="dark"] .register-page .register-form input::placeholder {
+  color: #a8b3c2;
+}
+/* ===== DARK MODE: black outline for Register button ===== */
+:root[data-theme="dark"] .register-page .register-form button[type="submit"] {
+  border: 2px solid #2f323d !important;
+}
+
+:root[data-theme="dark"] .register-page .register-form button[type="submit"]:hover,
+:root[data-theme="dark"] .register-page .register-form button[type="submit"]:focus {
+  outline: none;
+  border-color: #2f323d !important;
+  box-shadow: 0 0 0 2px rgba(0,0,0,.7), 0 6px 16px rgba(0,0,0,.55);
+}
+
+/* (אופציונלי) קו מתאר גם ללינק "Login here" אם הוא כפתור */
+:root[data-theme="dark"] .register-page .switch-link .link-button {
+  border: 1.5px solid #2f323d !important;
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+

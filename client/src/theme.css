@@ -1,0 +1,48 @@
+/* ========== theme.css (tokens for LIGHT by default) ===================== */
+:root {
+  /* Colors — Light */
+  --bg: #f6f8fb;
+  --text: #0f172a;
+  --muted: #475569;
+
+  --surface: #ffffff;
+  --surface-2: #f1f5f9;
+  --border: #e5e7eb;
+
+  --accent: #0072ff;       /* כחול מותג */
+  --accent-2: #00c6ff;     /* גרדיאנט משלים */
+  --success: #16a34a;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+
+  --radius: 12px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.08);
+  --shadow-md: 0 6px 20px rgba(0,0,0,.10);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,.15);
+}
+
+/* אפשרי: רק אם תרצה “לצבוע” אזור כללי דרך Utilities (Opt-in) */
+.theme-bg      { background: var(--bg); color: var(--text); }
+.theme-surface { background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm); }
+.theme-muted   { color: var(--muted); }
+
+/* כפתור ראשי (לא חובה להשתמש בו אם כבר יש לך) */
+.btn-primary {
+  background: linear-gradient(90deg, var(--accent-2), var(--accent));
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: transform .15s ease, box-shadow .2s ease;
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* קישורים בסיסיים (עדין, לא אגרסיבי) */
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }

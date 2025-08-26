@@ -1,6 +1,8 @@
 // src/App.js
-import React, { useState, useMemo, useCallback } from 'react';
-import { useEffect } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import './index.css';
+import './theme-over.css';
+import './theme.css';
 
 // Pages
 import Register from './pages/register';
@@ -15,7 +17,7 @@ import AboutPage from './pages/AboutPage';
 import ReviewsPage from './pages/ReviewsPage';
 import ContactPage from './pages/ContactPage';
 import FAQPage from './pages/FAQPage';
-
+import ThemeToggle from './components/ThemeToggle';
 
 // Components
 import MenuButton from './components/MenuButton';
@@ -38,41 +40,55 @@ function App() {
   const [cart, setCart] = useState([]);
   const [purchasedItems, setPurchasedItems] = useState([]);
   const [, setActivityLog] = useState([]);
-  const [theme, setTheme] = useState(() => localStorage.getItem('ui.theme') || 'light');
-  <button onClick={() => setTheme(t => t === 'light' ? 'dark' : 'light')}>
-  Toggle Theme
-</button>
 
-
-  const jets = useMemo(() => [
-    { id: 1, name: 'Falcon',       price: 2500000, imageUrl: falcon,       description: 'High-speed private jet.' },
-    { id: 2, name: 'SkyLiner 200', price: 1800000, imageUrl: skyLiner200,  description: 'Luxurious comfort in the skies.' },
-    { id: 3, name: 'AeroSwift',    price: 3200000, imageUrl: aeroSwift,    description: 'Cutting-edge design and performance.' },
-    { id: 4, name: 'CloudCruiser', price: 2100000, imageUrl: cloudCruiser, description: 'Smooth flight guaranteed.' },
-    { id: 5, name: 'JetStream 500',price: 2900000, imageUrl: jetStream500, description: 'State-of-the-art avionics.' },
-    { id: 6, name: 'Eagle Eye',    price: 2300000, imageUrl: eagleEye,     description: 'Premium surveillance jet.' },
-    { id: 7, name: 'SkyDancer',    price: 2750000, imageUrl: skyDancer,    description: 'Elegant and efficient.' },
-    { id: 8, name: 'Nimbus 300',   price: 1950000, imageUrl: nimbus300,    description: 'Compact business jet.' },
-    { id: 9, name: 'Horizon 700',  price: 3500000, imageUrl: horizon700,   description: 'Long-range luxury.' },
-    { id: 10, name: 'Phoenix GT',  price: 2600000, imageUrl: phoenixGT,    description: 'Performance and style.' },
-  ], []);
-
+  // ---------- THEME ----------
+  const [theme, setTheme] = useState(() => {
+    const saved = localStorage.getItem('ui.theme');
+    if (saved) return saved;
+    const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)')?.matches;
+    return prefersDark ? 'dark' : 'light';
+  });
   useEffect(() => {
-  localStorage.setItem('ui.theme', theme);
-  document.documentElement.dataset.theme = theme; // מחבר ל-CSS
-}, [theme]);
+    localStorage.setItem('ui.theme', theme);
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
+  const toggleTheme = () => setTheme(t => (t === 'light' ? 'dark' : 'light'));
 
+  // ---------- DATA ----------
+  const jets = useMemo(() => [
+    { id: 1,  name: 'Falcon',        price: 2500000, imageUrl: falcon,       description: 'High-speed private jet.' },
+    { id: 2,  name: 'SkyLiner 200',  price: 1800000, imageUrl: skyLiner200,  description: 'Luxurious comfort in the skies.' },
+    { id: 3,  name: 'AeroSwift',     price: 3200000, imageUrl: aeroSwift,    description: 'Cutting-edge design and performance.' },
+    { id: 4,  name: 'CloudCruiser',  price: 2100000, imageUrl: cloudCruiser, description: 'Smooth flight guaranteed.' },
+    { id: 5,  name: 'JetStream 500', price: 2900000, imageUrl: jetStream500, description: 'State-of-the-art avionics.' },
+    { id: 6,  name: 'Eagle Eye',     price: 2300000, imageUrl: eagleEye,     description: 'Premium surveillance jet.' },
+    { id: 7,  name: 'SkyDancer',     price: 2750000, imageUrl: skyDancer,    description: 'Elegant and efficient.' },
+    { id: 8,  name: 'Nimbus 300',    price: 1950000, imageUrl: nimbus300,    description: 'Compact business jet.' },
+    { id: 9,  name: 'Horizon 700',   price: 3500000, imageUrl: horizon700,   description: 'Long-range luxury.' },
+    { id: 10, name: 'Phoenix GT',    price: 2600000, imageUrl: phoenixGT,    description: 'Performance and style.' },
+  ], []);
   const [storeItems, setStoreItems] = useState(jets);
 
+  // ---------- HELPERS ----------
   const logActivity = (username, activity) => {
     const timestamp = new Date().toLocaleString();
     setActivityLog(prev => [...prev, { datetime: timestamp, username, activity }]);
   };
 
+  const fetchPurchasesForUser = async (username) => {
+    try {
+      const res = await fetch(`http://localhost:3001/api/purchase/${username}`);
+      if (!res.ok) throw new Error('Failed to load purchases');
+      const purchaseRecords = await res.json();
+      return purchaseRecords.flatMap(record => record.items || []);
+    } catch (err) {
+      console.error('❌ Error fetching purchases:', err);
+      return [];
+    }
+  };
+
   const handleLogin = async (userData) => {
-    console.log('👤 Logged in as:', userData);
     setUser(userData);
-    console.log('👤 Logged in as:', userData);
     logActivity(userData.username, 'login');
     const loadedItems = await fetchPurchasesForUser(userData.username);
     setPurchasedItems(loadedItems);
@@ -103,11 +119,7 @@ function App() {
   };
 
   const handleConfirmCheckout = async () => {
-    if (!user?.username) {
-      console.error('❌ No logged-in user found');
-      return;
-    }
-
+    if (!user?.username) return;
     try {
       const updatedRes = await fetch(`http://localhost:3001/api/purchase/${user.username}`);
       const updated = await updatedRes.json();
@@ -121,19 +133,6 @@ function App() {
     }
   };
 
-
-  const fetchPurchasesForUser = async (username) => {
-    try {
-      const res = await fetch(`http://localhost:3001/api/purchase/${username}`);
-      if (!res.ok) throw new Error('Failed to load purchases');
-      const purchaseRecords = await res.json();
-      return purchaseRecords.flatMap(record => record.items || []);
-    } catch (err) {
-      console.error('❌ Error fetching purchases:', err);
-      return [];
-    }
-  };
-
   const refreshStoreItems = useCallback(async () => {
     try {
       const res = await fetch('http://localhost:3001/api/products');
@@ -144,27 +143,38 @@ function App() {
     }
   }, [jets]);
 
-  useEffect(() => {
-    refreshStoreItems();
-  }, [refreshStoreItems]);
+  useEffect(() => { refreshStoreItems(); }, [refreshStoreItems]);
 
-  const renderWithMenu = (Component, props) => (
+  // ---------- LAYOUT WRAPPER ----------
+  const renderPage = (Component, props, withMenu = true) => (
     <>
-      <MenuButton user={user} onNavigate={setView} onLogout={handleLogout} />
+      <div className="theme-toggle-anchor">
+        <ThemeToggle onToggle={toggleTheme} />
+      </div>
+      {withMenu && (
+        <MenuButton user={user} onNavigate={setView} onLogout={handleLogout} />
+      )}
       <Component {...props} />
     </>
   );
 
+  // ---------- ROUTING ----------
   if (!user && view === 'login') {
-    return <AlreadyReg onLogin={handleLogin} onBackToRegister={() => setView('register')} />;
+    return renderPage(AlreadyReg, {
+      onLogin: handleLogin,
+      onBackToRegister: () => setView('register')
+    }, /* withMenu */ false);
   }
 
   if (!user && view === 'register') {
-    return <Register onLogin={handleLogin} onShowLogin={() => setView('login')} />;
+    return renderPage(Register, {
+      onLogin: handleLogin,
+      onShowLogin: () => setView('login')
+    }, /* withMenu */ false);
   }
 
   if (user && view === 'store') {
-    return renderWithMenu(StoreScreen, {
+    return renderPage(StoreScreen, {
       user,
       cart,
       onAddToCart: handleAddToCart,
@@ -176,7 +186,7 @@ function App() {
   }
 
   if (user && view === 'cart') {
-    return renderWithMenu(CartPage, {
+    return renderPage(CartPage, {
       cart,
       onBack: () => setView('store'),
       onRemove: handleRemoveFromCart,
@@ -185,65 +195,52 @@ function App() {
   }
 
   if (user && view === 'pay') {
-    return renderWithMenu(PayScreen, {
+    return renderPage(PayScreen, {
       total: cart.reduce((sum, item) => sum + item.price, 0),
       cart,
       user,
       onBack: () => setView('cart'),
       onConfirm: handleConfirmCheckout,
       onClearCart: () => setCart([]),
-      setPurchasedItems,
+      setPurchasedItems
     });
   }
 
   if (user && view === 'thankyou') {
-    return renderWithMenu(ThankYouPage, {
-      onGoToStore: () => setView('store')
-    });
+    return renderPage(ThankYouPage, { onGoToStore: () => setView('store') });
   }
 
   if (user && view === 'myItems') {
-    return renderWithMenu(MyItemsPage, {
+    return renderPage(MyItemsPage, {
       purchasedItems,
       onBackToStore: () => setView('store')
     });
   }
+
   if (user && view === 'about') {
-  return renderWithMenu(AboutPage, {
-    onBackToStore: () => setView('store')
-  });
-}
-if (user && view === 'reviews') {
-  return renderWithMenu(ReviewsPage, {
-    user,                    // ✅ pass user so we can set author automatically
-    onBackToStore: () => setView('store')
-  });
-}
+    return renderPage(AboutPage, { onBackToStore: () => setView('store') });
+  }
+
+  if (user && view === 'reviews') {
+    return renderPage(ReviewsPage, { user, onBackToStore: () => setView('store') });
+  }
 
   if (user?.username === 'admin' && view === 'admin') {
-    return renderWithMenu(AdminPage, {
+    return renderPage(AdminPage, {
       user,
       storeItems,
       setStoreItems,
-      onBackToStore: async () => {
-        await refreshStoreItems(); // 🆕 רענון אחרי הוספת מוצרים
-        setView('store');
-      }
+      onBackToStore: async () => { await refreshStoreItems(); setView('store'); }
     });
   }
-if (user && view === 'faq') {
-  return renderWithMenu(FAQPage, {
-    onBackToStore: () => setView('store'),
-  });
-}
 
-if (user && view === 'contact') {
-  return renderWithMenu(ContactPage, {
-    user,
-    onBackToStore: () => setView('store'),
-  });
-}
+  if (user && view === 'faq') {
+    return renderPage(FAQPage, { onBackToStore: () => setView('store') });
+  }
 
+  if (user && view === 'contact') {
+    return renderPage(ContactPage, { user, onBackToStore: () => setView('store') });
+  }
 
   return null;
 }

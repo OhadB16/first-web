@@ -1,5 +1,6 @@
 /* AdminPage.css - styled like PayScreen */
 
+/* ===== Default = LIGHT (העיצוב שלך, ללא שינוי) ======================== */
 .admin-container {
   background: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
   min-height: 100vh;
@@ -158,4 +159,56 @@ input[type="file"],
 
 .activity-table tr:hover {
   background-color: rgba(255,255,255,0.1);
+}
+
+/* ===== DARK MODE (מופעל רק כש־<html data-theme="dark">) =============== */
+:root[data-theme="dark"] .admin-container {
+  background:
+    radial-gradient(1100px 520px at 50% -140px, rgba(14,122,255,0.10), transparent 60%),
+    linear-gradient(180deg, #0b1220, #0c1726, #0a0f16);
+  color: #eaf2ff;
+}
+
+:root[data-theme="dark"] .image-drop-area,
+:root[data-theme="dark"] .product-row,
+:root[data-theme="dark"] .activity-table {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.16);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+}
+
+:root[data-theme="dark"] .activity-table th {
+  background-color: rgba(0, 114, 255, 0.5);
+  color: #f6fbff;
+}
+
+:root[data-theme="dark"] .activity-table td {
+  color: #eaf2ff;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+
+:root[data-theme="dark"] input[type="text"],
+:root[data-theme="dark"] input[type="number"],
+:root[data-theme="dark"] input[type="file"],
+:root[data-theme="dark"] .filter-input {
+  background: rgba(255,255,255,0.10);
+  color: #eaf2ff;
+  border: 1px solid rgba(255,255,255,0.18);
+  box-shadow: none;
+}
+
+:root[data-theme="dark"] .back-btn {
+  background: rgba(255,255,255,0.14);
+  color: #f6fbff;
+  box-shadow: none;
+}
+
+:root[data-theme="dark"] .add-button {
+  background: linear-gradient(90deg, #0094ff, #3b82f6);
+  color: #fff;
+}
+
+:root[data-theme="dark"] .delete-button {
+  background: linear-gradient(90deg, #ff4e50, #fbbf24);
+  color: #0f0f0f;
 }

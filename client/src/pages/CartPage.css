@@ -174,3 +174,72 @@
   box-shadow: 0 0 16px rgba(0, 198, 255, 0.6);
   transform: scale(1.04);
 }
+/* === THEME OVERRIDES (CartPage) === */
+:root[data-theme="dark"] .cart-page-container {
+  background: var(--bg) !important;
+  color: var(--text) !important;
+}
+
+:root[data-theme="dark"] .cart-header {
+  color: var(--accent-2) !important;
+  text-shadow: none !important;
+}
+
+:root[data-theme="dark"] .cart-item-card {
+  background: var(--card-bg) !important;
+  color: var(--card-fg) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: var(--shadow) !important;
+}
+
+:root[data-theme="dark"] .cart-item-image {
+  border-bottom: 1px solid var(--border) !important;
+}
+
+:root[data-theme="dark"] .cart-item-name {
+  color: var(--card-fg) !important;
+}
+:root[data-theme="dark"] .cart-item-price {
+  color: var(--accent-2) !important;
+}
+:root[data-theme="dark"] .cart-item-quantity,
+:root[data-theme="dark"] .cart-item-subtotal {
+  color: var(--muted) !important;
+}
+
+:root[data-theme="dark"] .cart-total {
+  background: var(--surface) !important;
+  color: var(--accent-2) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: var(--shadow) !important;
+}
+
+:root[data-theme="dark"] .back-btn {
+  background: transparent !important;
+  border: 2px solid var(--accent-2) !important;
+  color: var(--accent-2) !important;
+  box-shadow: none !important;
+}
+:root[data-theme="dark"] .back-btn:hover {
+  background: var(--accent-2) !important;
+  color: #000 !important;
+  transform: scale(1.03);
+}
+
+:root[data-theme="dark"] .remove-btn {
+  background-color: color-mix(in srgb, var(--error), transparent 87%) !important;
+  color: var(--error) !important;
+  border: 1px solid color-mix(in srgb, var(--error), transparent 65%) !important;
+}
+:root[data-theme="dark"] .remove-btn:hover {
+  background-color: var(--error) !important;
+  color: #fff !important;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--error), transparent 55%) !important;
+}
+
+:root[data-theme="dark"] .pay-button {
+  background: linear-gradient(90deg, var(--btn-grad-start), var(--btn-grad-end)) !important;
+  color: var(--btn-fg) !important;
+  box-shadow: var(--shadow) !important;
+}
+
