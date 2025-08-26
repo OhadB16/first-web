@@ -14,5 +14,61 @@
     "description": "created by automated test",
     "imageUrl": "",
     "price": 999
+  },
+  {
+    "id": "p1756244300598",
+    "name": "SecTest Jet",
+    "title": "SecTest Jet",
+    "description": "via security test",
+    "imageUrl": "",
+    "price": 123
+  },
+  {
+    "id": "p1756245281670",
+    "name": "SecTest Jet",
+    "title": "SecTest Jet",
+    "description": "via security test",
+    "imageUrl": "",
+    "price": 123
+  },
+  {
+    "id": "p1756245655531",
+    "name": "SecTest Jet",
+    "title": "SecTest Jet",
+    "description": "via security test",
+    "imageUrl": "",
+    "price": 123
+  },
+  {
+    "id": "p1756246199691",
+    "name": "SecTest Jet",
+    "title": "SecTest Jet",
+    "description": "created by security test",
+    "imageUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAB",
+    "price": 123
+  },
+  {
+    "id": "p1756246471696",
+    "name": "SecTest Jet",
+    "title": "SecTest Jet",
+    "description": "created by security test",
+    "imageUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAB",
+    "price": 123
+  },
+  {
+    "id": "p1756246750010",
+    "name": "Test Jet from tests",
+    "title": "Test Jet from tests",
+    "description": "created by automated test",
+    "imageUrl": "",
+    "price": 999
+  },
+  {
+    "id": "p1756246765025",
+    "name": "Test Jet",
+    "title": "Test Jet",
+    "description": "",
+    "imageUrl": "",
+    "price": 123
   }
 ]

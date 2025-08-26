@@ -28,7 +28,6 @@ const app = express();
 // ======================
 // 🛡️ MIDDLEWARE SETUP
 // ======================
-
 app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true,
@@ -42,7 +41,8 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-app.use(express.json({ limit: '10mb' }));
+// ⛔️ 5MB payload limit so big bodies return 413
+app.use(express.json({ limit: '5mb' }));
 app.use(cookieParser());
 
 // serve everything in /server/public at /public/*
@@ -55,7 +55,6 @@ app.get(['/readme', '/readme.html'], (req, res) => {
 app.get(['/llm', '/llm.html'], (req, res) => {
   res.sendFile(path.join(PUBLIC_DIR, 'llm.html'));
 });
-
 
 // ======================
 // 📦 IN-MEMORY DATA STORE
@@ -115,14 +114,14 @@ const saveAllData = async () => {
 console.log('activityLog is:', typeof activityLog);
 
 // ======================
-/* 🛣️ ATTACH ROUTES */
+// 🛣️ ATTACH ROUTES
 // ======================
 try {
   app.use('/api/login',     loginRoutes(users, activityLog));
   app.use('/api/register',  registerRoutes(users, activityLog, saveAllData));
   app.use('/api/cart',      cartRoutes(carts, activityLog));
   app.use('/api/purchase',  purchaseRoutes(purchases, carts, activityLog, saveAllData));
-  app.use('/api/products', productsRoutes(loadJSON, saveJSON));
+  app.use('/api/products',  productsRoutes(loadJSON, saveJSON)); // includes 405 for DELETE /
   app.use('/api/admin/activity', activityRoutes(loadJSON));
   app.use('/api/me',        meRoutes(users));
   app.use('/api/logout',    logoutRoutes());
@@ -135,9 +134,14 @@ try {
 // ======================
 // ⚠️ GLOBAL ERROR HANDLER
 // ======================
+// keep original status codes (e.g., 413 for too large bodies)
 app.use((err, req, res, next) => {
-  console.error('Unhandled error:', err);
-  res.status(500).json({ error: 'Internal server error' });
+  if (err && (err.type === 'entity.too.large' || err.status === 413)) {
+    return res.status(413).json({ error: 'Payload too large' });
+  }
+  const status = err?.status || err?.statusCode || 500;
+  const message = status === 500 ? 'Internal server error' : (err.message || 'Error');
+  res.status(status).json({ error: message });
 });
 
 // (Optional) legacy fallback to catch mis-wiring of /api/register:

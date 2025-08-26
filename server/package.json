@@ -8,7 +8,9 @@
     "start": "node server.js",
     "test": "node --test --test-concurrency=1",
     "test:e2e": "node --test --test-concurrency=1 tests/e2e.test.js",
-    "test:watch": "node --test --test-concurrency=1 --watch"
+    "test:watch": "node --test --test-concurrency=1 --watch",
+    "test:server": "node test.js",
+    "test:security": "node security.test.js"
   },
   "dependencies": {
     "cookie-parser": "^1.4.7",
@@ -17,5 +19,8 @@
     "express-rate-limit": "^8.0.1",
     "fs-extra": "^11.3.0",
     "stripe": "^18.3.0"
+  },
+  "devDependencies": {
+    "node-fetch": "^3.3.2"
   }
 }

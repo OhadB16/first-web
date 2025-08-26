@@ -253,5 +253,45 @@
     "username": "user_272733",
     "password": "P272733a!",
     "email": "u272733@mail.com"
+  },
+  {
+    "username": "sec_met2if4k_fmpg",
+    "password": "Secret123!",
+    "email": "sec_met2if4k_fmpg@ex.com"
+  },
+  {
+    "username": "sec_met33g4h_f0dr",
+    "password": "Secret123!",
+    "email": "sec_met33g4h_f0dr@ex.com"
+  },
+  {
+    "username": "sec_met3bglj_gihc",
+    "password": "Secret123!",
+    "email": "sec_met3bglj_gihc@ex.com"
+  },
+  {
+    "username": "user_1756246199654_667540",
+    "password": "P@ssw0rd!",
+    "email": "user_1756246199654_667540@example.com"
+  },
+  {
+    "username": "user_1756246471644_691610",
+    "password": "P@ssw0rd!",
+    "email": "user_1756246471644_691610@example.com"
+  },
+  {
+    "username": "user_446012",
+    "password": "P446012a!",
+    "email": "u446012@mail.com"
+  },
+  {
+    "username": "user_494719",
+    "password": "pw123",
+    "email": "user_494719@ex.com"
+  },
+  {
+    "username": "user_51551",
+    "password": "pw123",
+    "email": "user_51551@ex.com"
   }
 ]
