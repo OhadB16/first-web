@@ -1,5 +1,8 @@
-/* src/pages/AlreadyReg.css */
+/* src/pages/AlreadyReg.css
+   Login (Already Registered) page styling with light & dark mode support.
+*/
 
+/* === BASE LAYOUT ===================================================== */
 .alreadyreg-page {
   display: flex;
   justify-content: center;
@@ -93,7 +96,7 @@ button[type='submit']:hover {
   color: #0056b3;
 }
 
-/* === THEME OVERRIDES (AlreadyReg / Login) === */
+/* === THEME OVERRIDES (DARK MODE) ====================================== */
 :root[data-theme="dark"] .alreadyreg-page {
   background: var(--bg) !important;
   color: var(--text) !important;
@@ -139,10 +142,11 @@ button[type='submit']:hover {
   color: var(--accent) !important;
   text-decoration-color: color-mix(in srgb, var(--accent), transparent 40%) !important;
 }
-/* ==== Auth card & inputs – LIGHT (default) ======================= */
+
+/* === LIGHT MODE (DEFAULT) ============================================= */
 .alreadyreg-page .login-form {
-  background: #ffffff;                 /* כרטיס לבן ב־Light */
-  border: 1px solid #0f172a;           /* קו מתאר שחור/כחול-כהה */
+  background: #ffffff;
+  border: 1px solid #0f172a;
   border-radius: 16px;
 }
 
@@ -152,7 +156,7 @@ button[type='submit']:hover {
 .alreadyreg-page .login-form input[type="password"] {
   background: #ffffff;
   color: #0f172a;
-  border: 1px solid #0f172a;           /* קו מתאר שחור */
+  border: 1px solid #0f172a;
   border-radius: 10px;
 }
 
@@ -165,14 +169,14 @@ button[type='submit']:hover {
   box-shadow: 0 0 0 3px rgba(0,114,255,0.18);
 }
 
-/* תיבת סימון */
+/* Checkbox */
 .alreadyreg-page .login-form input[type="checkbox"] {
   accent-color: #0072ff;
 }
 
-/* ==== DARK ======================================================= */
+/* === DARK MODE – Enhanced Card & Inputs =============================== */
 :root[data-theme="dark"] .alreadyreg-page .login-form {
-  background: rgba(17, 24, 39, 0.82);   /* כרטיס כהה, מעט שקיפות */
+  background: rgba(17, 24, 39, 0.82);
   border: 1px solid rgba(255,255,255,0.18);
 }
 
@@ -182,7 +186,7 @@ button[type='submit']:hover {
 :root[data-theme="dark"] .alreadyreg-page .login-form input[type="password"] {
   background: rgba(17, 24, 39, 0.95);
   color: #e6eef7;
-  border: 1px solid rgba(255,255,255,0.28);  /* קו מתאר נראה */
+  border: 1px solid rgba(255,255,255,0.28);
 }
 
 :root[data-theme="dark"] .alreadyreg-page .login-form .input::placeholder,
@@ -200,9 +204,9 @@ button[type='submit']:hover {
   accent-color: #60a5fa;
 }
 
-/* ===== DARK MODE – black outlines (override) ===== */
+/* === DARK MODE – Strong Black Outlines ================================ */
 :root[data-theme="dark"] .alreadyreg-page .login-form {
-  border: 1.5px solid #000 !important;             /* כרטיס עם קו מתאר שחור */
+  border: 1.5px solid #000 !important;
   background: rgba(17, 24, 39, 0.9);
 }
 
@@ -212,22 +216,22 @@ button[type='submit']:hover {
 :root[data-theme="dark"] .alreadyreg-page .login-form input[type="password"] {
   background: rgba(17, 24, 39, 0.96);
   color: #e6eef7;
-  border: 1.5px solid #2f323d !important;         /* קו מתאר שחור */
-  box-shadow: 0 0 0 1px #000 inset;                /* חידוד הקצה בפנים */
+  border: 1.5px solid #2f323d !important;
+  box-shadow: 0 0 0 1px #000 inset;
 }
 
 :root[data-theme="dark"] .alreadyreg-page .login-form .input:focus,
 :root[data-theme="dark"] .alreadyreg-page .login-form input:focus {
   border-color: #000 !important;
   outline: none;
-  /* טבעת פוקוס שחורה עדינה – נשאר שחור וגם נראה */
   box-shadow: 0 0 0 2px rgba(37, 28, 28, 0.65) !important;
 }
 
 :root[data-theme="dark"] .alreadyreg-page .login-form input::placeholder {
   color: #a8b3c2;
 }
-/* ===== DARK MODE: black outline for Login button ===== */
+
+/* === DARK MODE – Login Button Outlines ================================ */
 :root[data-theme="dark"] .alreadyreg-page .primary-button {
   border: 2px solid #2f323d !important;
 }

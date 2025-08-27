@@ -1,20 +1,45 @@
 // server/routes/contact.js
 const express = require('express');
 
+/**
+ * contactRoutes
+ * -------------
+ * Defines routes for sending and managing contact messages.
+ *
+ * @param {Function} loadJSON - Async helper to load JSON data from disk.
+ * @param {Function} saveJSON - Async helper to save JSON data to disk.
+ * @returns {express.Router} Router with contact endpoints.
+ *
+ * Routes:
+ * - GET /api/contact (admin only)
+ *   → Returns all messages sorted from newest to oldest.
+ * - POST /api/contact (public or logged-in)
+ *   → Submits a new message (with different requirements for guests vs logged-in users).
+ * - DELETE /api/contact/:id (admin only)
+ *   → Deletes a message by ID.
+ */
 module.exports = function contactRoutes(loadJSON, saveJSON) {
   const router = express.Router();
 
+  /**
+   * Checks if request comes from an admin.
+   * Looks at the `X-Username` header, query param `who`, or `skyUser` cookie.
+   */
   const isAdmin = (req) => {
     const who = String(req.header('X-Username') || req.query.who || '').toLowerCase();
     const c = String((req.cookies && req.cookies.skyUser) || '').toLowerCase();
     return who === 'admin' || c === 'admin';
   };
 
-  // 📨 Admin: קבלת כל ההודעות (ממויין מהחדש לישן)
+  /**
+   * GET /api/contact
+   * ----------------
+   * Admin: fetch all messages, sorted newest to oldest.
+   */
   router.get('/', async (req, res) => {
     try {
       if (!isAdmin(req)) return res.status(403).json({ error: 'Forbidden' });
-      const all = await loadJSON('messages.json'); // [] אם לא קיים
+      const all = await loadJSON('messages.json'); // returns [] if not found
       all.sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
       return res.json(all);
     } catch (err) {
@@ -23,15 +48,19 @@ module.exports = function contactRoutes(loadJSON, saveJSON) {
     }
   });
 
-  // ✉️ Public/Logged-in: שליחת הודעה
+  /**
+   * POST /api/contact
+   * -----------------
+   * Public or logged-in: submit a message.
+   * Validation rules:
+   * - Guest: must provide fullName, email, and message.
+   * - Logged-in: must provide at least message; fullName/email are auto-filled if missing.
+   */
   router.post('/', async (req, res) => {
     try {
       const loggedInUser = String((req.cookies && req.cookies.skyUser) || '').trim();
       const { fullName, company, email, phone, preferred, budget, subject, message } = req.body || {};
 
-      // כללים:
-      // - משתמש מחובר: חובה message בלבד; נשלים fullName/email לפי הצורך
-      // - אורח: חובה fullName + email + message
       const isLoggedIn = !!loggedInUser;
 
       if (!isLoggedIn) {
@@ -62,7 +91,7 @@ module.exports = function contactRoutes(loadJSON, saveJSON) {
       all.push(clean);
       await saveJSON('messages.json', all);
 
-      // נחזיר את האובייקט המלא כדי שיהיה נוח למחוק לפי id
+      // Return full object so frontend can delete by id later
       return res.status(201).json(clean);
     } catch (err) {
       console.error('POST /api/contact error:', err);
@@ -70,7 +99,11 @@ module.exports = function contactRoutes(loadJSON, saveJSON) {
     }
   });
 
-  // 🗑️ Admin: מחיקת הודעה
+  /**
+   * DELETE /api/contact/:id
+   * -----------------------
+   * Admin: delete a message by its ID.
+   */
   router.delete('/:id', async (req, res) => {
     try {
       if (!isAdmin(req)) return res.status(403).json({ error: 'Forbidden' });

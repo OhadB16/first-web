@@ -7,7 +7,13 @@ import {
   CartesianGrid, XAxis, YAxis, Tooltip
 } from 'recharts';
 
-// Helper: Convert File to base64
+/**
+ * toBase64
+ * --------
+ * Utility function to convert a File object into a base64-encoded string.
+ * @param {File} file - Image or file to convert.
+ * @returns {Promise<string>} Base64 representation of the file.
+ */
 function toBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -17,6 +23,24 @@ function toBase64(file) {
   });
 }
 
+/**
+ * AdminPage
+ * ---------
+ * Admin dashboard for managing products, viewing sales charts, and filtering activity logs.
+ *
+ * Props:
+ * @param {Object}   props
+ * @param {{username?: string}} props.user - Current logged-in user.
+ * @param {Array}    props.storeItems - Current list of products in the store.
+ * @param {(items: Array) => void} props.setStoreItems - State setter for updating products.
+ * @param {() => void} props.onBackToStore - Callback to return to the store page.
+ *
+ * Features:
+ * - Add/remove products with image upload (drag & drop or file input).
+ * - Fetch and display activity logs with filters (username, activity text, date range).
+ * - Fetch and display sales data aggregated by time buckets (day/week/month/year).
+ * - Interactive bar chart using Recharts.
+ */
 function AdminPage({ user, storeItems, setStoreItems, onBackToStore }) {
   // ---------- Products form ----------
   const [newItem, setNewItem] = useState({ name: '', price: '', imageFile: null, image: '' });
@@ -37,58 +61,70 @@ function AdminPage({ user, storeItems, setStoreItems, onBackToStore }) {
     to: ''    // YYYY-MM-DD
   });
 
-  // ====== Fetch Activity ======
-const fetchLogs = useCallback(async () => {
-  setLoadingLogs(true);
-  try {
-    const res = await fetch('http://localhost:3001/api/admin/activity', {
-      headers: { 'X-Username': user?.username || '' },
-      credentials: 'include'
-    });
-    if (!res.ok) throw new Error('Failed to load activity');
-    const data = await res.json();
-    setLogs(Array.isArray(data) ? data : []);
-  } catch (err) {
-    console.error('❌ fetchLogs error:', err);
-  } finally {
-    setLoadingLogs(false);
-  }
-}, [user?.username]);
-
-// בתוך AdminPage.jsx – החלף את fetchSales
-const fetchSales = useCallback(async (b) => {
-  setLoadingSales(true);
-  try {
-    const res = await fetch(`http://localhost:3001/api/admin/activity/sales?bucket=${encodeURIComponent(b)}`, {
-      headers: { 'X-Username': user?.username || '' },
-      credentials: 'include'
-    });
-    if (!res.ok) throw new Error('Failed to load sales');
-    const data = await res.json();
-
-    // ✅ תמיכה גם בפורמט החדש וגם בישן
-    let rows = [];
-    if (Array.isArray(data)) {
-      // פורמט ישן: [{ date, count }]
-      rows = data.map(r => ({ bucket: r.date, units: r.count }));
-    } else if (Array.isArray(data.rows)) {
-      // פורמט חדש: { rows: [{ bucket, units }] }
-      rows = data.rows;
+  /**
+   * fetchLogs
+   * ---------
+   * Fetch user activity logs from server.
+   */
+  const fetchLogs = useCallback(async () => {
+    setLoadingLogs(true);
+    try {
+      const res = await fetch('http://localhost:3001/api/admin/activity', {
+        headers: { 'X-Username': user?.username || '' },
+        credentials: 'include'
+      });
+      if (!res.ok) throw new Error('Failed to load activity');
+      const data = await res.json();
+      setLogs(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error('❌ fetchLogs error:', err);
+    } finally {
+      setLoadingLogs(false);
     }
-    setSalesRows(rows);
-  } catch (err) {
-    console.error('❌ fetchSales error:', err);
-    setSalesRows([]);
-  } finally {
-    setLoadingSales(false);
-  }
-}, [user?.username]);
+  }, [user?.username]);
 
-useEffect(() => { fetchLogs(); }, [fetchLogs]);
-useEffect(() => { fetchSales(bucket); }, [fetchSales, bucket]);
+  /**
+   * fetchSales
+   * ----------
+   * Fetch sales statistics aggregated by a chosen bucket (day/week/month/year).
+   * Supports both old and new response formats.
+   * @param {string} b - Bucket type.
+   */
+  const fetchSales = useCallback(async (b) => {
+    setLoadingSales(true);
+    try {
+      const res = await fetch(`http://localhost:3001/api/admin/activity/sales?bucket=${encodeURIComponent(b)}`, {
+        headers: { 'X-Username': user?.username || '' },
+        credentials: 'include'
+      });
+      if (!res.ok) throw new Error('Failed to load sales');
+      const data = await res.json();
 
+      let rows = [];
+      if (Array.isArray(data)) {
+        // Old format: [{ date, count }]
+        rows = data.map(r => ({ bucket: r.date, units: r.count }));
+      } else if (Array.isArray(data.rows)) {
+        // New format: { rows: [{ bucket, units }] }
+        rows = data.rows;
+      }
+      setSalesRows(rows);
+    } catch (err) {
+      console.error('❌ fetchSales error:', err);
+      setSalesRows([]);
+    } finally {
+      setLoadingSales(false);
+    }
+  }, [user?.username]);
 
-  // ====== Filters ======
+  useEffect(() => { fetchLogs(); }, [fetchLogs]);
+  useEffect(() => { fetchSales(bucket); }, [fetchSales, bucket]);
+
+  /**
+   * filteredLogs
+   * ------------
+   * Memoized subset of logs filtered by username, activity, and date range.
+   */
   const filteredLogs = useMemo(() => {
     return logs.filter(r => {
       const uname = String(r.username || '').toLowerCase();
@@ -97,7 +133,6 @@ useEffect(() => { fetchSales(bucket); }, [fetchSales, bucket]);
 
       const uOk = filters.username ? uname.includes(filters.username.toLowerCase()) : true;
       const aOk = filters.activity ? act.includes(filters.activity.toLowerCase()) : true;
-
       const fromOk = filters.from ? (t >= new Date(filters.from + 'T00:00:00').getTime()) : true;
       const toOk = filters.to ? (t <= new Date(filters.to + 'T23:59:59').getTime()) : true;
 
@@ -105,9 +140,11 @@ useEffect(() => { fetchSales(bucket); }, [fetchSales, bucket]);
     });
   }, [logs, filters]);
 
-  // =========================
-  // Create product (Admin)
-  // =========================
+  /**
+   * handleAddItem
+   * -------------
+   * Create a new product and save it on the server.
+   */
   const handleAddItem = async () => {
     const { name, price, imageFile } = newItem;
 
@@ -160,31 +197,36 @@ useEffect(() => { fetchSales(bucket); }, [fetchSales, bucket]);
     }
   };
 
-  // =========================
-  // Delete product
-// ... בתוך AdminPage.jsx
-const handleRemove = async (id) => {
-  try {
-    const res = await fetch(`http://localhost:3001/api/products/${encodeURIComponent(id)}`, {
-      method: 'DELETE',
-      headers: { 'X-Username': user?.username || '' },
-      credentials: 'include'
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.error || `Failed to delete/hide product (status ${res.status})`);
+  /**
+   * handleRemove
+   * ------------
+   * Delete a product from the server and remove it from local state.
+   * @param {string|number} id - Product ID.
+   */
+  const handleRemove = async (id) => {
+    try {
+      const res = await fetch(`http://localhost:3001/api/products/${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+        headers: { 'X-Username': user?.username || '' },
+        credentials: 'include'
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `Failed to delete/hide product (status ${res.status})`);
+      }
+      setStoreItems(prev => prev.filter(item => String(item.id) !== String(id)));
+    } catch (err) {
+      console.error('❌ Error deleting/hiding product:', err);
+      alert(err.message || 'Failed to delete/hide product on server.');
     }
-    // מחיקה מקומית אחרי הצלחה מהשרת
-    setStoreItems(prev => prev.filter(item => String(item.id) !== String(id)));
-  } catch (err) {
-    console.error('❌ Error deleting/hiding product:', err);
-    alert(err.message || 'Failed to delete/hide product on server.');
-  }
-};
+  };
 
-  // =========================
-  // Image handlers
-  // =========================
+  /**
+   * Image upload handlers
+   * ---------------------
+   * handleImageUpload, handleFileChange, handleDrop, handleDragOver
+   * Manage image file selection and drag & drop.
+   */
   const handleImageUpload = (file) => {
     if (!file || !file.type.startsWith('image/')) {
       alert('Please upload a valid image file.');

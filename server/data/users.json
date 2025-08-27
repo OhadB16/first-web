@@ -6,7 +6,7 @@
   },
   {
     "username": "alon",
-    "password": "1M3C7979l@",
+    "password": "1Q2W3E4R5T",
     "email": "alon@alon.com"
   },
   {
@@ -14,30 +14,9 @@
     "password": "1Q2W3E4R5T"
   },
   {
-    "username": "alalal",
-    "password": "1Q2W3E4R5T"
-  },
-  {
-    "username": "AAAQQQ",
-    "password": "1Q2W3E4R5T"
-  },
-  {
-    "username": "QAQAQQQ",
-    "password": "1Q2W3E4R5T"
-  },
-  {
-    "username": "aaaaaaaa",
-    "password": "1Q2W3E4R5T"
-  },
-  {
     "username": "aaajjj",
     "password": "1Q2W3E4R5T",
     "email": "UBUUBUY@IKOK.COM"
-  },
-  {
-    "username": "admin",
-    "email": "admin@example.com",
-    "password": "admin"
   },
   {
     "username": "hadar.gafni",
@@ -293,5 +272,30 @@
     "username": "user_51551",
     "password": "pw123",
     "email": "user_51551@ex.com"
+  },
+  {
+    "username": "admin",
+    "email": "admin@example.com",
+    "password": "admin"
+  },
+  {
+    "username": "user_979257",
+    "password": "P979257a!",
+    "email": "u979257@mail.com"
+  },
+  {
+    "username": "user_289841",
+    "password": "pw123",
+    "email": "user_289841@ex.com"
+  },
+  {
+    "username": "user_254479",
+    "password": "pw123",
+    "email": "user_254479@ex.com"
+  },
+  {
+    "username": "user_1756280442430_489793",
+    "password": "P@ssw0rd!",
+    "email": "user_1756280442430_489793@example.com"
   }
 ]

@@ -1,6 +1,6 @@
 /* AdminPage.css - styled like PayScreen */
 
-/* ===== Default = LIGHT (העיצוב שלך, ללא שינוי) ======================== */
+/* ===== Default = LIGHT (your design, unchanged) ======================== */
 .admin-container {
   background: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
   min-height: 100vh;
@@ -161,7 +161,7 @@ input[type="file"],
   background-color: rgba(255,255,255,0.1);
 }
 
-/* ===== DARK MODE (מופעל רק כש־<html data-theme="dark">) =============== */
+/* ===== DARK MODE (active only when <html data-theme="dark">) =============== */
 :root[data-theme="dark"] .admin-container {
   background:
     radial-gradient(1100px 520px at 50% -140px, rgba(14,122,255,0.10), transparent 60%),

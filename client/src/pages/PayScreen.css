@@ -1,5 +1,6 @@
-/* src/pages/PayScreen.css */
+/* src/pages/PayScreen.css – Gradient glass style with theme support */
 
+/* === BASE =============================================================== */
 .pay-screen {
   position: relative;
   background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
@@ -10,11 +11,15 @@
   font-family: 'Segoe UI', Inter, sans-serif;
   padding: 20px;
 }
+
 .top-back-container {
   position: absolute;
   top: 20px;
   left: 20px;
   z-index: 1000;
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 16px;
 }
 
 .back-btn:hover {
@@ -24,7 +29,7 @@
   transform: scale(1.03);
 }
 
-
+/* === PAYMENT FORM ======================================================= */
 .payment-form {
   background-color: #fff;
   padding: 40px;
@@ -48,6 +53,7 @@
   color: #444;
 }
 
+/* === FORM FIELDS ======================================================== */
 .form-group {
   margin-bottom: 20px;
   display: flex;
@@ -77,11 +83,11 @@
   display: flex;
   gap: 16px;
 }
-
 .half {
   flex: 1;
 }
 
+/* === BUTTONS ============================================================ */
 .payment-buttons {
   margin-top: 30px;
   display: flex;
@@ -98,20 +104,78 @@
   cursor: pointer;
   transition: background 0.3s ease;
 }
-
 .pay-button:hover {
   background: linear-gradient(90deg, #0072ff, #00c6ff);
 }
 
+/* === RESPONSIVE ========================================================= */
 @media (max-width: 500px) {
   .row {
     flex-direction: column;
   }
 }
-.top-back-container {
-  display: flex;
-  justify-content: flex-start;
-  margin-bottom: 16px;
+
+/* === DARK MODE (append-only) ============================================ */
+:root[data-theme="dark"] .pay-screen {
+  background: var(--bg) !important;
+  color: var(--text) !important;
 }
 
+:root[data-theme="dark"] .payment-form {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: var(--shadow-md, 0 8px 24px rgba(0,0,0,.5)) !important;
+}
 
+:root[data-theme="dark"] .payment-title,
+:root[data-theme="dark"] .payment-total {
+  color: var(--text) !important;
+}
+
+:root[data-theme="dark"] .form-group label {
+  color: var(--text) !important;
+  opacity: .92;
+}
+
+:root[data-theme="dark"] .form-group input {
+  background: var(--surface-2, rgba(255,255,255,0.06)) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 10px;
+  box-shadow: none !important;
+}
+:root[data-theme="dark"] .form-group input::placeholder {
+  color: color-mix(in srgb, var(--text), transparent 45%);
+}
+:root[data-theme="dark"] .form-group input:focus {
+  border-color: color-mix(in srgb, var(--accent), transparent 35%) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent), transparent 80%) !important;
+  outline: none;
+}
+
+:root[data-theme="dark"] .pay-button {
+  background: linear-gradient(90deg, var(--accent-2), var(--accent)) !important;
+  color: #fff !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: var(--shadow-md, 0 8px 24px rgba(0,0,0,.5)) !important;
+}
+:root[data-theme="dark"] .pay-button:hover {
+  background: linear-gradient(90deg, var(--accent), var(--accent-2)) !important;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg, 0 12px 36px rgba(0,0,0,.6)) !important;
+}
+
+/* back button – subtle glass outline in dark */
+:root[data-theme="dark"] .back-btn {
+  background: rgba(255,255,255,.08) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+:root[data-theme="dark"] .back-btn:hover {
+  background: rgba(255,255,255,.12) !important;
+  color: var(--text) !important;
+  box-shadow: var(--shadow-sm, 0 1px 3px rgba(0,0,0,.35)) !important;
+}

@@ -1,18 +1,5 @@
 [
   {
-    "id": "m1756206336084",
-    "fromUser": "admin",
-    "fullName": "Alon",
-    "company": "",
-    "email": "a@a.com",
-    "phone": "",
-    "preferred": "",
-    "budget": "",
-    "subject": "",
-    "message": "Hello",
-    "createdAt": "2025-08-26T11:05:36.084Z"
-  },
-  {
     "id": "m1756207123544",
     "fullName": "user_922707",
     "company": "",
@@ -39,84 +26,6 @@
     "byUser": "admin"
   },
   {
-    "id": "m1756210853690",
-    "fullName": "user_702875",
-    "company": "",
-    "email": "user_702875@example.com",
-    "phone": "",
-    "preferred": "",
-    "budget": "",
-    "subject": "",
-    "message": "Hello from logged-in test",
-    "createdAt": "2025-08-26T12:20:53.690Z",
-    "byUser": "user_702875"
-  },
-  {
-    "id": "m1756212071736",
-    "fromUser": "user_824485",
-    "byUser": "user_824485",
-    "fullName": "user_824485",
-    "company": "",
-    "email": "user_824485@example.com",
-    "phone": "",
-    "preferred": "",
-    "budget": "",
-    "subject": "",
-    "message": "Hello from logged-in test",
-    "createdAt": "2025-08-26T12:41:11.736Z"
-  },
-  {
-    "id": "m1756212071738",
-    "fullName": "",
-    "company": "",
-    "email": "",
-    "phone": "",
-    "preferred": "",
-    "budget": "",
-    "subject": "",
-    "message": "guest without email/fullName",
-    "createdAt": "2025-08-26T12:41:11.738Z"
-  },
-  {
-    "id": "m1756212369083",
-    "fromUser": "user_599212",
-    "byUser": "user_599212",
-    "fullName": "user_599212",
-    "company": "",
-    "email": "user_599212@example.com",
-    "phone": "",
-    "preferred": "",
-    "budget": "",
-    "subject": "",
-    "message": "Hello from logged-in test",
-    "createdAt": "2025-08-26T12:46:09.083Z"
-  },
-  {
-    "id": "m1756212369084",
-    "fullName": "",
-    "company": "",
-    "email": "",
-    "phone": "",
-    "preferred": "",
-    "budget": "",
-    "subject": "",
-    "message": "guest without email/fullName",
-    "createdAt": "2025-08-26T12:46:09.084Z"
-  },
-  {
-    "id": "m1756213631348",
-    "fullName": "user_548658",
-    "company": "",
-    "email": "user_548658@example.com",
-    "phone": "",
-    "preferred": "",
-    "budget": "",
-    "subject": "",
-    "message": "Hello from logged-in test",
-    "createdAt": "2025-08-26T13:07:11.348Z",
-    "byUser": "user_548658"
-  },
-  {
     "id": "m1756213659533",
     "fullName": "user_790377",
     "company": "",
@@ -128,57 +37,5 @@
     "message": "Hello from logged-in test",
     "createdAt": "2025-08-26T13:07:39.533Z",
     "byUser": "user_790377"
-  },
-  {
-    "id": "m1756216107249",
-    "fullName": "user_649380",
-    "company": "",
-    "email": "user_649380@example.com",
-    "phone": "",
-    "preferred": "",
-    "budget": "",
-    "subject": "",
-    "message": "Hello from logged-in test",
-    "createdAt": "2025-08-26T13:48:27.249Z",
-    "byUser": "user_649380"
-  },
-  {
-    "id": "m1756218974290",
-    "fullName": "user_355579",
-    "company": "",
-    "email": "user_355579@example.com",
-    "phone": "",
-    "preferred": "",
-    "budget": "",
-    "subject": "",
-    "message": "Hello from logged-in test",
-    "createdAt": "2025-08-26T14:36:14.290Z",
-    "byUser": "user_355579"
-  },
-  {
-    "id": "m1756244300616",
-    "fullName": "Big",
-    "company": "",
-    "email": "x@x.x",
-    "phone": "",
-    "preferred": "",
-    "budget": "",
-    "subject": "",
-    "message": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-    "createdAt": "2025-08-26T21:38:20.616Z",
-    "byUser": null
-  },
-  {
-    "id": "m1756246765026",
-    "fullName": "user_51551",
-    "company": "",
-    "email": "user_51551@example.com",
-    "phone": "",
-    "preferred": "",
-    "budget": "",
-    "subject": "",
-    "message": "Hello from logged-in test",
-    "createdAt": "2025-08-26T22:19:25.026Z",
-    "byUser": "user_51551"
   }
 ]

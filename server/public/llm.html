@@ -12,8 +12,8 @@
       --text:#eef2f6;
       --muted:rgba(255,255,255,.8);
       --accent1:#00c6ff; --accent2:#0072ff;
-      --green1:#22c55e; --green2:#16a34a;
-      --warn1:#f59e0b; --warn2:#ea580c;
+      --green1:#5d67c2; --green2:#86e7ed;
+      --warn1:#6564b4; --warn2:#d98e51;
       --mono:#0e2433;
     }
     body{
@@ -61,6 +61,25 @@
     @media (min-width:760px){ .grid{grid-template-columns:1fr 1fr} }
     .footer{opacity:.85; margin-top:10px; font-size:.92rem}
     a { color:#bfe3ff }
+    h2 {
+  /* תשמור/תעדכן את הגודל שיש לך אם תרצה */
+  background: linear-gradient(#d3d7e4, hsl(196, 90%, 69%), #e4edfc);
+  -webkit-background-clip: text; /* Safari/Chromium ישן */
+  background-clip: text;           /* תקן */
+  -webkit-text-fill-color: transparent;
+  color: transparent;              /* תקן */
+  text-shadow: 0 2px 6px rgba(90, 110, 162, 0.595); /* אופציונלי לעומק על רקע כהה */
+  font-weight: 800;                /* נראה “כותרתי” יותר; אפשר להוריד אם חזק מדי */
+}
+h3 {
+  /* תשמור/תעדכן את הגודל שיש לך אם תרצה */
+  background: linear-gradient(#d0dbff, hsl(234, 38%, 61%), #7babff);
+  -webkit-background-clip: text;   /* Safari/Chromium ישן */
+  background-clip: text;           /* תקן */
+  -webkit-text-fill-color: transparent;
+  color: transparent;              /* תקן */
+  font-weight: 800;                /* נראה “כותרתי” יותר; אפשר להוריד אם חזק מדי */
+}
   </style>
 </head>
 <body>
@@ -93,11 +112,11 @@
       <div>
         <h3>Client</h3>
         <ul class="list">
-          <li><span class="tag gen">generated</span> <code>client/src/pages/ContactPage.jsx</code> + <code>ContactPage.css</code> — split user/admin modes, fixed spacing so inputs don’t touch, wired to API.</li>
+          <li><span class="tag gen">generated</span> <code>client/src/pages/ContactPage.jsx</code> + <code>ContactPage.css</code> — split user/admin modes, spacing so inputs don’t touch, wired to API.</li>
           <li><span class="tag gen">generated</span> <code>client/src/pages/FAQPage.jsx</code> + <code>FAQPage.css</code> — themed like the site.</li>
           <li><span class="tag ref">refactored</span> <code>client/src/pages/ReviewsPage.jsx</code> — admin-only delete button & call to <code>DELETE /api/reviews/:id</code>.</li>
           <li><span class="tag ref">refactored</span> <code>client/src/components/MenuButton.jsx</code> — added <em>FAQ</em> and <em>Contact</em> entries, kept style consistent.</li>
-          <li><span class="tag ref">refactored</span> <code>AlreadyReg.css</code> & <code>Register.css</code> — “Remember me” checkbox alignment inside the card on all screens.</li>
+          <li><span class="tag ref">refactored</span> <code>Register.css</code> — “Remember me” checkbox alignment inside the card on all screens.</li>
           <li><span class="tag gen">generated</span> <code>server/public/readme.html</code> & <code>server/public/llm.html</code> — static documents per assignment.</li>
         </ul>
       </div>
@@ -132,43 +151,32 @@ router.delete('/:id', async (req, res) =&gt; {
       <summary>2) Contact messages API</summary>
       <pre><code>// server/routes/contact.js (excerpt)
 router.get('/', async (req, res) =&gt; {
-  const who = String((req.query.who || '')).toLowerCase(); // 'admin' | 'user'
+  const who = String((req.query.who || req.get('X-Username') || '')).toLowerCase();
+  if (who !== 'admin' &amp;&amp; String((req.cookies &amp;&amp; req.cookies.skyUser) || '').toLowerCase() !== 'admin') {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
   const all = await loadJSON('messages.json');
-  const list = who === 'admin' ? all : all.filter(m =&gt; m.status !== 'deleted');
-  list.sort((a,b) =&gt; (b.date||'').localeCompare(a.date||''));
-  res.json(list);
+  all.sort((a,b) =&gt; String(b.createdAt||'').localeCompare(String(a.createdAt||'')));
+  res.json(all);
 });
 
 router.post('/', async (req, res) =&gt; {
-  const { name, email, phone, subject, body, budget, prefer } = req.body || {};
-  if (!name || !email || !body) return res.status(400).json({ error:'name, email, body required' });
-  const all = await loadJSON('messages.json');
+  const user = String((req.cookies &amp;&amp; req.cookies.skyUser) || '').trim();
+  const { fullName, email, message } = req.body || {};
+  if (!user &amp;&amp; (!fullName || !email || !message)) {
+    return res.status(400).json({ error:'Full name, email and message are required.' });
+  }
   const created = {
-    id: 'm' + Date.now(),
-    date: new Date().toISOString(),
-    name: String(name).slice(0,120),
-    email: String(email).slice(0,160),
-    phone: String(phone||'').slice(0,60),
-    subject: String(subject||'').slice(0,180),
-    body: String(body||'').slice(0,2000),
-    budget: String(budget||'Undisclosed').slice(0,60),
-    prefer: String(prefer||'Email').slice(0,40),
-    status: 'open'
+    id:'m'+Date.now(),
+    fullName: user || String(fullName).slice(0,120),
+    email: user ? (email || `${user}@example.com`) : String(email).slice(0,160),
+    message: String(message||'').slice(0,4000),
+    createdAt: new Date().toISOString(),
+    byUser: user || null
   };
-  all.push(created); await saveJSON('messages.json', all);
-  res.status(201).json(created);
-});
-
-router.delete('/:id', async (req,res) =&gt; {
-  const username = String(req.get('X-Username') || '').toLowerCase();
-  if (username !== 'admin') return res.status(403).json({ error:'Admin only' });
-  const id = String(req.params.id||'');
-  const all = await loadJSON('messages.json');
-  const idx = all.findIndex(m =&gt; m.id === id);
-  if (idx === -1) return res.status(404).json({ error:'Not found' });
-  const [removed] = all.splice(idx,1);
+  const all = await loadJSON('messages.json'); all.push(created);
   await saveJSON('messages.json', all);
-  res.json({ ok:true, removed });
+  res.status(201).json(created);
 });</code></pre>
     </details>
 
@@ -181,7 +189,8 @@ const handleDelete = async (id) =&gt; {
   if (!window.confirm('Delete this review?')) return;
   const res = await fetch(`http://localhost:3001/api/reviews/${id}`, {
     method: 'DELETE',
-    headers: { 'X-Username': user.username }, credentials: 'include'
+    headers: { 'X-Username': user.username },
+    credentials: 'include',
   });
   if (!res.ok) throw new Error((await res.json()).error || 'Failed to delete');
   setReviews(prev =&gt; prev.filter(r =&gt; r.id !== id));
@@ -192,17 +201,27 @@ const handleDelete = async (id) =&gt; {
       <summary>4) Serving static docs from <code>/public</code></summary>
       <pre><code>// server/server.js (excerpt)
 const path = require('path');
-app.use(express.static(path.join(__dirname, 'public')));
-app.get('/readme.html', (req,res) =&gt; res.sendFile(path.join(__dirname,'public','readme.html')));
-app.get('/llm.html',    (req,res) =&gt; res.sendFile(path.join(__dirname,'public','llm.html')));</code></pre>
+app.use('/public', express.static(path.join(__dirname, 'public'), { index:false }));
+app.get(['/readme','/readme.html'], (req,res) =&gt; res.sendFile(path.join(__dirname,'public','readme.html')));
+app.get(['/llm','/llm.html'], (req,res) =&gt; res.sendFile(path.join(__dirname,'public','llm.html')));</code></pre>
     </details>
+  </section>
+
+  <section class="card">
+    <h2>Roles &amp; Permissions</h2>
+    <ul class="list">
+      <li><strong>User</strong>: Register/login, add to cart, purchase, view My Items, submit contact messages, post reviews.</li>
+      <li><strong>Admin</strong>: Add/remove products, view activity (admin endpoints), moderate (delete reviews &amp; contact messages).</li>
+      <li><strong>Server enforcement</strong>: Admin endpoints require <code>X-Username: admin</code> (and cookies).</li>
+      <li><strong>UI gating</strong>: Admin controls are hidden for non-admin users.</li>
+    </ul>
   </section>
 
   <section class="card">
     <h2>How I Used the LLM</h2>
     <ul class="list">
       <li>Debugging &amp; refactoring: reduce duplication, fix CORS and path issues, improve error messages.</li>
-      <li>Scaffolding: create full feature slices (Contact page, FAQ) consistent with my project’s look and state model.</li>
+      <li>Scaffolding: create feature slices (Contact page, FAQ) consistent with my project’s look and state model.</li>
       <li>Security &amp; roles: simple admin-only guards on sensitive routes and UI actions.</li>
       <li>Polish: consistent CSS, spacing, and component structure.</li>
     </ul>
@@ -210,7 +229,7 @@ app.get('/llm.html',    (req,res) =&gt; res.sendFile(path.join(__dirname,'public
   </section>
 
   <section class="card footer">
-    <strong>Project:</strong> SKY • <strong>Author:</strong> Alon Bar Shimon • <strong>Date:</strong> 2025-08  
+    <strong>Project:</strong> SKY • <strong>Author:</strong> Alon Bar Shimon • <strong>Date:</strong> 2025-08
     <br />If you have questions about what was generated vs. hand-written, see the list above or the git history.
   </section>
 </body>

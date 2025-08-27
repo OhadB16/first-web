@@ -13,7 +13,22 @@ import horizon700 from '../assets/jets/Horizon700.png';
 import aeroSwift from '../assets/jets/AeroSwift.png';
 import cloudCruiser from '../assets/jets/CloudCruiser.png';
 
-// Reusable slice section: image + text; `reverse` flips layout (like your reference site)
+/**
+ * Slice
+ * -----
+ * Reusable layout section consisting of an image and descriptive text.
+ *
+ * Props:
+ * @param {string}  title - Section title.
+ * @param {string}  [subtitle] - Optional subtitle displayed under the title.
+ * @param {string}  copy - Main descriptive text content.
+ * @param {string}  img - Image source to display alongside the text.
+ * @param {boolean} [reverse=false] - If true, flips layout (image right, text left).
+ *
+ * Behavior:
+ * - Displays an image and text side-by-side.
+ * - "Learn More" button is provided (currently static, can be wired to actions).
+ */
 function Slice({ title, subtitle, copy, img, reverse = false }) {
   return (
     <section className={`slice ${reverse ? 'reverse' : ''}`}>
@@ -32,6 +47,22 @@ function Slice({ title, subtitle, copy, img, reverse = false }) {
   );
 }
 
+/**
+ * AboutPage
+ * ----------
+ * Premium About page showcasing the company's services and fleet,
+ * with hero section, side index, alternating content slices, and a CTA section.
+ *
+ * Props:
+ * @param {() => void} onBackToStore - Callback to navigate back to the store page.
+ *
+ * Layout:
+ * - Hero banner with overlay text and button.
+ * - Side index with quick links (static demo).
+ * - Main content with alternating Slice components for different services.
+ * - CTA-wide section with summary and marketing tone.
+ * - Footer with Back to Store button.
+ */
 function AboutPage({ onBackToStore }) {
   return (
     <div className="aboutV2">
@@ -52,7 +83,7 @@ function AboutPage({ onBackToStore }) {
         </div>
       </header>
 
-      {/* Demo side index — use buttons instead of <a> without href for accessibility */}
+      {/* Demo side index — uses buttons for accessibility */}
       <aside className="side-index" aria-hidden="true">
         <button type="button" className="linklike">Aircraft Management</button>
         <button type="button" className="linklike">Aircraft Sales</button>

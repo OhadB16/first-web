@@ -1,3 +1,6 @@
+/* src/pages/MyItemsPage.css — gradient glass look, theme-aware */
+
+/* === BASE =============================================================== */
 .items-page-container {
   padding: 32px;
   font-family: 'Inter', 'Segoe UI', sans-serif;
@@ -34,7 +37,6 @@
   cursor: pointer;
   transition: all 0.3s ease;
 }
-
 .back-btn:hover {
   background: #00c6ff;
   color: #000;
@@ -62,7 +64,6 @@
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   text-align: center;
 }
-
 .item-card:hover {
   transform: scale(1.04);
   box-shadow: 0 8px 24px rgba(0, 198, 255, 0.4);
@@ -80,7 +81,6 @@
 .item-info {
   padding: 16px;
 }
-
 .item-info h3 {
   margin: 0 0 8px;
   font-size: 18px;
@@ -88,19 +88,18 @@
   color: #ffffff;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
-
 .item-info p {
   font-size: 14px;
   color: #cce7ff;
   margin: 0 0 12px;
 }
-
 .item-info .price {
   font-size: 16px;
   font-weight: bold;
   color: #00c6ff;
 }
-/* === THEME OVERRIDES (MyItemsPage) === */
+
+/* === DARK THEME OVERRIDES =============================================== */
 :root[data-theme="dark"] .items-page-container {
   background: var(--bg) !important;
   color: var(--text) !important;

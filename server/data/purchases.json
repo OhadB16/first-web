@@ -167,5 +167,45 @@
       }
     ],
     "timestamp": "2025-08-26T14:15:43.717Z"
+  },
+  {
+    "username": "alon",
+    "items": [
+      {
+        "id": "p1756218988217",
+        "name": "Test Jet from tests",
+        "price": 999,
+        "imageUrl": "",
+        "description": "created by automated test"
+      },
+      {
+        "id": 7,
+        "name": "SkyDancer",
+        "price": 2750000,
+        "imageUrl": "/static/media/SkyDancer.abf95cd6e9c57f726c22.png",
+        "description": "Elegant and efficient."
+      },
+      {
+        "id": 1,
+        "name": "Falcon",
+        "price": 2500000,
+        "imageUrl": "/static/media/Falcon.cee0cd5c95e1c3a5fac4.png",
+        "description": "High-speed private jet."
+      }
+    ],
+    "timestamp": "2025-08-27T09:30:10.142Z"
+  },
+  {
+    "username": "admin",
+    "items": [
+      {
+        "id": 4,
+        "name": "CloudCruiser",
+        "price": 2100000,
+        "imageUrl": "/static/media/CloudCruiser.be6cb39e33ff623e82bd.png",
+        "description": "Smooth flight guaranteed."
+      }
+    ],
+    "timestamp": "2025-08-27T09:42:10.934Z"
   }
 ]

@@ -2,13 +2,33 @@ import React, { useState } from 'react';
 import './AlreadyReg.css';
 import Logo from '../components/Logo';
 
-// (אופציונלי לפיתוח בלבד) — fallback כאשר השרת לא זמין
+/**
+ * DEV_ADMIN
+ * ---------
+ * Development-only fallback admin credentials (used if backend is unavailable).
+ */
 const DEV_ADMIN = {
   username: 'admin',
   email: 'admin@example.com',
   password: 'admin',
 };
 
+/**
+ * AlreadyReg
+ * ----------
+ * Login page for already registered users.
+ *
+ * Props:
+ * @param {(user: {username: string, email: string}) => void} onLogin - Callback on successful login.
+ * @param {() => void} onBackToRegister - Callback to go back to registration page.
+ *
+ * Features:
+ * - Accepts username/email and password for login.
+ * - Supports "remember me" (cookie lifetime).
+ * - Connects to backend `/api/login`.
+ * - Displays error messages without revealing which field failed.
+ * - Provides a dev-only fallback login if the backend is unreachable.
+ */
 function AlreadyReg({ onLogin, onBackToRegister }) {
   // --- State ---
   const [form, setForm] = useState({ identifier: '', password: '' });
@@ -17,6 +37,11 @@ function AlreadyReg({ onLogin, onBackToRegister }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // --- Handlers ---
+  /**
+   * handleChange
+   * ------------
+   * Updates form state and handles the "remember me" checkbox.
+   */
   const handleChange = (e) => {
     const { name, value, checked, type } = e.target;
     if (name === 'rememberMe' && type === 'checkbox') {
@@ -27,11 +52,16 @@ function AlreadyReg({ onLogin, onBackToRegister }) {
     if (error) setError('');
   };
 
+  /**
+   * adminDevFallback
+   * ----------------
+   * Local dev-only login fallback if backend is down.
+   * Sets a cookie with admin credentials for testing.
+   */
   const adminDevFallback = () => {
-    // קיצור־דרך ל־dev בלבד אם ה־backend לא נגיש
     const expires = new Date();
-    if (rememberMe) expires.setDate(expires.getDate() + 12); // 12 ימים
-    else expires.setTime(expires.getTime() + 30 * 60000);    // 30 דק'
+    if (rememberMe) expires.setDate(expires.getDate() + 12); // 12 days
+    else expires.setTime(expires.getTime() + 30 * 60000);    // 30 minutes
     document.cookie = `skyUser=${encodeURIComponent(
       DEV_ADMIN.username
     )}; expires=${expires.toUTCString()}; path=/`;
@@ -39,6 +69,12 @@ function AlreadyReg({ onLogin, onBackToRegister }) {
     onLogin({ username: DEV_ADMIN.username, email: DEV_ADMIN.email });
   };
 
+  /**
+   * handleSubmit
+   * ------------
+   * Attempts to log in the user by posting to the server.
+   * Falls back to dev credentials if the server is unreachable.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { identifier, password } = form;
@@ -50,28 +86,27 @@ function AlreadyReg({ onLogin, onBackToRegister }) {
 
     setIsSubmitting(true);
     try {
-      // תמיד ניגשים לשרת — הוא כבר תומך בזיהוי לפי username או email
       const res = await fetch('http://localhost:3001/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include', // נחוץ לעוגיות
+        credentials: 'include', // required for cookies
         body: JSON.stringify({ username: identifier, password, rememberMe }),
       });
 
       const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        // שגיאה כללית — אל תחשוף איזה שדה שגוי
+        // Generic error message (do not expose which field is wrong)
         setError(data.error || 'Login failed');
         return;
       }
 
-      // אין צורך לכתוב document.cookie ידנית — השרת כבר שם skyUser + username
+      // Server already sets cookie skyUser + username
       onLogin({ username: data.username, email: data.email });
     } catch (err) {
       console.error('Login network error:', err);
 
-      // Fallback dev בלבד — במקרה שהשרת למטה ורוצים לבדוק לוקאלית
+      // Dev-only fallback if server is down
       const isAdminCreds =
         (form.identifier || '').toLowerCase().trim() === DEV_ADMIN.username &&
         form.password === DEV_ADMIN.password;

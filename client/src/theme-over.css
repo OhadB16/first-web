@@ -1,7 +1,7 @@
 /* ========== theme-over.css (DARK MODE ONLY) ============================= */
-/* הפעלה: document.documentElement.setAttribute('data-theme','dark'); */
+/* Activation: document.documentElement.setAttribute('data-theme','dark'); */
 :root[data-theme="dark"] {
-  --bg: #0d141a;          /* רקע כללי כהה */
+  --bg: #0d141a;          /* General dark background */
   --text: #e6edf3;
   --muted: #9aa7b3;
 
@@ -9,8 +9,8 @@
   --surface-2: rgba(255,255,255,0.06);
   --border: rgba(255,255,255,0.18);
 
-  --accent: #60a5fa;      /* כחול בהיר */
-  --accent-2: #22d3ee;    /* תכלת */
+  --accent: #60a5fa;      /* Light blue */
+  --accent-2: #22d3ee;    /* Cyan */
   --success: #22c55e;
   --warning: #f59e0b;
   --danger: #f87171;
@@ -20,7 +20,7 @@
   --shadow-lg: 0 14px 44px rgba(0,0,0,.6);
 }
 
-/* בסיסי — לא פולשני: מי שמחיל .theme-bg יקבל כהה */
+/* Base — not intrusive: only elements with .theme-bg get dark mode */
 :root[data-theme="dark"] .theme-bg {
   background: radial-gradient(1200px 500px at 50% -100px, rgba(0, 150, 255, .10), transparent 60%),
               linear-gradient(180deg, #0f2027, #203a43, #2c5364);
@@ -33,7 +33,7 @@
   box-shadow: var(--shadow-sm);
 }
 
-/* התאמות לטפסים במצב כהה — מבלי לגעת ב-checkbox/radio */
+/* Dark mode adjustments for form inputs — excluding checkbox/radio */
 :root[data-theme="dark"] input:not([type="checkbox"]):not([type="radio"]),
 :root[data-theme="dark"] textarea,
 :root[data-theme="dark"] select {
@@ -47,21 +47,20 @@
   color: rgba(230,237,243,.65);
 }
 
-/* פוקוס כהה נעים */
+/* Softer focus style in dark mode */
 :root[data-theme="dark"] :focus-visible {
   outline: 2px solid rgba(96, 165, 250, .8);
   outline-offset: 2px;
 }
 
-/* כפתור ראשי במצב כהה (אם משתמשים במחלקה) */
+/* Primary button styling in dark mode (if .btn-primary is used) */
 :root[data-theme="dark"] .btn-primary {
   background: linear-gradient(90deg, var(--accent-2), var(--accent));
   color: #0b1220;
   box-shadow: var(--shadow-md);
 }
 
-/* --- דוגמאות לאזורים שכדאי שיהיו כהים במצב Dark בלבד, בלי לשבור ברירת מחדל --- */
-/* רק אם העמודים הללו קיימים אצלך; כולם scoped ל-dark בלבד */
+/* --- Example areas styled only in Dark mode (scoped by page classes) --- */
 :root[data-theme="dark"] .admin-container,
 :root[data-theme="dark"] .contact-page,
 :root[data-theme="dark"] .faq-container,
@@ -72,7 +71,7 @@
   color: var(--text);
 }
 
-/* כרטיסים/קופסאות נפוצות בתוך העמודים (אם יש מחלקות כאלה) */
+/* Cards / dropdowns commonly used in pages */
 :root[data-theme="dark"] .card,
 :root[data-theme="dark"] .dropdown-menu {
   background: var(--surface);
@@ -81,7 +80,7 @@
   color: var(--text);
 }
 
-/* הידור עדין לטבלאות */
+/* Subtle table adjustments */
 :root[data-theme="dark"] table {
   color: var(--text);
 }

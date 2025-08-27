@@ -1,5 +1,19 @@
-/* src/pages/StoreScreen.css */
+/* ==========================================================================
+   src/pages/StoreScreen.css
+   --------------------------------------------------------------------------
+   Purpose:
+   - Styles for the Store screen: page background, navbar, search, cart button,
+     product grid, and dark-mode overrides.
 
+   Notes:
+   - This file intentionally keeps all existing selectors and declarations
+     unchanged. Only documentation comments were added.
+   - Dark mode styles are scoped with :root[data-theme="dark"] (set at runtime).
+   - Some properties (e.g., `background-color: linear-gradient(...)`) are kept
+     as-is even if unconventional, to avoid changing your code.
+   ========================================================================== */
+
+/* Root container for the Store page (full-viewport gradient + base typography) */
 .store-screen-page {
   min-height: 100vh;
   background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
@@ -7,7 +21,8 @@
   font-family: 'Inter', 'Segoe UI', sans-serif;
 }
 
-/* NAVBAR */
+/* NAVBAR
+   Fixed-height top bar with centered logo and subtle shadow */
 .navbar {
   background: linear-gradient(to right, #222d32, #203a43, #0f2027);
   display: flex;
@@ -19,7 +34,8 @@
   position: relative;
 }
 
-/* Cart button styling */
+/* Cart button styling
+   Prominent CTA with gradient, shadow and hover scale effect */
 .cart-button {
   height: 40px;
   padding: 0 20px;
@@ -43,7 +59,8 @@
   transform: scale(1.04);
 }
 
-/* PRODUCT GRID */
+/* PRODUCT GRID
+   Responsive card grid with auto-fill behavior and consistent gaps */
 .products-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -51,14 +68,17 @@
   padding: 32px;
 }
 
-/* HEADER */
+/* HEADER
+   Flex container for search + cart actions.
+   NOTE: `background-color` with a gradient is unconventional; preserved as-is. */
 .store-header {
   justify-content: space-between;
   align-items: center;
   background-color: linear-gradient(to bottom, #091f28, #203a43, #2ca4d7);
 }
 
-/* Container holding both search and button side by side */
+/* Container holding both search and button side by side
+   Wraps on narrow screens to keep controls usable */
 .header-controls {
   display: flex;
   align-items: center;
@@ -66,7 +86,8 @@
   flex-wrap: wrap;
 }
 
-/* Search input styling */
+/* Search input styling (header-scoped)
+   Uses pointer styling and smooth hover transition */
 .header-controls input {
   height: 10px;
   font-size: 16px;
@@ -78,7 +99,8 @@
   transition: background-color 0.3s ease;
 }
 
-/* EMPTY MESSAGE */
+/* EMPTY MESSAGE
+   Centered message shown when no results match */
 .empty-message {
   font-size: 18px;
   text-align: center;
@@ -86,7 +108,8 @@
   color: #bbb;
 }
 
-/* SEARCH INPUT */
+/* SEARCH INPUT (standalone class)
+   Larger, pill-ish input with glow focus effect */
 .search-input {
   height: 40px;
   padding: 0 16px;
@@ -113,7 +136,8 @@
   box-shadow: 0 0 16px rgba(0, 198, 255, 0.4);
 }
 
-/* PRODUCT IMAGE */
+/* PRODUCT IMAGE
+   Consistent image sizing with rounded corners for cards */
 .product-card img {
   width: 100%;
   height: 160px;
@@ -121,8 +145,10 @@
   border-radius: 12px;
   margin-bottom: 16px;
 }
-/* ==== DARK MODE — Store =============================================== */
-/* מופעל רק אם על <html> יש data-theme="dark" */
+
+/* ==== DARK MODE — Store ===============================================
+   Applied only when the <html> element has data-theme="dark"
+   (the theme toggle sets/removes this attribute) */
 
 :root[data-theme="dark"] .store-screen-page {
   background:
@@ -158,7 +184,8 @@
   box-shadow: 0 10px 24px rgba(10,122,255,.35);
 }
 
-/* כפתור החלפת Theme */
+/* Theme toggle button
+   Minimal floating control with light hover lift */
 .theme-toggle {
   height: 40px;
   padding: 0 14px;

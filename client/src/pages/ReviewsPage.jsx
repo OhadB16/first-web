@@ -3,6 +3,11 @@ import React, { useEffect, useMemo, useState } from 'react';
 import './ReviewsPage.css';
 import Logo from '../components/Logo';
 
+/**
+ * FALLBACK_REVIEWS
+ * ----------------
+ * Local fallback data in case server fetch fails.
+ */
 const FALLBACK_REVIEWS = [
   { id: 'r1', author: 'M. Cohen', date: '2025-07-15', rating: 5, aspect: 'Service',   title: 'Concierge-level support', text: 'Every step from pre-buy to delivery was handled with precision and discretion.' },
   { id: 'r2', author: 'A. Levi',  date: '2025-07-03', rating: 4, aspect: 'Fleet',     title: 'Impressive selection',    text: 'We compared multiple airframes; their advice was data-driven and unbiased.' },
@@ -10,6 +15,12 @@ const FALLBACK_REVIEWS = [
   { id: 'r4', author: 'Global Holdings', date: '2025-06-05', rating: 4, aspect: 'Delivery', title: 'Seamless handover', text: 'Registration, escrow, and ferry flight executed without a single hiccup.' },
 ];
 
+/**
+ * Stars
+ * -----
+ * Displays a star rating out of 5.
+ * @param {number} value - Rating value (0–5).
+ */
 function Stars({ value }) {
   return (
     <span className="stars" aria-label={`${value} out of 5`}>
@@ -19,6 +30,22 @@ function Stars({ value }) {
   );
 }
 
+/**
+ * ReviewsPage
+ * -----------
+ * Page to display, filter, add, and (for admin) delete client reviews.
+ *
+ * Props:
+ * @param {{username?: string}} user - Current logged-in user.
+ * @param {() => void} onBackToStore - Callback to navigate back to the store.
+ *
+ * Behavior:
+ * - Loads reviews from `/api/reviews`; falls back to hardcoded reviews if offline.
+ * - Allows filtering by aspect and searching within reviews.
+ * - Calculates and displays average rating.
+ * - Logged-in users can submit new reviews.
+ * - Admin can delete reviews.
+ */
 function ReviewsPage({ user, onBackToStore }) {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,11 +55,14 @@ function ReviewsPage({ user, onBackToStore }) {
   // show admin controls only for admin
   const isAdmin = (user?.username || '').toLowerCase() === 'admin';
 
-  // add review form
+  // add review form state
   const [form, setForm] = useState({ rating: 5, aspect: 'Service', title: '', text: '' });
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
 
+  /**
+   * Load reviews from server (with fallback).
+   */
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -50,8 +80,14 @@ function ReviewsPage({ user, onBackToStore }) {
     return () => { cancelled = true; };
   }, []);
 
+  /**
+   * Unique list of aspects for filtering.
+   */
   const aspects = useMemo(() => ['All', ...Array.from(new Set(reviews.map(r => r.aspect)))], [reviews]);
 
+  /**
+   * Filtered reviews (by aspect and search text).
+   */
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return reviews.filter(r => {
@@ -65,11 +101,19 @@ function ReviewsPage({ user, onBackToStore }) {
     });
   }, [reviews, aspectFilter, search]);
 
+  /**
+   * Average rating of filtered reviews.
+   */
   const avgRating = useMemo(() => {
     if (!filtered.length) return 0;
     return Math.round((filtered.reduce((s, r) => s + (r.rating || 0), 0) / filtered.length) * 10) / 10;
   }, [filtered]);
 
+  /**
+   * handleSubmit
+   * ------------
+   * Submits a new review (requires login).
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitError('');
@@ -110,7 +154,12 @@ function ReviewsPage({ user, onBackToStore }) {
     }
   };
 
-  // admin-only delete
+  /**
+   * handleDelete
+   * ------------
+   * Admin-only: deletes a review from server and state.
+   * @param {string|number} id - Review ID.
+   */
   const handleDelete = async (id) => {
     if (!isAdmin) return;
     if (!window.confirm('Delete this review?')) return;
@@ -130,6 +179,7 @@ function ReviewsPage({ user, onBackToStore }) {
     }
   };
 
+  // --- UI ---
   return (
     <div className="reviews-page">
       <Logo />

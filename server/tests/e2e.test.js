@@ -1,19 +1,33 @@
 // server/tests/e2e.test.js
 // Run with: npm run test:e2e
+// End-to-end tests covering registration, login, current user, products (admin),
+// contact (guest + logged-in), and admin message management.
 
 const test = require('node:test');
 const assert = require('node:assert/strict');
 
-// מעלה את השרת (server.js עושה listen)
+// Boots the server (server.js performs the listen)
 require('../server.js');
 
 const BASE = 'http://localhost:3001';
 
+/**
+ * randUser
+ * --------
+ * Generates a pseudo-random username for test isolation.
+ * @returns {string}
+ */
 function randUser() {
   return 'user_' + Math.floor(Math.random() * 1e6);
 }
 
-// Cookie jar פשוט לשמירת skyUser בין בקשות
+/**
+ * CookieJar
+ * ---------
+ * Minimal cookie jar to persist `skyUser` (and others) between requests.
+ * - absorb(): collect Set-Cookie headers from a response
+ * - header(): produce "Cookie" header for the next request
+ */
 class CookieJar {
   constructor() { this.map = new Map(); }
   absorb(setCookieHeaders) {
@@ -64,7 +78,7 @@ test('POST /api/login sets cookie', async () => {
   });
   assert.equal(res.status, 200);
 
-  // תאימות לגרסאות Node שונות:
+  // Compatibility for different Node versions:
   let setCookie = [];
   if (typeof res.headers.getSetCookie === 'function') {
     setCookie = res.headers.getSetCookie();
@@ -95,7 +109,7 @@ test('POST /api/products creates a product (admin)', async () => {
 
 // ---- Contact suite ----
 test('POST /api/contact creates message (logged-in)', async () => {
-  // משתמש מחובר: מספיק message
+  // Logged-in user: message is sufficient
   const res = await fetch(`${BASE}/api/contact`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...jar.header() },

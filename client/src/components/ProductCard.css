@@ -1,4 +1,5 @@
 /* ProductCard.css */
+/* Styles for the product card component, including hover effects and dark-mode overrides. */
 
 .product-card {
   background: rgba(255, 255, 255, 0.06);
@@ -46,9 +47,9 @@
 
 .product-footer {
   display: flex;
-  flex-direction: column;         /* ← Stack items vertically */
-  align-items: center;            /* ← Center horizontally */
-  gap: 10px;                      /* ← Add spacing between items */
+  flex-direction: column;         /* Stack items vertically */
+  align-items: center;            /* Center horizontally */
+  gap: 10px;                      /* Add spacing between items */
   margin-top: auto;
   text-align: center;
 }
@@ -94,11 +95,12 @@
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   min-height: 20px;
 }
+
 /* ==== DARK MODE ONLY (append-only) ===================================== */
-/* לא נוגע ב-Light. מופעל רק אם על <html> יש data-theme="dark" */
+/* Does not affect Light mode. Applies only when <html> has data-theme="dark". */
 
 :root[data-theme="dark"] .product-card {
-  background: rgba(16, 20, 28, 0.86);            /* זכוכית כהה יותר */
+  background: rgba(16, 20, 28, 0.86);            /* Darker glass */
   border: 1px solid rgba(255, 255, 255, 0.18);
   color: #eaf2ff;
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
@@ -110,7 +112,7 @@
 }
 
 :root[data-theme="dark"] .product-image {
-  background: #0a0f16;                           /* משטח תמונה כהה */
+  background: #0a0f16;                           /* Dark image surface */
 }
 
 :root[data-theme="dark"] .product-card h3 {
@@ -123,7 +125,7 @@
 }
 
 :root[data-theme="dark"] .price {
-  color: #73caff;                                 /* תכלת עדינה */
+  color: #73caff;                                 /* Soft light blue */
 }
 
 :root[data-theme="dark"] .product-footer button {

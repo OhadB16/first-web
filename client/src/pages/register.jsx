@@ -2,6 +2,26 @@ import React, { useState } from 'react';
 import './Register.css';
 import Logo from '../components/Logo';
 
+/**
+ * Register
+ * --------
+ * Registration page that lets new users create an account.
+ *
+ * Props:
+ * @param {(user: {username: string, email: string}) => void} onLogin - Callback triggered after successful registration + login.
+ * @param {() => void} onShowLogin - Callback to switch to the login page.
+ *
+ * Behavior:
+ * - Collects username, email, password, confirm password, and remember me.
+ * - Validates input:
+ *   - Username required, cannot be "admin".
+ *   - Email required.
+ *   - Password required, must be strong (≥8 chars, includes uppercase and number).
+ *   - Passwords must match.
+ * - Submits registration request to `/api/register`.
+ * - If registration succeeds, immediately logs in the user via `/api/login` so that cookies are set.
+ * - On success, calls onLogin with user info.
+ */
 function Register({ onLogin, onShowLogin }) {
   const [form, setForm] = useState({
     username: '',
@@ -13,6 +33,11 @@ function Register({ onLogin, onShowLogin }) {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  /**
+   * handleChange
+   * ------------
+   * Updates controlled form state and handles checkbox for rememberMe.
+   */
   const handleChange = (e) => {
     const { name, value, checked, type } = e.target;
     if (name === 'rememberMe' && type === 'checkbox') {
@@ -23,9 +48,22 @@ function Register({ onLogin, onShowLogin }) {
     if (Object.keys(errors).length) setErrors({});
   };
 
+  /**
+   * isPasswordStrong
+   * ----------------
+   * Simple password strength check.
+   * @param {string} pass - Password candidate.
+   * @returns {boolean} True if strong.
+   */
   const isPasswordStrong = (pass) =>
     pass.length >= 8 && /[A-Z]/.test(pass) && /[0-9]/.test(pass);
 
+  /**
+   * validate
+   * --------
+   * Validates form inputs and sets error messages if invalid.
+   * @returns {boolean} Whether the form is valid.
+   */
   const validate = () => {
     const newErrors = {};
 
@@ -54,6 +92,14 @@ function Register({ onLogin, onShowLogin }) {
     return Object.keys(newErrors).length === 0;
   };
 
+  /**
+   * handleSubmit
+   * ------------
+   * Handles registration form submission:
+   * 1. Registers the user.
+   * 2. Logs in immediately to set cookies.
+   * 3. Calls onLogin on success.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
@@ -81,12 +127,12 @@ function Register({ onLogin, onShowLogin }) {
       // 2) Immediately login so the server sets cookies with proper maxAge
       const loginRes = await fetch('http://localhost:3001/api/login', {
         method: 'POST',
-        credentials: 'include', // ← חייב כדי לקבל עוגיות
+        credentials: 'include', // needed for cookies
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          username: form.username,     // ה־API בצד השרת מקבל username או email בפרמטר "username"
+          username: form.username, // server accepts "username" param for username or email
           password: form.password,
-          rememberMe,                  // ← פה קסם ה-remember me
+          rememberMe,              // apply remember-me option
         }),
       });
 
@@ -96,7 +142,7 @@ function Register({ onLogin, onShowLogin }) {
         return;
       }
 
-      // 3) הצלחה – אין צורך לכתוב עוגיות ידנית, השרת כבר עשה את זה.
+      // 3) Success — no need to manually write cookies, server already did.
       onLogin({ username: loginData.username, email: loginData.email });
       alert('Registration successful!');
     } catch (err) {
@@ -107,6 +153,7 @@ function Register({ onLogin, onShowLogin }) {
     }
   };
 
+  // --- UI ---
   return (
     <div className="register-page">
       <div className="register-form">

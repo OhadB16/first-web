@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 import './PayScreen.css';
 
+/**
+ * getCookie
+ * ---------
+ * Retrieves the value of a cookie by name.
+ * @param {string} name - The cookie name.
+ * @returns {string|null} - The cookie value, or null if not found.
+ */
 function getCookie(name) {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
@@ -8,6 +15,26 @@ function getCookie(name) {
   return null;
 }
 
+/**
+ * PayScreen
+ * ---------
+ * Payment confirmation screen where user enters payment info and finalizes purchase.
+ *
+ * Props:
+ * @param {number} total - Total price of items in the cart.
+ * @param {Array} cart - Items currently in the cart.
+ * @param {Object} user - Logged-in user info (used for cookie validation).
+ * @param {() => void} onBack - Callback to navigate back to the cart.
+ * @param {() => void} onConfirm - Callback when purchase is confirmed.
+ * @param {() => void} onClearCart - Callback to clear cart after successful purchase.
+ * @param {(items: Array) => void} setPurchasedItems - Setter to update purchased items after purchase.
+ *
+ * Behavior:
+ * - Requires user login (cookie "skyUser").
+ * - Prevents purchase if cart is empty.
+ * - Cleans up cart items (ensures imageUrl is safe).
+ * - Posts purchase to server, updates purchases list, clears cart, and confirms checkout.
+ */
 function PayScreen({ total, cart, user, onBack, onConfirm, onClearCart, setPurchasedItems }) {
   const [formData, setFormData] = useState({
     name: '',
@@ -17,10 +44,21 @@ function PayScreen({ total, cart, user, onBack, onConfirm, onClearCart, setPurch
     cvv: '',
   });
 
+  /**
+   * handleChange
+   * ------------
+   * Updates controlled input state in payment form.
+   */
   const handleChange = (e) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  /**
+   * fetchUpdatedPurchases
+   * ---------------------
+   * Refreshes user's purchased items from server.
+   * @param {string} username - Current username.
+   */
   const fetchUpdatedPurchases = async (username) => {
     try {
       const res = await fetch(`http://localhost:3001/api/purchase/${username}`);
@@ -33,6 +71,12 @@ function PayScreen({ total, cart, user, onBack, onConfirm, onClearCart, setPurch
     }
   };
 
+  /**
+   * handleSubmit
+   * ------------
+   * Submits the payment form, validates login & cart,
+   * sends purchase to server, and updates purchased items.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -53,22 +97,22 @@ function PayScreen({ total, cart, user, onBack, onConfirm, onClearCart, setPurch
     }
 
     try {
-    const cleanedCart = cart.map(item => {
-      const imageUrl = item.imageUrl
-        ? item.imageUrl
-        : item.image?.startsWith('data:image')
-          ? item.image
-          : '';
+      // Ensure each cart item has consistent imageUrl
+      const cleanedCart = cart.map(item => {
+        const imageUrl = item.imageUrl
+          ? item.imageUrl
+          : item.image?.startsWith('data:image')
+            ? item.image
+            : '';
 
-      return {
-        id: item.id,
-        name: item.name,
-        price: item.price,
-        imageUrl,
-        description: item.description || 'No description available'
-      };
-    });
-
+        return {
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          imageUrl,
+          description: item.description || 'No description available'
+        };
+      });
 
       const endpoint = `http://localhost:3001/api/purchase/${username}`;
       console.log('📤 Sending POST to:', endpoint);
@@ -94,6 +138,7 @@ function PayScreen({ total, cart, user, onBack, onConfirm, onClearCart, setPurch
     }
   };
 
+  // --- UI ---
   return (
     <div className="pay-screen">
       <div className="top-back-container">
@@ -120,18 +165,41 @@ function PayScreen({ total, cart, user, onBack, onConfirm, onClearCart, setPurch
 
         <div className="form-group">
           <label>Card Number</label>
-          <input name="cardNumber" type="text" maxLength={19} placeholder="1234 5678 9012 3456" value={formData.cardNumber} onChange={handleChange} required />
+          <input
+            name="cardNumber"
+            type="text"
+            maxLength={19}
+            placeholder="1234 5678 9012 3456"
+            value={formData.cardNumber}
+            onChange={handleChange}
+            required
+          />
         </div>
 
         <div className="row">
           <div className="form-group half">
             <label>Expiry (MM/YY)</label>
-            <input name="expiry" type="text" placeholder="08/26" value={formData.expiry} onChange={handleChange} required />
+            <input
+              name="expiry"
+              type="text"
+              placeholder="08/26"
+              value={formData.expiry}
+              onChange={handleChange}
+              required
+            />
           </div>
 
           <div className="form-group half">
             <label>CVV</label>
-            <input name="cvv" type="text" placeholder="123" maxLength={4} value={formData.cvv} onChange={handleChange} required />
+            <input
+              name="cvv"
+              type="text"
+              placeholder="123"
+              maxLength={4}
+              value={formData.cvv}
+              onChange={handleChange}
+              required
+            />
           </div>
         </div>
 

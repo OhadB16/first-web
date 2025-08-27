@@ -1,4 +1,6 @@
 /* src/pages/FAQPage.css — styled like AdminPage/PayScreen */
+
+/* === BASE =============================================================== */
 .faq-container {
   min-height: 100vh;
   padding: 40px 20px;
@@ -58,6 +60,7 @@
   margin-top: 22px;
 }
 
+/* === CTA Button ========================================================= */
 .btn-outline {
   padding: 12px 18px;
   border-radius: 10px;
@@ -73,7 +76,8 @@
   background: rgba(255,255,255,0.18);
   box-shadow: 0 10px 24px rgba(0,0,0,0.4);
 }
-/* === THEME OVERRIDES (FAQPage) === */
+
+/* === THEME OVERRIDES (Dark) ============================================= */
 :root[data-theme="dark"] .faq-container {
   background: var(--bg) !important;
   color: var(--text) !important;

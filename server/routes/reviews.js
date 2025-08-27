@@ -3,10 +3,30 @@
 
 const express = require('express');
 
+/**
+ * Reviews Routes
+ * --------------
+ * Provides CRUD operations for reviews.
+ *
+ * @param {Function} loadJSON - Utility to read persisted JSON data from disk.
+ * @param {Function} saveJSON - Utility to write JSON data back to disk.
+ * @returns {express.Router} Express router for reviews API.
+ *
+ * Routes:
+ * - GET    /api/reviews?source=ask-the-aspects → Fetch reviews (optionally filter by source).
+ * - POST   /api/reviews → Add a new review (requires title, text, and valid rating).
+ * - DELETE /api/reviews/:id → Delete a review (admin-only).
+ */
 module.exports = function reviewsRoutes(loadJSON, saveJSON) {
   const router = express.Router();
 
-  // GET /api/reviews?source=ask-the-aspects
+  /**
+   * GET /api/reviews
+   * ----------------
+   * Fetch reviews.
+   * - Optional query param `source` to filter reviews by their source.
+   * - Reviews are sorted by `date` (newest first).
+   */
   router.get('/', async (req, res) => {
     try {
       const source = (req.query.source || '').toLowerCase();
@@ -23,8 +43,15 @@ module.exports = function reviewsRoutes(loadJSON, saveJSON) {
     }
   });
 
-  // POST /api/reviews
-  // Body: { author, rating(1..5), aspect, title, text, source }
+  /**
+   * POST /api/reviews
+   * -----------------
+   * Create a new review.
+   * - Body: { author, rating (1–5), aspect, title, text, source }
+   * - Title and text are required.
+   * - Rating must be between 1 and 5.
+   * - Review is persisted with a generated `id` and current date (YYYY-MM-DD).
+   */
   router.post('/', async (req, res) => {
     try {
       const { author, rating, aspect, title, text, source } = req.body || {};
@@ -67,7 +94,12 @@ module.exports = function reviewsRoutes(loadJSON, saveJSON) {
     }
   });
 
-  // DELETE /api/reviews/:id  (admin-only)
+  /**
+   * DELETE /api/reviews/:id
+   * -----------------------
+   * Delete a review by ID.
+   * - Only allowed if `X-Username: admin` header is provided.
+   */
   router.delete('/:id', async (req, res) => {
     try {
       const who = String(req.header('X-Username') || '').toLowerCase();

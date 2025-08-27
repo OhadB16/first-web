@@ -3,6 +3,19 @@ import React from 'react';
 import './FAQPage.css';
 import Logo from '../components/Logo';
 
+/**
+ * FAQPage
+ * -------
+ * Displays a list of frequently asked questions with expandable answers.
+ *
+ * Props:
+ * @param {() => void} onBackToStore - Callback to navigate back to the store.
+ *
+ * Behavior:
+ * - Renders a set of pre-defined FAQs.
+ * - Each FAQ uses a <details> element, allowing expand/collapse for better readability.
+ * - Includes a back button to return to the store.
+ */
 function FAQPage({ onBackToStore }) {
   const faqs = [
     {

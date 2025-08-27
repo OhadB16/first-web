@@ -34,13 +34,24 @@ import nimbus300 from './assets/jets/Nimbus300.png';
 import horizon700 from './assets/jets/Horizon700.png';
 import phoenixGT from './assets/jets/PhoeniGT.png';
 
-function getCookie(name) {
-  if (typeof document === 'undefined') return '';
-  const m = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/([$?*|{}\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)'));
-  return m ? decodeURIComponent(m[1]) : '';
-}
-
-
+/**
+ * App
+ * ---
+ * Main application component.
+ *
+ * State:
+ * - user: current logged-in user or null.
+ * - view: current page to render.
+ * - cart: array of items in cart.
+ * - purchasedItems: array of purchased products.
+ * - activityLog: local activity logs.
+ * - theme: current theme ("light" or "dark").
+ *
+ * Behavior:
+ * - Handles routing between pages based on state.
+ * - Manages login, logout, cart, checkout, purchases, and theme toggle.
+ * - Fetches store items and user data from server.
+ */
 function App() {
   const [user, setUser] = useState(null);
   const [view, setView] = useState('register');
@@ -55,21 +66,24 @@ function App() {
     const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)')?.matches;
     return prefersDark ? 'dark' : 'light';
   });
-  useEffect(() => {
-  (async () => {
-    try {
-      const res = await fetch('http://localhost:3001/api/me', {
-        credentials: 'include',
-      });
-      if (res.ok) {
-        const u = await res.json();
-        setUser(u);
-        setView('store'); // או השאר את מה שאתה מעדיף כברירת מחדל למשתמש מחובר
-      }
-    } catch {}
-  })();
-}, []);
 
+  // Fetch current user on load
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch('http://localhost:3001/api/me', {
+          credentials: 'include',
+        });
+        if (res.ok) {
+          const u = await res.json();
+          setUser(u);
+          setView('store'); // default view for logged-in user
+        }
+      } catch {}
+    })();
+  }, []);
+
+  // Save theme to localStorage + HTML attribute
   useEffect(() => {
     localStorage.setItem('ui.theme', theme);
     document.documentElement.setAttribute('data-theme', theme);
@@ -92,11 +106,25 @@ function App() {
   const [storeItems, setStoreItems] = useState(jets);
 
   // ---------- HELPERS ----------
+  /**
+   * logActivity
+   * -----------
+   * Adds a local activity record (client-side only).
+   * @param {string} username
+   * @param {string} activity
+   */
   const logActivity = (username, activity) => {
     const timestamp = new Date().toLocaleString();
     setActivityLog(prev => [...prev, { datetime: timestamp, username, activity }]);
   };
 
+  /**
+   * fetchPurchasesForUser
+   * ---------------------
+   * Loads all purchased items for a given user from the server.
+   * @param {string} username
+   * @returns {Promise<Array>} items array
+   */
   const fetchPurchasesForUser = async (username) => {
     try {
       const res = await fetch(`http://localhost:3001/api/purchase/${username}`);
@@ -109,6 +137,12 @@ function App() {
     }
   };
 
+  /**
+   * handleLogin
+   * -----------
+   * Sets user state, logs activity, fetches purchases, and navigates to store.
+   * @param {{username:string,email:string}} userData
+   */
   const handleLogin = async (userData) => {
     setUser(userData);
     logActivity(userData.username, 'login');
@@ -117,19 +151,47 @@ function App() {
     setView('store');
   };
 
-  const handleLogout = () => {
-    if (user) logActivity(user.username, 'logout');
-    setUser(null);
-    setCart([]);
-    setPurchasedItems([]);
-    setView('register');
+  /**
+   * handleLogout
+   * ------------
+   * Calls the server to clear auth cookies, then clears local state and routes to register.
+   */
+  const handleLogout = async () => {
+    try {
+      await fetch('http://localhost:3001/api/logout', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json', 'X-Username': user?.username || '' },
+        body: JSON.stringify({ username: user?.username || '' })
+      });
+    } catch (e) {
+      // Non-fatal: proceed with client-side cleanup regardless
+    } finally {
+      if (user) logActivity(user.username, 'logout');
+      setUser(null);
+      setCart([]);
+      setPurchasedItems([]);
+      setView('register');
+    }
   };
 
+  /**
+   * handleAddToCart
+   * ---------------
+   * Adds a jet to the cart and logs activity for authenticated users.
+   * @param {Object} jet
+   */
   const handleAddToCart = (jet) => {
     if (user) logActivity(user.username, `add-to-cart: ${jet.name}`);
     setCart(prev => [...prev, jet]);
   };
 
+  /**
+   * handleRemoveFromCart
+   * --------------------
+   * Removes a single instance of a jet (by id) from the cart.
+   * @param {number|string} jetId
+   */
   const handleRemoveFromCart = (jetId) => {
     setCart(prev => {
       const index = prev.findIndex(jet => jet.id === jetId);
@@ -140,6 +202,12 @@ function App() {
     });
   };
 
+  /**
+   * handleConfirmCheckout
+   * ---------------------
+   * After payment succeeds, refreshes purchased items from the server,
+   * clears cart, and navigates to the Thank You page.
+   */
   const handleConfirmCheckout = async () => {
     if (!user?.username) return;
     try {
@@ -155,6 +223,11 @@ function App() {
     }
   };
 
+  /**
+   * refreshStoreItems
+   * -----------------
+   * Fetches additional products from the server and merges with base jets.
+   */
   const refreshStoreItems = useCallback(async () => {
     try {
       const res = await fetch('http://localhost:3001/api/products');
@@ -168,6 +241,15 @@ function App() {
   useEffect(() => { refreshStoreItems(); }, [refreshStoreItems]);
 
   // ---------- LAYOUT WRAPPER ----------
+  /**
+   * renderPage
+   * ----------
+   * Renders a page component with the theme toggle and (optionally) the menu.
+   * @param {React.ComponentType<any>} Component
+   * @param {Object} props
+   * @param {boolean} withMenu
+   * @returns {JSX.Element}
+   */
   const renderPage = (Component, props, withMenu = true) => (
     <>
       <div className="theme-toggle-anchor">

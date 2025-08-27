@@ -1,125 +1,326 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
   <meta charset="utf-8" />
-  <title>README – SKY Jet Store</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>README • SKY Jet Store</title>
   <style>
-    body{font-family:Arial,Segoe UI,Inter,sans-serif;background:linear-gradient(180deg,#0f2027,#203a43,#2c5364);color:#eef2f6;margin:0;padding:24px}
-    .card{max-width:980px;margin:0 auto;background:rgba(255,255,255,.08);border-radius:14px;padding:20px;box-shadow:0 10px 24px rgba(0,0,0,.35);backdrop-filter:blur(10px)}
-    h1,h2{margin:0 0 12px}
+    :root{
+      --bg1:#0f2027; --bg2:#203a43; --bg3:#2c5364;
+      --glass:rgba(255,255,255,.10);
+      --glass2:rgba(255,255,255,.16);
+      --ink:#eef2f6;
+      --muted:rgba(255,255,255,.85);
+      --accent1:#00c6ff; --accent2:#0072ff;
+      --ok1:#22c55e; --ok2:#16a34a;
+      --warn1:#f59e0b; --warn2:#ea580c;
+      --danger1:#ef4444; --danger2:#dc2626;
+      --mono:#0e2433;
+    }
+    /* Base */
+    html,body{height:100%}
+    body{
+      margin:0; color:var(--ink);
+      font: 15px/1.6 system-ui, -apple-system, Segoe UI, Inter, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(1200px 500px at 50% -100px, rgba(0,150,255,.15), transparent 60%),
+        linear-gradient(180deg,var(--bg1),var(--bg2),var(--bg3));
+      min-height:100vh; display:flex; align-items:center; flex-direction:column;
+      padding:40px 16px 64px;
+    }
+    .logo{
+      font-weight:900; font-size:44px; letter-spacing:.5px; margin:4px 0 2px;
+      background:linear-gradient(90deg,var(--accent1),var(--accent2));
+      -webkit-background-clip:text; background-clip:text;
+      -webkit-text-fill-color:transparent;
+      text-shadow:0 3px 10px rgba(0,0,0,.35);
+    }
+    .sub{opacity:.92; margin-bottom:22px}
+
+    /* Cards / Sections */
+    .card{
+      width:100%; max-width:1040px;
+      background:var(--glass); border:1px solid rgba(255,255,255,.18);
+      border-radius:14px; box-shadow:0 10px 24px rgba(0,0,0,.35);
+      backdrop-filter: blur(10px);
+      padding:18px; margin:10px 0 18px;
+    }
+    h1,h2,h3{margin:.2rem 0 .6rem}
     h1{font-size:28px}
-    h2{font-size:22px;margin-top:18px}
-    code,pre{font-family:ui-monospace,SFMono-Regular,Consolas,Menlo,monospace}
-    pre{background:rgba(0,0,0,.35);padding:12px;border-radius:8px;overflow:auto}
-    ul{margin:8px 0 12px}
-    .small{opacity:.9}
-    a{color:#9bd1ff}
+    h2{font-size:22px}
+    h3{font-size:18px}
+    p{margin:.4rem 0}
+    .muted{color:var(--muted)}
+    .grid{display:grid; gap:12px}
+    @media (min-width:820px){ .grid.two{grid-template-columns:1fr 1fr} }
+
+    /* Pills / tags */
+    .pill{display:inline-block; padding:4px 10px; border-radius:999px; font-weight:700; font-size:.82rem;}
+    .ok{background:linear-gradient(90deg,var(--ok1),var(--ok2)); color:#fff}
+    .warn{background:linear-gradient(90deg,var(--warn1),var(--warn2)); color:#fff}
+    .danger{background:linear-gradient(90deg,var(--danger1),var(--danger2)); color:#fff}
+    .accent{background:linear-gradient(90deg,var(--accent1),var(--accent2)); color:#0b1220}
+
+    /* Lists & code */
+    ul{margin:.3rem 0 .6rem}
+    li{margin:.12rem 0}
+    pre{overflow:auto; background:rgba(255,255,255,.94); color:var(--mono);
+        padding:12px; border-radius:10px; box-shadow: inset 0 2px 8px rgba(0,0,0,.18); }
+    code{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size:13px}
+
+    /* Small helpers */
+    .kvs{display:grid; gap:8px}
+    @media (min-width:720px){ .kvs{grid-template-columns:1fr 1fr 1fr} }
+    .kv{background:var(--glass2); border:1px solid rgba(255,255,255,.22); border-radius:12px; padding:10px}
+    .kv b{display:block; font-size:.86rem; opacity:.9}
+    .kv span{opacity:.95}
+
+    .routes{display:grid; gap:10px}
+    @media (min-width:820px){ .routes{grid-template-columns:1fr 1fr} }
+    .r{background:var(--glass2); border:1px solid rgba(255,255,255,.22); border-radius:12px; padding:12px}
+    .r code{font-size:.84rem}
+
+    .footer{opacity:.85; margin-top:10px; font-size:.92rem}
+    a { color:#bfe3ff }
+    /* === h2 with the same gradient as the SKY logo === */
+h2 {
+  /* תשמור/תעדכן את הגודל שיש לך אם תרצה */
+  background: linear-gradient(#d3d7e4, hsl(196, 90%, 69%), #e4edfc);
+  -webkit-background-clip: text; /* Safari/Chromium ישן */
+  background-clip: text;           /* תקן */
+  -webkit-text-fill-color: transparent;
+  color: transparent;              /* תקן */
+  text-shadow: 0 2px 6px rgba(90, 110, 162, 0.595); /* אופציונלי לעומק על רקע כהה */
+  font-weight: 800;                /* נראה “כותרתי” יותר; אפשר להוריד אם חזק מדי */
+}
+h3 {
+  /* תשמור/תעדכן את הגודל שיש לך אם תרצה */
+  background: linear-gradient(#d0dbff, hsl(234, 38%, 61%), #7babff);
+  -webkit-background-clip: text;   /* Safari/Chromium ישן */
+  background-clip: text;           /* תקן */
+  -webkit-text-fill-color: transparent;
+  color: transparent;              /* תקן */
+  font-weight: 800;                /* נראה “כותרתי” יותר; אפשר להוריד אם חזק מדי */
+}
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>README – SKY Jet Store</h1>
-    <p class="small">This file was prepared individually. Reach it at <code>/readme.html</code>. &nbsp;|&nbsp; LLM page: <a href="/llm.html">/llm.html</a></p>
+  <div class="logo">SKY</div>
+  <div class="sub">Project for people who like to buy airplain someday</div>
 
-    <h2>Store name</h2>
-    <p><strong>sky</strong></p>
+  <!-- Overview -->
+  <section class="card">
+    <h2>Overview</h2>
+    <p><strong>SKY Jet Store</strong> is a full-stack app (React + Node/Express) for browsing luxury jets, adding to cart, purchasing, and managing content like reviews and contact requests. An <em>admin</em> role unlocks moderation and product management.</p>
+    <div class="kvs">
+      <div class="kv"><b>Store name</b><span>SKY</span></div>
+      <div class="kv"><b>Stack</b><span>React, CSS, Node.js/Express, JSON persistence</span></div>
+      <div class="kv"><b>Admin login</b><span><code>admin / admin</code></span></div>
+    </div>
+  </section>
 
-    <h2>What am I selling?</h2>
-    <p>Luxury jets that look like spaceships — at surprisingly good prices.</p>
-
-    <h2>Additional pages and how to use them</h2>
-    <ul>
-      <li><strong>Contact page</strong> – submit requests to the company.
+  <!-- How to Use -->
+  <section class="card">
+    <h2>How to Use the App</h2>
+    <div class="grid two">
+      <div>
+        <h3>As a User <span class="pill accent">UI</span></h3>
         <ul>
-          <li><em>Admin view</em>: browse all submitted requests and mark/handle/delete them. Data persists in <code>server/data/messages.json</code>.</li>
-          <li><em>Customer view</em>: submit a new request through the form.</li>
+          <li>Register or login (☰ Menu &rarr; shown on top right).</li>
+          <li>Browse jets, search, and <strong>Add to Cart</strong>.</li>
+          <li>Proceed to <strong>Cart</strong> &rarr; <strong>Pay</strong> &rarr; see <strong>My Items</strong>.</li>
+          <li>Open <strong>Reviews</strong> to read/post a review.</li>
+          <li>Use <strong>Contact</strong> to send a message (persisted to the server).</li>
         </ul>
-      </li>
-      <li><strong>FAQ page</strong> – previously asked questions to save time before contacting support.</li>
-      <li><strong>Reviews page</strong> – customers can post a review (appears instantly). Admin can delete reviews that are not appropriate (removes them from the JSON as well).</li>
-      <li><strong>About page</strong> – background about the people and how the company operates.</li>
-    </ul>
-    <p><strong>How to operate:</strong> open the top menu (☰ Menu) and select Contact / FAQ / Reviews / About. Use <code>admin / admin</code> to see admin capabilities.</p>
+      </div>
+      <div>
+        <h3>As Admin <span class="pill warn">role</span></h3>
+        <ul>
+          <li>Login with <code>admin / admin</code>.</li>
+          <li>Access <strong>Admin</strong> panel from the menu (add/remove products).</li>
+          <li>Moderate: delete <strong>Reviews</strong> and <strong>Contact</strong> messages.</li>
+          <li>View activity summaries via admin endpoints.</li>
+        </ul>
+      </div>
+    </div>
+    <p class="muted">Tip: “Remember me” keeps you logged in (cookie-based). It does <em>not</em> autofill your browser password fields.</p>
+  </section>
 
-    <h2>What was hard?</h2>
-    <p>Understanding the interaction between all the moving parts. Once I got that, everything flowed better. I also note the code could be structured even more cleanly; I’ll improve that next time when I have more time.</p>
-
-    <h2>Partner</h2>
-    <p><strong>I worked solo.</strong></p>
-
-    <h2>How I tested</h2>
-    <p>Mainly live UI testing: constantly checking that submissions are persisted correctly and buttons behave as expected in both user and admin modes.</p>
-    <p>There is also an automated API test script: <code>server/test.js</code> (run via <code>npm run test:api</code>).</p>
-    <h2>Role-based access & permissions</h2>
-<p>
-  The app enforces a clear separation between a regular <strong>User</strong> and the <strong>Admin</strong>.
-  UI and API are aligned so admin-only controls are visible only to admin, and the server re-validates every
-  sensitive action.
-</p>
-<ul>
-  <li>
-    <strong>Admin capabilities</strong>:
+  <!-- Pages -->
+  <section class="card">
+    <h2>Pages</h2>
     <ul>
-      <li>Contact desk: view all submitted messages, mark/handle, and <em>delete</em> messages.</li>
-      <li>Reviews: remove any review that violates policy.</li>
-      <li>Admin page access (back-office tools).</li>
+      <li><strong>Store</strong> – product grid with search, add to cart.</li>
+      <li><strong>Cart / Pay / Thank You</strong> – simple checkout flow (mock payment).</li>
+      <li><strong>My Items</strong> – shows purchased jets.</li>
+      <li><strong>Reviews</strong> – users can post; admin can delete.</li>
+      <li><strong>Contact</strong> – submit a request; admin inbox for moderation.</li>
+      <li><strong>FAQ</strong> &amp; <strong>About</strong> – supporting content.</li>
+      <li><strong>Theme toggle</strong> – light/dark across the app.</li>
     </ul>
-  </li>
-  <li>
-    <strong>User capabilities</strong>:
+  </section>
+
+  <!-- Roles & Permissions -->
+  <section class="card">
+    <h2>Roles &amp; Permissions</h2>
+    <div class="grid two">
+      <div class="r">
+        <h3>User <span class="pill ok">allowed</span></h3>
+        <ul>
+          <li>Register/login, add to cart, purchase, view My Items</li>
+          <li>Submit contact messages</li>
+          <li>Post reviews</li>
+        </ul>
+      </div>
+      <div class="r">
+        <h3>Admin <span class="pill warn">extra</span></h3>
+        <ul>
+          <li>Add/remove products (admin page)</li>
+          <li>Delete reviews and contact messages</li>
+          <li>Query activity endpoints</li>
+        </ul>
+      </div>
+    </div>
+    <p><strong>UI gating:</strong> admin-only controls are hidden for non-admins.  
+       <strong>Server enforcement:</strong> admin endpoints require header <code>X-Username: admin</code> (cookies are also used).</p>
+  </section>
+
+  <!-- API -->
+  <section class="card">
+    <h2>Server API (selected)</h2>
+    <p class="muted">Base URL: <code>http://localhost:3001</code>. Static docs: <code>/readme.html</code>, <code>/llm.html</code>.</p>
+
+    <div class="routes">
+      <div class="r">
+        <h3>Auth &amp; Me</h3>
+        <ul>
+          <li><code>POST /api/register</code> – create user</li>
+          <li><code>POST /api/login</code> – login (<em>rememberMe</em> supported)</li>
+          <li><code>POST /api/logout</code> – logout</li>
+          <li><code>GET /api/me</code> – current user (from cookies/header)</li>
+        </ul>
+      </div>
+
+      <div class="r">
+        <h3>Products</h3>
+        <ul>
+          <li><code>GET /api/products</code> – list all</li>
+          <li><code>POST /api/products</code> <span class="pill warn">admin</span></li>
+          <li><code>DELETE /api/products/:id</code> <span class="pill warn">admin</span></li>
+        </ul>
+      </div>
+
+      <div class="r">
+        <h3>Cart &amp; Purchases</h3>
+        <ul>
+          <li><code>POST /api/purchase/:username</code> – record purchase</li>
+          <li><code>GET /api/purchase/:username</code> – list purchases for user</li>
+          <li><code>POST /api/cart/:username</code> – save entire cart</li>
+          <li><code>GET /api/cart/:username</code> – get cart</li>
+          <li><code>DELETE /api/cart/:username/:jetId</code> – remove one item</li>
+        </ul>
+      </div>
+
+      <div class="r">
+        <h3>Reviews</h3>
+        <ul>
+          <li><code>GET /api/reviews?source=ask-the-aspects</code></li>
+          <li><code>POST /api/reviews</code> – create review</li>
+          <li><code>DELETE /api/reviews/:id</code> <span class="pill warn">admin</span></li>
+        </ul>
+      </div>
+
+      <div class="r">
+        <h3>Contact</h3>
+        <ul>
+          <li><code>POST /api/contact</code> – submit message</li>
+          <li><code>GET /api/contact</code> <span class="pill warn">admin</span> – list messages</li>
+          <li><code>DELETE /api/contact/:id</code> <span class="pill warn">admin</span></li>
+        </ul>
+      </div>
+
+      <div class="r">
+        <h3>Admin Activity</h3>
+        <ul>
+          <li><code>GET /api/admin/activity</code> <span class="pill warn">admin</span></li>
+          <li><code>GET /api/admin/activity/sales?bucket=day|week|month|year</code> <span class="pill warn">admin</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Run & Test -->
+  <section class="card">
+    <h2>Run Locally</h2>
+    <div class="grid two">
+      <div>
+        <h3>Server</h3>
+        <pre><code>cd server
+npm install
+npm run server     # starts on http://localhost:3001</code></pre>
+      </div>
+      <div>
+        <h3>Client</h3>
+        <pre><code>cd client
+npm install
+npm start          # opens http://localhost:3000</code></pre>
+      </div>
+    </div>
+    <h3>Optional packages (already referenced in project)</h3>
     <ul>
-      <li>Browse and purchase items, view “My Items”.</li>
-      <li>Submit contact messages.</li>
-      <li>Post reviews (which appear instantly).</li>
-      <li>No access to admin-only controls (no message inbox, no delete buttons, no admin page).</li>
-    </ul>
-  </li>
-  <li>
-    <strong>UI gating</strong>:
-    Admin-only buttons/links are conditionally rendered in the client (e.g., the delete icon in Reviews,
-    the Messages admin view). Regular users never see these controls.
-  </li>
-  <li>
-    <strong>Server enforcement</strong>:
-    Admin actions require the header <code>X-Username: admin</code> (and CORS allows this header).
-    Admin-only endpoints (<code>GET/DELETE /api/messages</code>, <code>DELETE /api/reviews/:id</code>) refuse non-admin requests.
-    This guarantees permissions even if someone tries to call the API directly.
-  </li>
-</ul>
-<p>
-  In short: there is a precise alignment between the user and admin flows, and the admin has specific
-  capabilities that regular users do not.
-</p>
-
-
-    <h2>All routes supported by the app (server)</h2>
-    <p class="small">Base URL: <code>http://localhost:3001</code></p>
-    <ul>
-      <li><code>GET /readme.html</code>, <code>GET /llm.html</code> – static documentation pages.</li>
-      <li><code>POST /api/register</code> – register a new user.</li>
-      <li><code>POST /api/login</code> – login (supports “Remember me”).</li>
-      <li><code>POST /api/logout</code> – logout.</li>
-      <li><code>GET /api/me</code> – current user info.</li>
-      <li><code>GET /api/products</code> – list of jets.</li>
-      <li><code>GET /api/purchase/:username</code> – purchases per user.</li>
-      <li><code>GET /api/reviews?source=ask-the-aspects</code> – load reviews.</li>
-      <li><code>POST /api/reviews</code> – create a new review.</li>
-      <li><code>DELETE /api/reviews/:id</code> – delete a review (Admin only, via <code>X-Username: admin</code> header).</li>
-      <li><code>GET /api/messages</code> – read contact messages (Admin).</li>
-      <li><code>POST /api/messages</code> – submit a contact message.</li>
-      <li><code>DELETE /api/messages/:id</code> – delete a message (Admin).</li>
+      <li><code>recharts</code> (admin charts): <code>cd client && npm i recharts</code></li>
+      <li>Stripe (future): <code>@stripe/react-stripe-js @stripe/stripe-js</code></li>
     </ul>
 
-    <h2>Run & test</h2>
-    <ul>
-      <li>Start server: <code>npm run server</code></li>
-      <li>Run API tests: <code>npm run test:api</code> (executes <code>server/test.js</code>)</li>
-    </ul>
+    <h3>API Tests</h3>
+    <pre><code># simple API script
+npm run test:api     # runs server/tests/test.js
 
+# e2e via node:test
+npm run test:e2e     # runs server/tests/e2e.test.js</code></pre>
+  </section>
+
+  <!-- Submission -->
+  <section class="card">
     <h2>Submission</h2>
-    <p>Submit without any <code>node_modules</code> folders and with a relevant <code>package.json</code>.</p>
-    <p>Filename format: <code>&lt;yourID&gt;_&lt;firstName&gt;_&lt;lastName&gt;_&lt;partnerFullName&gt;_&lt;partnerId&gt;_FP25.zip</code></p>
-  </div>
+    <ul>
+      <li><strong>Zip the project</strong> without any <code>node_modules</code>.</li>
+      <li>Include both docs: <code>/readme.html</code> (this file) and <code>/llm.html</code>.</li>
+      <li>Provide a relevant <code>package.json</code> for both <code>client</code> and <code>server</code>.</li>
+      <li>Suggested filename format:<br/>
+        <code>&lt;209149541&gt;_&lt;Alon&gt;_&lt;Bar Shimon&gt;_&lt;none&gt;_&lt;none&gt;_FP25.zip</code>
+      </li>
+    </ul>
+    <h3>.gitignore highlights</h3>
+    <pre><code>node_modules/
+client/build/
+server/build/
+server/data/*.json
+!server/data/users.json
+!server/data/carts.json
+!server/data/purchases.json
+!server/data/activity.json
+!server/data/jets.json
+!server/data/products.json
+!server/data/messages.json
+.DS_Store
+.env
+</code></pre>
+  </section>
+
+  <!-- Notes -->
+  <section class="card">
+    <h2>Notes</h2>
+    <ul>
+      <li>Static docs are served by the server: <code>/readme.html</code>, <code>/llm.html</code>.</li>
+      <li>Images in <code>client/src/assets/jets/</code> must be included so the store renders correctly.</li>
+      <li>“Remember me” uses a cookie to keep you logged in; it’s not the browser’s password manager.</li>
+    </ul>
+  </section>
+
+  <section class="card footer">
+    <strong>Project:</strong> SKY • <strong>Author:</strong> Alon Bar Shimon • <strong>Date:</strong> 2025-08  
+    <br />Questions? See also <a href="/llm.html">/llm.html</a>.
+  </section>
 </body>
 </html>

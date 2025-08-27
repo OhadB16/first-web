@@ -2,17 +2,42 @@
 import React, { useState } from 'react';
 import './MenuButton.css';
 
+/**
+ * MenuButton
+ * -----------
+ * A compact hamburger menu component that opens a dropdown with navigation actions.
+ *
+ * Props:
+ * @param {Object}   props
+ * @param {{username?: string}} [props.user] - Current logged-in user; when `username === 'admin'` an Admin entry is shown.
+ * @param {(target: string) => void} props.onNavigate - Callback invoked with a target route key (e.g., 'store', 'cart').
+ * @param {() => void} props.onLogout - Callback to perform logout.
+ * @param {'light'|'dark'} [props.theme='light'] - Optional UI theme flag (currently unused in this component).
+ * @param {() => void} [props.onToggleTheme=() => {}] - Optional theme toggle handler (currently unused in this component).
+ *
+ * Behavior:
+ * - Clicking the hamburger toggles a dropdown.
+ * - Selecting a menu item calls `onNavigate(target)` and closes the dropdown.
+ * - External links (README / LLM Code) open in a new tab.
+ * - Shows an extra "Admin" entry when the user is an admin.
+ */
 function MenuButton({ user, onNavigate, onLogout, theme = 'light', onToggleTheme = () => {} }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false); // Tracks whether the dropdown is visible
 
+  /**
+   * handleClick
+   * -----------
+   * Navigate to a target and close the menu.
+   * @param {string} target - Route key to navigate to (e.g., 'store', 'cart', 'admin').
+   */
   const handleClick = (target) => {
-    onNavigate(target);
-    setOpen(false);
+    onNavigate(target); // Delegate routing to parent
+    setOpen(false);     // Close the dropdown after navigation
   };
 
   return (
     <div className="menu-button-wrapper">
-      {/* כפתור תפריט */}
+      {/* Menu button */}
       <button type="button" className="hamburger" onClick={() => setOpen(!open)}>
         ☰ Menu
       </button>
@@ -29,7 +54,7 @@ function MenuButton({ user, onNavigate, onLogout, theme = 'light', onToggleTheme
           <button type="button" onClick={() => window.open('http://localhost:3001/readme.html', '_blank')}>📄 README</button>
           <button type="button" onClick={() => window.open('http://localhost:3001/llm.html', '_blank')}>🤖 LLM Code</button>
 
-          {/* ✅ רק לאדמין */}
+          {/* ✅ Admin only */}
           {user?.username === 'admin' && (
             <button type="button" onClick={() => handleClick('admin')}>🧑‍💻 Admin</button>
           )}

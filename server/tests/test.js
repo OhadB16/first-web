@@ -1,22 +1,34 @@
-// server/tests/test.js  (או server/test.js)
+// server/tests/test.js  (or server/test.js)
 /* eslint-disable no-console */
 
-// node-fetch v3 (ESM) טעינה דינמית תחת CommonJS:
+// Dynamic import for node-fetch v3 (ESM) under CommonJS:
 const fetch = (...args) =>
   import('node-fetch').then(({ default: f }) => f(...args));
 
 const BASE = process.env.BASE_URL || 'http://localhost:3001';
 
-// Cookie jar קטן – מספיק ל"skyUser"
+// Small cookie jar — sufficient for "skyUser"
 let cookieJar = '';
 
+/**
+ * Extracts the first Set-Cookie header from a response and stores it
+ * in a simple jar (name=value only).
+ * @param {Response} res
+ */
 function setCookieFromResponse(res) {
   const setCookie = res.headers.get('set-cookie');
   if (!setCookie) return;
-  const parts = setCookie.split(';')[0]; // רק name=value
+  const parts = setCookie.split(';')[0]; // only name=value
   cookieJar = cookieJar ? `${cookieJar}; ${parts}` : parts;
 }
 
+/**
+ * Wrapper around fetch that automatically attaches the stored Cookie header
+ * and captures updated Set-Cookie values from the response.
+ * @param {string} path
+ * @param {object} [opts]
+ * @returns {Promise<Response>}
+ */
 async function doFetch(path, opts = {}) {
   const headers = { ...(opts.headers || {}) };
   if (cookieJar) headers['cookie'] = cookieJar;
@@ -25,6 +37,12 @@ async function doFetch(path, opts = {}) {
   return res;
 }
 
+/**
+ * Tiny test helper: runs a predicate and prints PASS/FAIL with a label.
+ * The predicate can return true/false or a string describing the failure.
+ * @param {() => (boolean|string|Promise<boolean|string>)} predicate
+ * @param {string} label
+ */
 async function expect(predicate, label) {
   try {
     const ok = await predicate();
@@ -40,6 +58,10 @@ async function expect(predicate, label) {
   }
 }
 
+/**
+ * Generates a random test user object.
+ * @returns {{username:string,password:string,email:string}}
+ */
 function randUser() {
   const n = Math.floor(Math.random() * 1e6);
   return { username: `user_${n}`, password: `P${n}a!`, email: `u${n}@mail.com` };
@@ -90,14 +112,14 @@ function randUser() {
     return Array.isArray(j);
   }, 'GET /api/products returns an array');
 
-  // 5) Contact – create public message  ✅ תוקן: בודקים id/message ולא ok:true
+  // 5) Contact – create public message  ✅ Fixed: validate id/message (API returns the created record, not { ok:true })
   const contactSubject = 'Test from test.js ' + Date.now();
   const contactMessage = 'Hello from automated tests';
   await expect(async () => {
     const res = await doFetch('/api/contact', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      // שדות חובה לפי ה־router: fullName, email, message (גם אם מחוברים)
+      // Required fields per router: fullName, email, message (even if logged in)
       body: JSON.stringify({
         fullName: 'Test Runner',
         email: 'runner@example.com',
@@ -111,7 +133,7 @@ function randUser() {
     });
     if (res.status !== 201) return `status ${res.status}`;
     const j = await res.json();
-    // ה־API מחזיר את הרשומה שנוצרה (עם id, createdAt, וכו') — לא { ok:true }
+    // API returns the created record (with id, createdAt, etc.) — not { ok:true }
     return j && j.id && j.message === contactMessage ? true : 'missing id/message';
   }, 'POST /api/contact creates a message');
 

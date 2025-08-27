@@ -45,7 +45,7 @@ app.use(limiter);
 app.use(express.json({ limit: '5mb' }));
 app.use(cookieParser());
 
-// serve everything in /server/public at /public/*
+// Serve everything in /server/public at /public/*
 app.use('/public', express.static(PUBLIC_DIR, { index: false }));
 
 app.get(['/readme', '/readme.html'], (req, res) => {
@@ -67,6 +67,17 @@ let activityLog = [];
 // ======================
 // 💾 LOAD DATA FROM DISK
 // ======================
+
+/**
+ * loadAllData
+ * -----------
+ * Loads persisted state from disk into the in-memory stores.
+ * - Ensures an admin user exists (username: "admin").
+ * - Populates users, carts, purchases, and activityLog arrays in-place.
+ * - Exits the process on unrecoverable errors to avoid running with partial state.
+ *
+ * @returns {Promise<void>}
+ */
 const loadAllData = async () => {
   try {
     const loadedUsers = await loadJSON('users.json');
@@ -100,6 +111,15 @@ const loadAllData = async () => {
 // ======================
 // 💾 SAVE DATA TO DISK
 // ======================
+
+/**
+ * saveAllData
+ * -----------
+ * Persists the current in-memory state (users, carts, purchases, activityLog)
+ * to their corresponding JSON files on disk. Logs but does not throw on error.
+ *
+ * @returns {Promise<void>}
+ */
 const saveAllData = async () => {
   try {
     await saveJSON('users.json', users);
@@ -134,7 +154,7 @@ try {
 // ======================
 // ⚠️ GLOBAL ERROR HANDLER
 // ======================
-// keep original status codes (e.g., 413 for too large bodies)
+// Keep original status codes (e.g., 413 for too large bodies)
 app.use((err, req, res, next) => {
   if (err && (err.type === 'entity.too.large' || err.status === 413)) {
     return res.status(413).json({ error: 'Payload too large' });

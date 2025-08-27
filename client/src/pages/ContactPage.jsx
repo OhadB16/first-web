@@ -2,6 +2,25 @@ import React, { useEffect, useState } from 'react';
 import './ContactPage.css';
 import Logo from '../components/Logo';
 
+/**
+ * ContactPage
+ * ------------
+ * Contact form for regular users and inbox management for admins.
+ *
+ * Props:
+ * @param {{username?: string}} user - Current logged-in user.
+ * @param {() => void} onBackToStore - Callback to navigate back to the store page.
+ *
+ * Behavior:
+ * - If user is **admin**:
+ *   - Fetches messages from server (`/api/contact`).
+ *   - Displays messages in a grid with metadata (sender, company, email, phone, etc.).
+ *   - Allows admin to mark messages as handled (deletes them).
+ * - If user is **not admin**:
+ *   - Displays contact form (name, company, email, phone, preferences, budget, subject, message).
+ *   - On submit, posts form data to `/api/contact`.
+ *   - Displays error messages when send fails.
+ */
 export default function ContactPage({ user, onBackToStore }) {
   const isAdmin = (user?.username || '').toLowerCase() === 'admin';
 
@@ -23,7 +42,11 @@ export default function ContactPage({ user, onBackToStore }) {
   });
   const [sending, setSending] = useState(false);
 
-  // Load inbox for admin
+  /**
+   * Load inbox for admin
+   * --------------------
+   * Fetches all messages when the user is admin.
+   */
   useEffect(() => {
     if (!isAdmin) return;
     let cancel = false;
@@ -44,6 +67,11 @@ export default function ContactPage({ user, onBackToStore }) {
     return () => { cancel = true; };
   }, [isAdmin, user?.username]);
 
+  /**
+   * handleSend
+   * ----------
+   * Sends the contact form (regular user).
+   */
   const handleSend = async (e) => {
     e.preventDefault();
     setError('');
@@ -70,6 +98,13 @@ export default function ContactPage({ user, onBackToStore }) {
     }
   };
 
+  /**
+   * handleDelete
+   * ------------
+   * Marks a message as handled (admin only).
+   * Deletes message from server and removes from local state.
+   * @param {string|number} id - Message ID.
+   */
   const handleDelete = async (id) => {
     if (!window.confirm('Mark as handled and remove this message?')) return;
     try {
@@ -87,6 +122,7 @@ export default function ContactPage({ user, onBackToStore }) {
     }
   };
 
+  // --- UI ---
   return (
     <div className="contact-page">
       <Logo />

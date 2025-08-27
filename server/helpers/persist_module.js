@@ -9,9 +9,13 @@ function resolveDataPath(file) {
 }
 
 /**
- * טוען JSON מהדיסק בצורה לא-חוסמת.
- * @param {string} file - שם/נתיב קובץ (יחסי ל-server/data)
- * @param {*} defaultValue - ערך ברירת מחדל להחזרה בשגיאה/חוסר קובץ (ברירת מחדל: [])
+ * loadJSON
+ * --------
+ * Loads JSON data from disk asynchronously (non-blocking).
+ *
+ * @param {string} file - File name or path (relative to server/data if not absolute).
+ * @param {*} [defaultValue=[]] - Default value to return if the file doesn’t exist or an error occurs.
+ * @returns {Promise<*>} The parsed JSON data, or a copy of defaultValue.
  */
 async function loadJSON(file, defaultValue = []) {
   const p = resolveDataPath(file);
@@ -27,15 +31,19 @@ async function loadJSON(file, defaultValue = []) {
 }
 
 /**
- * שומר JSON לדיסק בצורה לא-חוסמת.
- * @param {string} file
- * @param {*} data
+ * saveJSON
+ * --------
+ * Saves JSON data to disk asynchronously (non-blocking).
+ *
+ * @param {string} file - File name or path (relative to server/data if not absolute).
+ * @param {*} data - The JSON-serializable data to save.
+ * @returns {Promise<void>}
  */
 async function saveJSON(file, data) {
   const p = resolveDataPath(file);
   try {
-    await fs.ensureDir(path.dirname(p));                // ודא שהתיקיה קיימת
-    await fs.writeJson(p, data, { spaces: 2 });         // שומר עם ריווח יפה
+    await fs.ensureDir(path.dirname(p));                // Ensure parent directory exists
+    await fs.writeJson(p, data, { spaces: 2 });         // Pretty-print JSON with indentation
   } catch (err) {
     console.error(`❌ Failed to write ${p}:`, err);
   }

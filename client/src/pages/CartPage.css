@@ -1,5 +1,8 @@
-/* src/pages/CartPage.css */
+/* src/pages/CartPage.css
+   Cart page styling – Light (default) + Dark mode overrides.
+*/
 
+/* === BASE CONTAINER ==================================================== */
 .cart-page-container {
   padding: 24px;
   background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
@@ -9,7 +12,7 @@
   min-height: 100vh;
 }
 
-/* HEADER */
+/* === HEADER ============================================================ */
 .cart-header {
   display: flex;
   align-items: center;
@@ -19,7 +22,7 @@
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
-/* BACK BUTTON */
+/* === BACK BUTTON ======================================================= */
 .back-btn {
   background: transparent;
   border: 2px solid #00c6ff;
@@ -41,7 +44,7 @@
   box-shadow: 0 0 12px rgba(0, 198, 255, 0.4);
 }
 
-/* EMPTY CART MESSAGE */
+/* === EMPTY CART ======================================================== */
 .empty-cart {
   text-align: center;
   color: #ff4e4e;
@@ -49,7 +52,7 @@
   margin: 40px 0;
 }
 
-/* CART LAYOUT */
+/* === CART CONTENT ====================================================== */
 .cart-content {
   display: flex;
   flex-direction: column;
@@ -60,10 +63,10 @@
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
-  justify-content: center; /* center when only one */
+  justify-content: center;
 }
 
-/* CART ITEM CARD */
+/* === CART ITEM CARD ==================================================== */
 .cart-item-card {
   background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(6px);
@@ -80,11 +83,9 @@
   width: 100%;
 }
 
-.cart-item-card:hover {
-  transform: scale(1.03);
-}
+.cart-item-card:hover { transform: scale(1.03); }
 
-/* ITEM IMAGE */
+/* IMAGE */
 .cart-item-image {
   width: 100%;
   height: 160px;
@@ -92,7 +93,7 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* ITEM DETAILS */
+/* DETAILS */
 .cart-item-details {
   padding: 16px;
   display: flex;
@@ -119,7 +120,7 @@
   color: #cce7ff;
 }
 
-/* TOTAL */
+/* === TOTAL ============================================================= */
 .cart-total {
   align-self: flex-end;
   background: rgba(255, 255, 255, 0.08);
@@ -133,7 +134,7 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* REMOVE BUTTON */
+/* === REMOVE BUTTON ===================================================== */
 .remove-btn {
   margin-top: 12px;
   padding: 10px 16px;
@@ -154,7 +155,7 @@
   box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
 }
 
-/* PAY BUTTON */
+/* === PAY BUTTON ======================================================== */
 .pay-button {
   margin-top: 20px;
   padding: 12px 24px;
@@ -174,7 +175,8 @@
   box-shadow: 0 0 16px rgba(0, 198, 255, 0.6);
   transform: scale(1.04);
 }
-/* === THEME OVERRIDES (CartPage) === */
+
+/* === DARK MODE OVERRIDES =============================================== */
 :root[data-theme="dark"] .cart-page-container {
   background: var(--bg) !important;
   color: var(--text) !important;
@@ -196,16 +198,10 @@
   border-bottom: 1px solid var(--border) !important;
 }
 
-:root[data-theme="dark"] .cart-item-name {
-  color: var(--card-fg) !important;
-}
-:root[data-theme="dark"] .cart-item-price {
-  color: var(--accent-2) !important;
-}
+:root[data-theme="dark"] .cart-item-name { color: var(--card-fg) !important; }
+:root[data-theme="dark"] .cart-item-price { color: var(--accent-2) !important; }
 :root[data-theme="dark"] .cart-item-quantity,
-:root[data-theme="dark"] .cart-item-subtotal {
-  color: var(--muted) !important;
-}
+:root[data-theme="dark"] .cart-item-subtotal { color: var(--muted) !important; }
 
 :root[data-theme="dark"] .cart-total {
   background: var(--surface) !important;
@@ -223,7 +219,6 @@
 :root[data-theme="dark"] .back-btn:hover {
   background: var(--accent-2) !important;
   color: #000 !important;
-  transform: scale(1.03);
 }
 
 :root[data-theme="dark"] .remove-btn {
@@ -242,4 +237,3 @@
   color: var(--btn-fg) !important;
   box-shadow: var(--shadow) !important;
 }
-

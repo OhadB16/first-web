@@ -9,8 +9,8 @@
   --surface-2: #f1f5f9;
   --border: #e5e7eb;
 
-  --accent: #0072ff;       /* כחול מותג */
-  --accent-2: #00c6ff;     /* גרדיאנט משלים */
+  --accent: #0072ff;       /* Brand blue */
+  --accent-2: #00c6ff;     /* Complementary gradient */
   --success: #16a34a;
   --warning: #f59e0b;
   --danger: #ef4444;
@@ -21,12 +21,23 @@
   --shadow-lg: 0 12px 32px rgba(0,0,0,.15);
 }
 
-/* אפשרי: רק אם תרצה “לצבוע” אזור כללי דרך Utilities (Opt-in) */
-.theme-bg      { background: var(--bg); color: var(--text); }
-.theme-surface { background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm); }
-.theme-muted   { color: var(--muted); }
+/* Optional utilities: apply light theme styling only if opted-in */
+.theme-bg {
+  background: var(--bg);
+  color: var(--text);
+}
+.theme-surface {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+.theme-muted {
+  color: var(--muted);
+}
 
-/* כפתור ראשי (לא חובה להשתמש בו אם כבר יש לך) */
+/* Primary button (optional if you already style buttons elsewhere) */
 .btn-primary {
   background: linear-gradient(90deg, var(--accent-2), var(--accent));
   color: #fff;
@@ -43,6 +54,11 @@
   box-shadow: var(--shadow-lg);
 }
 
-/* קישורים בסיסיים (עדין, לא אגרסיבי) */
-a { color: var(--accent); text-decoration: none; }
-a:hover { text-decoration: underline; }
+/* Base link styling (subtle, not aggressive) */
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
