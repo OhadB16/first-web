@@ -1,59 +1,121 @@
-/* AdminPage.css - styled like PayScreen */
+/* src/pages/AdminPage.css
+   Admin page — premium dark gradient (PayScreen style), tokens, and a11y.
+   - Safe drop-in: keeps your existing class names
+   - Design tokens for easy theming
+   - Consistent inputs/buttons, focus styles, drag-over highlight
+*/
 
-/* ===== Default = LIGHT (העיצוב שלך, ללא שינוי) ======================== */
+/* =========================
+   TOKENS & PAGE WRAPPER
+   ========================= */
 .admin-container {
-  background: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
+  /* Colors */
+  --ink: #eaf2ff;
+  --muted: #c9d6e2;
+  --accent: #66ccff;
+  --accent-strong: #9ad7ff;
+  --danger: #ff4e50;
+  --warn: #fbbf24;
+
+  /* Layout */
+  --container-w: min(1100px, 96vw);
+  --radius-lg: 12px;
+  --radius-sm: 8px;
+
+  /* Effects */
+  --shadow-md: 0 2px 10px rgba(0,0,0,0.30);
+  --shadow-lg: 0 6px 18px rgba(0,0,0,0.45);
+
+  /* Background */
+  --bg: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
+
+  background: var(--bg);
   min-height: 100vh;
   padding: 40px 20px;
-  font-family: 'Segoe UI', Inter, sans-serif;
+  font-family: 'Segoe UI', Inter, system-ui, -apple-system, sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: white;
+  color: var(--ink);
 }
 
+/* Optional width container for main blocks (use in your JSX if desired) */
+.admin-container ._container {
+  width: var(--container-w);
+  margin: 0 auto;
+}
+
+/* =========================
+   HEADER / LOGO
+   ========================= */
 .logo {
-  font-size: 3rem;
+  font-size: clamp(2.2rem, 4vw, 3rem);
   margin-bottom: 1.5rem;
-  font-weight: bold;
+  font-weight: 800;
   text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
 }
 
+/* =========================
+   INPUTS & FILTER
+   ========================= */
 input[type="text"],
 input[type="number"],
 input[type="file"],
 .filter-input {
   width: 100%;
-  padding: 12px;
+  padding: 12px 14px;
   font-size: 1rem;
   margin-bottom: 16px;
-  border-radius: 8px;
-  border: none;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255,255,255,0.18);
   outline: none;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  color: var(--ink);
+  background: rgba(255,255,255,0.10);
+  box-shadow: none;
 }
 
+input::placeholder,
+.filter-input::placeholder { color: var(--muted); }
+
+input:focus-visible,
+.filter-input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* =========================
+   IMAGE UPLOAD / PREVIEW
+   ========================= */
 .image-drop-area {
   border: 2px dashed rgba(255,255,255,0.4);
   padding: 24px;
-  background-color: rgba(255,255,255,0.1);
-  border-radius: 12px;
+  background-color: rgba(255,255,255,0.08);
+  border-radius: var(--radius-lg);
   text-align: center;
-  color: #eee;
+  color: var(--ink);
   margin-bottom: 24px;
+  transition: background-color .2s ease, border-color .2s ease;
+}
+
+/* Add/Remove this class from JS on dragenter/dragleave */
+.image-drop-area.is-dragover {
+  background-color: rgba(102,204,255,0.12);
+  border-color: var(--accent);
 }
 
 .image-preview {
   position: relative;
   margin-top: 10px;
+  display: inline-block;
 }
 
 .image-preview img {
   max-width: 120px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   box-shadow: 0 2px 8px rgba(0,0,0,0.4);
 }
 
+/* Remove preview button */
 .remove-image {
   position: absolute;
   top: -8px;
@@ -68,18 +130,26 @@ input[type="file"],
   height: 24px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.4);
 }
+.remove-image:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
 
+/* =========================
+   BUTTONS
+   ========================= */
 .add-button,
 .delete-button,
 .back-btn {
   padding: 12px 20px;
   font-size: 15px;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 700;
   margin: 10px 0;
-  transition: all 0.3s ease;
+  transition: transform .2s ease, box-shadow .2s ease, opacity .2s ease;
+  will-change: transform, box-shadow;
 }
 
 .add-button {
@@ -88,22 +158,42 @@ input[type="file"],
 }
 
 .delete-button {
-  background: linear-gradient(90deg, #ff4e50, #f9d423);
-  color: black;
+  background: linear-gradient(90deg, var(--danger), var(--warn));
+  color: #0f0f0f; /* better contrast on warm gradient */
 }
 
 .back-btn {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.20);
   color: white;
 }
 
 .add-button:hover,
 .delete-button:hover,
 .back-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 12px rgba(255,255,255,0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 0 12px rgba(255,255,255,0.28);
 }
 
+.add-button:focus-visible,
+.delete-button:focus-visible,
+.back-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Disabled state helper (in case you add disabled attr) */
+.add-button:disabled,
+.delete-button:disabled,
+.back-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* =========================
+   PRODUCTS LIST
+   ========================= */
 .products-list {
   width: 100%;
   max-width: 900px;
@@ -116,32 +206,40 @@ input[type="file"],
 .product-row {
   display: flex;
   align-items: center;
-  background: rgba(255,255,255,0.1);
+  gap: 16px;
+  background: rgba(255,255,255,0.10);
   padding: 16px;
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   backdrop-filter: blur(6px);
-  color: white;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  color: var(--ink);
+  box-shadow: var(--shadow-md);
 }
 
 .product-thumb {
   width: 60px;
-  height: auto;
-  margin-right: 16px;
+  height: 60px;
+  object-fit: cover;
   border-radius: 6px;
+  flex-shrink: 0;
 }
 
 .product-details {
   flex-grow: 1;
+  min-width: 0; /* prevents overflow with long names */
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
+/* =========================
+   ACTIVITY TABLE
+   ========================= */
 .activity-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 24px;
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  background-color: rgba(255,255,255,0.1);
+  background-color: rgba(255,255,255,0.10);
   box-shadow: 0 4px 16px rgba(0,0,0,0.3);
 }
 
@@ -149,24 +247,44 @@ input[type="file"],
 .activity-table td {
   padding: 12px;
   text-align: left;
-  border-bottom: 1px solid rgba(255,255,255,0.2);
-  color: white;
+  border-bottom: 1px solid rgba(255,255,255,0.20);
+  color: var(--ink);
+  vertical-align: top;
 }
 
 .activity-table th {
-  background-color: rgba(0, 114, 255, 0.6);
+  background-color: rgba(0, 114, 255, 0.60);
+  color: #f6fbff;
+  position: sticky;
+  top: 0; /* sticks when table scrolls inside a fixed-height area */
+  z-index: 1;
 }
 
 .activity-table tr:hover {
-  background-color: rgba(255,255,255,0.1);
+  background-color: rgba(255,255,255,0.10);
 }
 
-/* ===== DARK MODE (מופעל רק כש־<html data-theme="dark">) =============== */
+/* Optional zebra stripes for readability */
+/*
+.activity-table tbody tr:nth-child(even) {
+  background-color: rgba(255,255,255,0.06);
+}
+*/
+
+/* =========================
+   DARK THEME OVERRIDES
+   (triggered via: <html data-theme="dark">)
+   ========================= */
 :root[data-theme="dark"] .admin-container {
+  --ink: #eaf2ff;
+  --muted: #9fb3c8;
+  --accent: #7ec3ff;
+  --accent-strong: #a9d6ff;
+
   background:
     radial-gradient(1100px 520px at 50% -140px, rgba(14,122,255,0.10), transparent 60%),
     linear-gradient(180deg, #0b1220, #0c1726, #0a0f16);
-  color: #eaf2ff;
+  color: var(--ink);
 }
 
 :root[data-theme="dark"] .image-drop-area,
@@ -174,16 +292,16 @@ input[type="file"],
 :root[data-theme="dark"] .activity-table {
   background: rgba(255,255,255,0.07);
   border: 1px solid rgba(255,255,255,0.16);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+  box-shadow: var(--shadow-lg);
 }
 
 :root[data-theme="dark"] .activity-table th {
-  background-color: rgba(0, 114, 255, 0.5);
+  background-color: rgba(0, 114, 255, 0.50);
   color: #f6fbff;
 }
 
 :root[data-theme="dark"] .activity-table td {
-  color: #eaf2ff;
+  color: var(--ink);
   border-bottom: 1px solid rgba(255,255,255,0.12);
 }
 
@@ -192,7 +310,7 @@ input[type="file"],
 :root[data-theme="dark"] input[type="file"],
 :root[data-theme="dark"] .filter-input {
   background: rgba(255,255,255,0.10);
-  color: #eaf2ff;
+  color: var(--ink);
   border: 1px solid rgba(255,255,255,0.18);
   box-shadow: none;
 }
@@ -209,6 +327,25 @@ input[type="file"],
 }
 
 :root[data-theme="dark"] .delete-button {
-  background: linear-gradient(90deg, #ff4e50, #fbbf24);
+  background: linear-gradient(90deg, var(--danger), var(--warn));
   color: #0f0f0f;
+}
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+@media (max-width: 768px) {
+  .products-list { max-width: 100%; }
+  .product-row { flex-wrap: wrap; }
+  .product-thumb { width: 56px; height: 56px; }
+}
+
+/* =========================
+   ACCESSIBILITY: REDUCED MOTION
+   ========================= */
+@media (prefers-reduced-motion: reduce) {
+  .admin-container * {
+    transition: none !important;
+    animation: none !important;
+  }
 }

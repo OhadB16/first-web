@@ -1,21 +1,50 @@
-/* src/pages/FAQPage.css — styled like AdminPage/PayScreen */
+/* src/pages/FAQPage.css
+   FAQ page — premium gradient + glass, a11y focus, tidy details/summary.
+   - All rules scoped under .faq-container
+   - Design tokens + dark-mode via token reassignment (no !important)
+*/
+
+/* =========================
+   TOKENS & PAGE WRAPPER
+   ========================= */
 .faq-container {
+  /* Colors */
+  --ink: #ffffff;
+  --muted: rgba(255,255,255,0.9);
+  --accent: #7ec3ff;
+
+  /* Surfaces */
+  --page-bg: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
+  --card-bg: rgba(255,255,255,0.10);
+  --card-fg: #ffffff;
+  --border: rgba(255,255,255,0.25);
+
+  /* Effects */
+  --shadow: 0 6px 16px rgba(0,0,0,0.35);
+  --focus-ring: 0 0 0 3px rgba(126,195,255,0.28);
+
+  /* Layout */
+  --container-w: min(900px, 96vw);
+  --radius: 14px;
+
   min-height: 100vh;
   padding: 40px 20px;
-  background: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
-  color: #fff;
-  font-family: 'Segoe UI', Inter, sans-serif;
+  background: var(--page-bg);
+  color: var(--ink);
+  font-family: 'Segoe UI', Inter, system-ui, -apple-system, sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
+/* =========================
+   TYPOGRAPHY / HEADER
+   ========================= */
 .faq-title {
-  font-size: 2.2rem;
+  font-size: clamp(1.8rem, 4vw, 2.2rem);
   margin: 8px 0 6px;
   text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
 }
-
 .faq-subtitle {
   opacity: 0.9;
   margin-bottom: 20px;
@@ -23,70 +52,127 @@
   max-width: 800px;
 }
 
+/* =========================
+   LIST & ITEMS
+   ========================= */
 .faq-list {
-  width: 100%;
-  max-width: 900px;
+  width: var(--container-w);
   display: grid;
   gap: 14px;
 }
 
 .faq-item {
-  background: rgba(255,255,255,0.10);
-  border: 1px solid rgba(255,255,255,0.25);
-  border-radius: 14px;
-  padding: 14px 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 12px; /* summary has its own padding */
   backdrop-filter: blur(6px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.35);
+  box-shadow: var(--shadow);
 }
 
+/* Summary row — clickable, with chevron */
 .faq-item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+
   cursor: pointer;
   font-weight: 700;
   letter-spacing: 0.2px;
   list-style: none;
+  padding: 8px 6px;
+  border-radius: 10px;
+
+  transition: background-color .15s ease, color .15s ease, transform .15s ease;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after {
+  content: '▸';
+  display: inline-block;
+  transform: translateY(1px);
+  transition: transform .2s ease;
+  opacity: .9;
+}
+.faq-item[open] summary::after { transform: rotate(90deg) translateY(0); }
+
+.faq-item summary:hover { background: rgba(255,255,255,0.06); }
+.faq-item summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  box-shadow: var(--focus-ring);
 }
 
-.faq-item summary::-webkit-details-marker { display: none; }
-
+/* Body copy */
 .faq-item p {
-  margin: 10px 0 0;
+  margin: 10px 6px 8px;
   line-height: 1.6;
   color: #f0f3f6;
 }
 
-.faq-cta {
-  margin-top: 22px;
+/* Optional fade-in for opened content */
+@keyframes faqFadeIn {
+  from { opacity: 0; transform: translateY(-2px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
+.faq-item[open] p { animation: faqFadeIn .18s ease; }
+
+/* =========================
+   CTA BUTTON
+   ========================= */
+.faq-cta { margin-top: 22px; }
 
 .btn-outline {
   padding: 12px 18px;
   border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.6);
+  border: 1px solid var(--border);
   background: rgba(255,255,255,0.12);
-  color: #fff;
+  color: var(--ink);
   font-weight: 700;
   cursor: pointer;
-  transition: transform .12s ease, box-shadow .2s ease, background .2s ease;
+  transition: transform .12s ease, box-shadow .2s ease, background .2s ease, opacity .2s ease;
 }
 .btn-outline:hover {
   transform: translateY(-1px);
   background: rgba(255,255,255,0.18);
   box-shadow: 0 10px 24px rgba(0,0,0,0.4);
 }
-/* === THEME OVERRIDES (FAQPage) === */
+.btn-outline:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.btn-outline:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* =========================
+   DARK THEME
+   Activated via: <html data-theme="dark">
+   Reassign tokens to global theme vars with fallbacks.
+   ========================= */
 :root[data-theme="dark"] .faq-container {
-  background: var(--bg) !important;
-  color: var(--text) !important;
+  --ink: var(--text, #eaf2ff);
+  --muted: var(--muted, #9fb3c8);
+  --accent: var(--accent, #7ec3ff);
+
+  --page-bg:
+    var(--bg, radial-gradient(1000px 420px at 50% -200px, rgba(14,122,255,.10), transparent 60%)),
+    var(--bg2, linear-gradient(180deg, #0b1220, #0c1b2a, #0a0f16));
+  --card-bg: var(--surface, rgba(255,255,255,0.07));
+  --card-fg: var(--text, #f6fbff);
+  --border: var(--border, rgba(255,255,255,0.16));
+  --shadow: var(--shadow, 0 10px 28px rgba(0,0,0,0.5));
 }
 
-:root[data-theme="dark"] .faq-item {
-  background: var(--surface) !important;
-  border: 1px solid var(--border) !important;
-  box-shadow: var(--shadow) !important;
-}
-
-:root[data-theme="dark"] .btn-outline {
-  border: 1px solid var(--border) !important;
-  background: linear-gradient(90deg, var(--btn-grad-start), var(--btn-grad-end)) !important;
-  color: var(--btn-fg) !important;
+/* =========================
+   REDUCED MOTION
+   ========================= */
+@media (prefers-reduced-motion: reduce) {
+  .faq-container * {
+    transition: none !important;
+    animation: none !important;
+  }
 }

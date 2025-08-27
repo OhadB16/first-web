@@ -1,117 +1,209 @@
-/* src/pages/PayScreen.css */
+/* src/pages/PayScreen.css
+   Pay screen — premium gradient + card, a11y focus, dark-mode tokens.
+   - All rules scoped under .pay-screen
+   - Duplicate .top-back-container merged
+*/
 
+/* =========================
+   TOKENS & PAGE WRAPPER
+   ========================= */
 .pay-screen {
+  /* Colors */
+  --ink: #0f172a;
+  --muted: #444;
+  --accent: #0072ff;
+  --accent-2: #00c6ff;
+
+  /* Surfaces */
+  --page-bg: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+  --card-bg: #ffffff;
+  --card-fg: #222;
+  --border: #e5e7eb;
+
+  /* Inputs */
+  --input-bg: #ffffff;
+  --input-fg: #111827;
+  --input-border: #d1d5db;
+  --input-border-focus: #0b0f12;
+
+  /* Effects */
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.3);
+  --focus-ring: 0 0 0 3px rgba(0,114,255,0.22);
+
   position: relative;
-  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Segoe UI', Inter, sans-serif;
+  font-family: 'Segoe UI', Inter, system-ui, -apple-system, sans-serif;
   padding: 20px;
+  background: var(--page-bg);
+  color: var(--ink);
 }
+
+/* Back link container (single, merged definition) */
 .top-back-container {
   position: absolute;
   top: 20px;
   left: 20px;
   z-index: 1000;
+  display: flex;
+  justify-content: flex-start;
+  gap: 8px;
 }
 
+/* Reusable back button (inherits global if present) */
+.back-btn {
+  background: transparent;
+  border: 2px solid var(--accent-2);
+  color: var(--accent-2);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease, color .2s ease;
+  box-shadow: 0 2px 6px rgba(0, 198, 255, 0.2);
+}
 .back-btn:hover {
   background-color: #ffffff;
   color: #000000;
-  box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
-  transform: scale(1.03);
+  box-shadow: 0 0 12px rgba(255,255,255,0.4);
+  transform: translateY(-1px);
+}
+.back-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
-
+/* =========================
+   PAYMENT CARD
+   ========================= */
 .payment-form {
-  background-color: #fff;
-  padding: 40px;
-  border-radius: 16px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
   width: 100%;
   max-width: 500px;
+  background: var(--card-bg);
+  color: var(--card-fg);
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border);
 }
 
 .payment-title {
   font-size: 28px;
   margin-bottom: 10px;
-  color: #222;
   text-align: center;
+  color: var(--card-fg);
 }
 
 .payment-total {
   font-size: 20px;
   margin-bottom: 30px;
   text-align: center;
-  color: #444;
+  color: var(--muted);
 }
 
+/* =========================
+   FORM
+   ========================= */
 .form-group {
   margin-bottom: 20px;
   display: flex;
   flex-direction: column;
+  gap: 6px;
 }
-
 .form-group label {
-  margin-bottom: 6px;
   font-size: 14px;
   color: #555;
 }
-
 .form-group input {
   padding: 12px;
   font-size: 16px;
-  border: 1px solid #ffffff;
-  border-radius: 6px;
+  border: 1px solid var(--input-border);
+  border-radius: 10px;
+  background: var(--input-bg);
+  color: var(--input-fg);
   outline: none;
-  transition: border-color 0.2s ease;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.form-group input:focus-visible {
+  border-color: var(--input-border-focus);
+  box-shadow: var(--focus-ring);
 }
 
-.form-group input:focus {
-  border-color: #000507;
-}
+/* Row layout */
+.row { display: flex; gap: 16px; }
+.half { flex: 1; }
 
-.row {
-  display: flex;
-  gap: 16px;
-}
-
-.half {
-  flex: 1;
-}
-
+/* =========================
+   ACTIONS
+   ========================= */
 .payment-buttons {
   margin-top: 30px;
   display: flex;
   justify-content: space-between;
+  gap: 12px;
 }
 
 .pay-button {
   padding: 12px 20px;
   font-size: 16px;
-  background: linear-gradient(90deg, #00c6ff, #0072ff);
+  font-weight: 700;
+  background: linear-gradient(90deg, var(--accent-2), var(--accent));
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: background .2s ease, transform .2s ease, box-shadow .2s ease;
 }
-
 .pay-button:hover {
-  background: linear-gradient(90deg, #0072ff, #00c6ff);
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(0,114,255,.35);
+}
+.pay-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.pay-button:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
+/* =========================
+   RESPONSIVE
+   ========================= */
 @media (max-width: 500px) {
-  .row {
-    flex-direction: column;
-  }
-}
-.top-back-container {
-  display: flex;
-  justify-content: flex-start;
-  margin-bottom: 16px;
+  .row { flex-direction: column; }
+  .payment-form { padding: 28px; }
 }
 
+/* =========================
+   DARK THEME
+   Activated via: <html data-theme="dark">
+   Reassign tokens to your global theme vars with fallbacks.
+   ========================= */
+:root[data-theme="dark"] .pay-screen {
+  --ink: var(--text, #eaf2ff);
+  --muted: var(--muted, #9fb3c8);
+  --accent: var(--accent, #7ec3ff);
+  --accent-2: var(--accent-2, var(--accent, #7ec3ff));
 
+  --page-bg:
+    var(--bg, radial-gradient(1000px 420px at 50% -200px, rgba(14,122,255,.10), transparent 60%)),
+    var(--bg2, linear-gradient(180deg, #0b1220, #0c1b2a, #0a0f16));
+
+  --card-bg: var(--surface, rgba(17, 24, 39, 0.90));
+  --card-fg: var(--text, #f6fbff);
+  --border: var(--border, rgba(255,255,255,0.16));
+
+  --input-bg: var(--input-bg, rgba(17, 24, 39, 0.96));
+  --input-fg: var(--input-fg, #e6eef7);
+  --input-border: var(--input-border, rgba(255,255,255,0.28));
+  --input-border-focus: #93c5fd;
+
+  --shadow-lg: var(--shadow, 0 12px 32px rgba(0,0,0,0.55));
+}

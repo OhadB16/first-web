@@ -1,6 +1,12 @@
-import React, { useEffect, useState } from 'react';
+// src/pages/ContactPage.jsx
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import './ContactPage.css';
 import Logo from '../components/Logo';
+
+const API_BASE =
+  (typeof import.meta !== 'undefined' && import.meta?.env?.VITE_API_BASE_URL) ||
+  (typeof process !== 'undefined' && process?.env?.REACT_APP_API_BASE_URL) ||
+  'http://localhost:3001';
 
 export default function ContactPage({ user, onBackToStore }) {
   const isAdmin = (user?.username || '').toLowerCase() === 'admin';
@@ -19,63 +25,50 @@ export default function ContactPage({ user, onBackToStore }) {
     preferred: 'Email',
     budget: 'Undisclosed',
     subject: '',
-    message: ''
+    message: '',
   });
   const [sending, setSending] = useState(false);
+  const [sentNotice, setSentNotice] = useState('');
 
-  // Load inbox for admin
-  useEffect(() => {
+  const mounted = useRef(true);
+  useEffect(() => () => { mounted.current = false; }, []);
+
+  // =========================
+  // Admin: Load inbox
+  // =========================
+  const loadInbox = useCallback(async () => {
     if (!isAdmin) return;
-    let cancel = false;
-    (async () => {
-      try {
-        const res = await fetch('http://localhost:3001/api/contact', {
-          headers: { 'X-Username': user.username }
-        });
-        if (!res.ok) throw new Error('Load failed');
-        const data = await res.json();
-        if (!cancel) setMessages(Array.isArray(data) ? data : []);
-      } catch (e) {
-        if (!cancel) setError('Load failed');
-      } finally {
-        if (!cancel) setLoading(false);
-      }
-    })();
-    return () => { cancel = true; };
-  }, [isAdmin, user?.username]);
-
-  const handleSend = async (e) => {
-    e.preventDefault();
+    setLoading(true);
     setError('');
-    setSending(true);
+    const ctrl = new AbortController();
     try {
-      const res = await fetch('http://localhost:3001/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
+      const res = await fetch(`${API_BASE}/api/contact`, {
+        headers: { 'X-Username': user?.username || '' },
+        signal: ctrl.signal,
       });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || 'Send failed');
-      }
-      setForm({
-        fullName: '', company: '', email: '', phone: '',
-        preferred: 'Email', budget: 'Undisclosed', subject: '', message: ''
-      });
-      alert('Message sent. We will reply shortly.');
+      if (!res.ok) throw new Error('Load failed');
+      const data = await res.json();
+      setMessages(Array.isArray(data) ? data : []);
     } catch (e) {
-      setError(e.message || 'Send failed');
+      if (mounted.current) setError('Load failed');
     } finally {
-      setSending(false);
+      if (mounted.current) setLoading(false);
     }
-  };
+    return () => ctrl.abort();
+  }, [API_BASE, isAdmin, user?.username]);
 
-  const handleDelete = async (id) => {
+  useEffect(() => { loadInbox(); }, [loadInbox]);
+
+  // =========================
+  // Admin: Delete/mark handled
+  // =========================
+  const handleDelete = useCallback(async (id) => {
+    if (!id) return;
     if (!window.confirm('Mark as handled and remove this message?')) return;
     try {
-      const res = await fetch(`http://localhost:3001/api/contact/${id}`, {
+      const res = await fetch(`${API_BASE}/api/contact/${encodeURIComponent(id)}`, {
         method: 'DELETE',
-        headers: { 'X-Username': user.username }
+        headers: { 'X-Username': user?.username || '' },
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
@@ -83,10 +76,48 @@ export default function ContactPage({ user, onBackToStore }) {
       }
       setMessages(prev => prev.filter(m => m.id !== id));
     } catch (e) {
-      alert(e.message);
+      setError(e.message || 'Delete failed');
+    }
+  }, [API_BASE, user?.username]);
+
+  // =========================
+  // User: Send message
+  // =========================
+  const handleSend = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSentNotice('');
+    // Basic client-side guard
+    if (!form.fullName || !form.email || !form.message) {
+      setError('Please complete required fields.');
+      return;
+    }
+    setSending(true);
+    try {
+      const res = await fetch(`${API_BASE}/api/contact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || 'Send failed');
+      }
+      setForm({
+        fullName: '', company: '', email: '', phone: '',
+        preferred: 'Email', budget: 'Undisclosed', subject: '', message: '',
+      });
+      setSentNotice('Message sent. We will reply shortly.');
+    } catch (e2) {
+      setError(e2.message || 'Send failed');
+    } finally {
+      if (mounted.current) setSending(false);
     }
   };
 
+  // =========================
+  // UI
+  // =========================
   return (
     <div className="contact-page">
       <Logo />
@@ -96,105 +127,167 @@ export default function ContactPage({ user, onBackToStore }) {
       </header>
 
       {isAdmin ? (
-        <section className="inbox-wrap">
+        <section className="_container" aria-label="Inbox">
+          <div className="admin-toolbar">
+            <h3 style={{ margin: 0 }}>Messages</h3>
+            <button className="refresh" type="button" onClick={loadInbox} disabled={loading}>
+              {loading ? 'Refreshing…' : 'Refresh'}
+            </button>
+          </div>
+
           {loading ? (
-            <div className="loading">Loading…</div>
+            <div className="loading" role="status" aria-live="polite">Loading…</div>
+          ) : messages.length === 0 ? (
+            <div className="empty" role="status" aria-live="polite">No messages.</div>
           ) : (
-            <>
-              {!messages.length && <div className="empty">No messages.</div>}
-              <div className="inbox-grid">
-                {messages.map(m => (
-                  <article key={m.id} className="msg-card">
-                    <header className="msg-head">
-                      <div className="row">
-                        <strong>{m.fullName || '—'}</strong>
-                        {m.company ? <span className="muted"> • {m.company}</span> : null}
-                      </div>
-                      <time>{new Date(m.createdAt || m.date || '').toLocaleString()}</time>
-                    </header>
+            <ul className="message-list">
+              {messages.map(m => (
+                <li key={m.id} className="message-item">
+                  <div className="meta">
+                    <strong>{m.fullName || '—'}</strong>
+                    {m.company ? <span> • {m.company}</span> : null}
+                    <span className="date">
+                      {m.createdAt || m.date
+                        ? new Date(m.createdAt || m.date).toLocaleString()
+                        : ''}
+                    </span>
+                  </div>
 
-                    <div className="msg-meta">
-                      <div><b>Email:</b> {m.email || '—'}</div>
-                      {m.phone && <div><b>Phone:</b> {m.phone}</div>}
-                      {m.preferred && <div><b>Preferred:</b> {m.preferred}</div>}
-                      {m.budget && <div><b>Budget:</b> {m.budget}</div>}
-                      {m.subject && <div><b>Subject:</b> {m.subject}</div>}
-                    </div>
+                  <div className="subject">{m.subject || '(No subject)'}</div>
 
-                    <p className="msg-body">{m.message}</p>
+                  <div className="body">{m.message}</div>
 
-                    <div className="msg-actions">
-                      <button className="delete-button" onClick={() => handleDelete(m.id)}>
-                        Mark as handled
-                      </button>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </>
+                  <div className="row-actions">
+                    <button
+                      className="btn-ok"
+                      type="button"
+                      onClick={() => handleDelete(m.id)}
+                    >
+                      Mark as handled
+                    </button>
+                  </div>
+
+                  <div className="meta" style={{ marginTop: 8 }}>
+                    <div><b>Email:</b> {m.email || '—'}</div>
+                    {m.phone && <div><b>Phone:</b> {m.phone}</div>}
+                    {m.preferred && <div><b>Preferred:</b> {m.preferred}</div>}
+                    {m.budget && <div><b>Budget:</b> {m.budget}</div>}
+                  </div>
+                </li>
+              ))}
+            </ul>
           )}
-          {error && <div className="form-error">{error}</div>}
-          <div className="footer-actions">
+
+          {error && <div className="empty" role="alert">{error}</div>}
+
+          <div className="actions" style={{ justifyContent: 'flex-end', marginTop: 16 }}>
             <button className="back-btn" onClick={onBackToStore} type="button">← Back to Store</button>
           </div>
         </section>
       ) : (
-        <form className="contact-form" onSubmit={handleSend}>
-          <div className="two">
-            <label><span>Full Name *</span>
-              <input required value={form.fullName}
-                     onChange={e => setForm(f => ({ ...f, fullName: e.target.value }))}/>
+        <form className="_container" onSubmit={handleSend} noValidate>
+          <div className="grid-2">
+            <label className="field">
+              <span>Full Name *</span>
+              <input
+                required
+                value={form.fullName}
+                onChange={e => setForm(f => ({ ...f, fullName: e.target.value }))}
+                autoComplete="name"
+              />
             </label>
-            <label><span>Company</span>
-              <input value={form.company}
-                     onChange={e => setForm(f => ({ ...f, company: e.target.value }))}/>
-            </label>
-          </div>
-
-          <div className="two">
-            <label><span>Email *</span>
-              <input type="email" required value={form.email}
-                     onChange={e => setForm(f => ({ ...f, email: e.target.value }))}/>
-            </label>
-            <label><span>Phone</span>
-              <input value={form.phone}
-                     onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}/>
+            <label className="field">
+              <span>Company</span>
+              <input
+                value={form.company}
+                onChange={e => setForm(f => ({ ...f, company: e.target.value }))}
+                autoComplete="organization"
+              />
             </label>
           </div>
 
-          <div className="two">
-            <label><span>Preferred Contact</span>
-              <select value={form.preferred}
-                      onChange={e => setForm(f => ({ ...f, preferred: e.target.value }))}>
-                <option>Email</option><option>Phone</option><option>SMS</option><option>WhatsApp</option>
+          <div className="grid-2">
+            <label className="field">
+              <span>Email *</span>
+              <input
+                type="email"
+                required
+                value={form.email}
+                onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+                autoComplete="email"
+              />
+            </label>
+            <label className="field">
+              <span>Phone</span>
+              <input
+                value={form.phone}
+                onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
+                autoComplete="tel"
+              />
+            </label>
+          </div>
+
+          <div className="grid-2">
+            <label className="field">
+              <span>Preferred Contact</span>
+              <select
+                value={form.preferred}
+                onChange={e => setForm(f => ({ ...f, preferred: e.target.value }))}
+              >
+                <option>Email</option>
+                <option>Phone</option>
+                <option>SMS</option>
+                <option>WhatsApp</option>
               </select>
             </label>
-            <label><span>Budget</span>
-              <select value={form.budget}
-                      onChange={e => setForm(f => ({ ...f, budget: e.target.value }))}>
+            <label className="field">
+              <span>Budget</span>
+              <select
+                value={form.budget}
+                onChange={e => setForm(f => ({ ...f, budget: e.target.value }))}
+              >
                 <option>Undisclosed</option>
-                <option>$1–3M</option><option>$3–7M</option><option>$7–15M</option><option>$15M+</option>
+                <option>$1–3M</option>
+                <option>$3–7M</option>
+                <option>$7–15M</option>
+                <option>$15M+</option>
               </select>
             </label>
           </div>
 
-          <label className="full"><span>Subject</span>
-            <input value={form.subject}
-                   onChange={e => setForm(f => ({ ...f, subject: e.target.value }))}/>
+          <label className="field">
+            <span>Subject</span>
+            <input
+              value={form.subject}
+              onChange={e => setForm(f => ({ ...f, subject: e.target.value }))}
+            />
           </label>
 
-          <label className="full"><span>Message *</span>
-            <textarea required rows={6} value={form.message}
-                      onChange={e => setForm(f => ({ ...f, message: e.target.value }))}/>
+          <label className="field">
+            <span>Message *</span>
+            <textarea
+              required
+              rows={6}
+              value={form.message}
+              onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
+            />
           </label>
 
-          {error && <div className="form-error">{error}</div>}
+          {/* Notices */}
+          {error && (
+            <div className="empty" role="alert" aria-live="polite">{error}</div>
+          )}
+          {sentNotice && (
+            <div className="empty" role="status" aria-live="polite">{sentNotice}</div>
+          )}
 
-          <div className="form-actions">
-            <button className="btn-primary" type="submit" disabled={sending}>
+          <div className="actions form-actions">
+            <button className="btn-ok" type="submit" disabled={sending}>
               {sending ? 'Sending…' : 'Send Message'}
             </button>
-            <button className="back-btn" type="button" onClick={onBackToStore}>← Back to Store</button>
+            <button className="back-btn" type="button" onClick={onBackToStore}>
+              ← Back to Store
+            </button>
           </div>
         </form>
       )}

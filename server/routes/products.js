@@ -1,60 +1,84 @@
 // server/routes/products.js
 const express = require('express');
 
+/**
+ * Products API
+ *
+ * - GET    /api/products          → merged list: jets.json + products.json minus hides.json
+ * - POST   /api/products          → (admin) create a product, id = 'p' + timestamp
+ * - DELETE /api/products/:id      → (admin) if 'p*' → remove from products.json; else → add to hides.json
+ * - DELETE /api/products          → 405 (collection delete not allowed)
+ * - OPTIONS/HEAD supported
+ *
+ * Trust model for admin:
+ *   Prefer the httpOnly cookie `username` if present (set by /api/login).
+ *   Fallback to `skyUser` (UI cookie) only if the httpOnly cookie is absent.
+ *   Header is the weakest and only used when no cookies exist.
+ */
 module.exports = function productsRoutes(loadJSON, saveJSON) {
   const router = express.Router();
 
   const isAdmin = (req) => {
-    const h = String(req.header('X-Username') || '').toLowerCase();
-    const c = String((req.cookies && req.cookies.skyUser) || '').toLowerCase();
-    return h === 'admin' || c === 'admin';
+    const cookieStrong = String(req.cookies?.username || '').toLowerCase();  // httpOnly
+    const cookieUi     = String(req.cookies?.skyUser  || '').toLowerCase();  // UI cookie
+    const hdr          = String(req.header('X-Username') || '').toLowerCase();
+
+    // trust order: httpOnly cookie → UI cookie → header
+    const ident = cookieStrong || cookieUi || hdr;
+    return ident === 'admin';
   };
 
-  // GET /api/products — בסיס + תוספות אדמין פחות מוחבאים
-  router.get('/', async (req, res) => {
+  // Utility: safe read of array JSON
+  const readArray = async (file) => {
+    const v = await loadJSON(file, []);
+    return Array.isArray(v) ? v : [];
+  };
+
+  // HEAD/OPTIONS for nicer clients
+  router.head('/', (_req, res) => res.status(200).end());
+  router.options('/', (_req, res) => res.set('Allow', 'GET, POST, OPTIONS, HEAD').status(204).end());
+
+  // GET /api/products — base + admin extras minus hides
+  router.get('/', async (_req, res) => {
     try {
-      const base  = await loadJSON('jets.json');      // []
-      const extra = await loadJSON('products.json');  // []
-      const hides = await loadJSON('hides.json');     // [] (רשימת IDs)
+      const base  = await readArray('jets.json');
+      const extra = await readArray('products.json');
+      const hides = await readArray('hides.json');
 
-      const hiddenIds = new Set((Array.isArray(hides) ? hides : []).map(String));
-
-      const list = [
-        ...(Array.isArray(base)  ? base  : []),
-        ...(Array.isArray(extra) ? extra : []),
-      ].filter(p => !hiddenIds.has(String(p.id)));
+      const hiddenIds = new Set(hides.map(String));
+      const list = [...base, ...extra].filter(p => !hiddenIds.has(String(p.id)));
 
       return res.json(list);
     } catch (err) {
       console.error('GET /api/products error:', err);
-      return res.json([]); // אל תפיל את השרת — החזר רשימה ריקה
+      return res.json([]); // do not crash the app
     }
   });
 
-  // POST /api/products — יצירת מוצר חדש (Admin בלבד)
+  // POST /api/products — create (Admin only)
   router.post('/', async (req, res) => {
     try {
       if (!isAdmin(req)) return res.status(403).json({ error: 'Forbidden' });
 
       const { name, title, description, imageUrl, price } = req.body || {};
 
+      // Minimal normalization/validation (server.js enforces body size)
       const clean = {
-        id: 'p' + Date.now(),
+        id: 'p' + Date.now().toString(36), // compact & unique-enough
         name: String(name || title || '').trim().slice(0, 120),
         title: String(title || name || '').trim().slice(0, 120),
-        // בלי slice כדי לא לחתוך base64 ארוך — ההגבלה ברמת השרת (5MB) מטופלת ב-server.js
-        description: String(description || '').trim(),
+        description: String(description || '').trim(),  // keep full text (no slice on base64 comment)
         imageUrl: String(imageUrl || '').trim(),
-        price: Number.isFinite(Number(price)) ? Number(price) : 0
+        price: Number.isFinite(Number(price)) ? Number(price) : 0,
       };
 
       if (!clean.title) {
         return res.status(400).json({ error: 'title/name required' });
       }
 
-      const existing = await loadJSON('products.json');
-      existing.push(clean);
-      await saveJSON('products.json', existing);
+      const products = await readArray('products.json');
+      products.push(clean);
+      await saveJSON('products.json', products);
 
       return res.status(201).json(clean);
     } catch (err) {
@@ -63,7 +87,7 @@ module.exports = function productsRoutes(loadJSON, saveJSON) {
     }
   });
 
-  // DELETE /api/products/:id — מחיקה (למוצר אדמין) או הסתרה (למוצרי בסיס)
+  // DELETE /api/products/:id — delete (admin product) or hide (base product)
   router.delete('/:id', async (req, res) => {
     try {
       if (!isAdmin(req)) return res.status(403).json({ error: 'Forbidden' });
@@ -71,25 +95,21 @@ module.exports = function productsRoutes(loadJSON, saveJSON) {
       const id = String(req.params.id || '');
 
       if (id.startsWith('p')) {
-        // מוצר שהאדמין הוסיף — מוחקים מ-products.json
-        const products = await loadJSON('products.json');
-        const before = products.length;
-        const after  = products.filter(p => String(p.id) !== id);
-
-        if (after.length === before) {
+        // Admin-created → remove from products.json
+        const products = await readArray('products.json');
+        const after = products.filter(p => String(p.id) !== id);
+        if (after.length === products.length) {
           return res.status(404).json({ error: 'Not found' });
         }
-
         await saveJSON('products.json', after);
         return res.json({ ok: true, removedFrom: 'products.json', id });
       }
 
-      // מוצר בסיס — נוסיף ל-hides.json כדי להסתיר מהתצוגה
-      const hides = await loadJSON('hides.json');
-      const set   = new Set((Array.isArray(hides) ? hides : []).map(String));
+      // Base product → add to hides.json
+      const hides = await readArray('hides.json');
+      const set = new Set(hides.map(String));
       set.add(id);
       await saveJSON('hides.json', Array.from(set));
-
       return res.json({ ok: true, hiddenIn: 'hides.json', id });
     } catch (err) {
       console.error('DELETE /api/products/:id error:', err);
@@ -97,16 +117,11 @@ module.exports = function productsRoutes(loadJSON, saveJSON) {
     }
   });
 
-  // ❌ DELETE /api/products (ללא מזהה) — לא מותר: מחזירים 405
+  // DELETE /api/products — 405 for collection-level delete (single definition)
   router.delete('/', (req, res) => {
+    res.set('Allow', 'GET, POST, OPTIONS, HEAD');
     return res.status(405).json({ error: 'Method Not Allowed' });
   });
-  // ❌ Collection-level DELETE is not allowed (return 405)
-router.delete('/', (req, res) => {
-  res.set('Allow', 'GET, POST');           // רמז ללקוח אילו שיטות מותרות על האוסף
-  return res.status(405).json({ error: 'Method Not Allowed' });
-});
-
 
   return router;
 };

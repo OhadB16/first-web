@@ -1,29 +1,65 @@
-/* ========== theme-over.css (DARK MODE ONLY) ============================= */
-/* הפעלה: document.documentElement.setAttribute('data-theme','dark'); */
-:root[data-theme="dark"] {
-  --bg: #0d141a;          /* רקע כללי כהה */
-  --text: #e6edf3;
-  --muted: #9aa7b3;
+/* ========== theme-over.css (DARK MODE ONLY) =============================
+   Activate via: document.documentElement.setAttribute('data-theme','dark')
+   Scope: Only applies when <html data-theme="dark"> is set.
+   Goal: Centralize dark tokens so page-level overrides can stay minimal.
+   ---------------------------------------------------------------------- */
 
+:root[data-theme="dark"] {
+  /* ----- Base colors -------------------------------------------------- */
+  --bg: #0d141a;                 /* App background (used by page wrappers) */
+  --text: #e6edf3;               /* Primary text */
+  --muted: #9aa7b3;              /* Secondary text */
+
+  /* ----- Surfaces, borders, shadows ---------------------------------- */
   --surface: rgba(255,255,255,0.08);
   --surface-2: rgba(255,255,255,0.06);
   --border: rgba(255,255,255,0.18);
 
-  --accent: #60a5fa;      /* כחול בהיר */
-  --accent-2: #22d3ee;    /* תכלת */
-  --success: #22c55e;
-  --warning: #f59e0b;
-  --danger: #f87171;
-
   --shadow-sm: 0 1px 3px rgba(0,0,0,.35);
   --shadow-md: 0 8px 24px rgba(0,0,0,.5);
   --shadow-lg: 0 14px 44px rgba(0,0,0,.6);
+  --shadow: var(--shadow-md);    /* Generic shadow token many components use */
+
+  /* ----- Accents / status -------------------------------------------- */
+  --accent: #60a5fa;             /* Light blue */
+  --accent-2: #22d3ee;           /* Cyan / teal */
+  --accent-3: #22c55e;           /* Green (used in Reviews/Contact buttons) */
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger:  #f87171;
+  --error:   #ef4444;            /* Several pages reference --error */
+
+  /* ----- Buttons / menus --------------------------------------------- */
+  --btn-grad-start: #0e7aff;
+  --btn-grad-end:   #3a8bfd;
+  --btn-fg: #ffffff;
+
+  --menu-bg: var(--surface);
+  --menu-fg: var(--text);
+  --menu-item-hover: rgba(255,255,255,0.10);
+
+  /* ----- Cards -------------------------------------------------------- */
+  --card-bg: var(--surface);
+  --card-fg: var(--text);
+
+  /* ----- Inputs ------------------------------------------------------- */
+  --input-bg: rgba(255,255,255,0.10);
+  --input-fg: var(--text);
+  --input-border: var(--border);
+
+  /* ----- Animation timing (used in Menu) ------------------------------ */
+  --t: .25s ease;
+
+  /* Help UA widgets (inputs, scrollbars) adopt dark defaults */
+  color-scheme: dark;
 }
 
-/* בסיסי — לא פולשני: מי שמחיל .theme-bg יקבל כהה */
+/* ---------- Non-invasive helpers (opt-in classes) --------------------- */
+/* Use .theme-bg / .theme-surface to “darkify” blocks without rewriting them */
 :root[data-theme="dark"] .theme-bg {
-  background: radial-gradient(1200px 500px at 50% -100px, rgba(0, 150, 255, .10), transparent 60%),
-              linear-gradient(180deg, #0f2027, #203a43, #2c5364);
+  background:
+    radial-gradient(1200px 500px at 50% -100px, rgba(0,150,255,.10), transparent 60%),
+    linear-gradient(180deg, #0f2027, #203a43, #2c5364);
   color: var(--text);
 }
 :root[data-theme="dark"] .theme-surface {
@@ -33,62 +69,59 @@
   box-shadow: var(--shadow-sm);
 }
 
-/* התאמות לטפסים במצב כהה — מבלי לגעת ב-checkbox/radio */
+/* ---------- Form elements --------------------------------------------- */
+/* (Checkbox/Radio deliberately left alone to keep platform feel) */
 :root[data-theme="dark"] input:not([type="checkbox"]):not([type="radio"]),
 :root[data-theme="dark"] textarea,
 :root[data-theme="dark"] select {
-  background: rgba(255,255,255,0.10);
-  color: var(--text);
-  border: 1px solid var(--border);
+  background: var(--input-bg);
+  color: var(--input-fg);
+  border: 1px solid var(--input-border);
   border-radius: 10px;
   box-shadow: none;
 }
-:root[data-theme="dark"] ::placeholder {
-  color: rgba(230,237,243,.65);
-}
+:root[data-theme="dark"] ::placeholder { color: rgba(230,237,243,.65); }
 
-/* פוקוס כהה נעים */
+/* Comfortable focus ring that reads well on dark backgrounds */
 :root[data-theme="dark"] :focus-visible {
-  outline: 2px solid rgba(96, 165, 250, .8);
+  outline: 2px solid rgba(96,165,250,.8);
   outline-offset: 2px;
 }
 
-/* כפתור ראשי במצב כהה (אם משתמשים במחלקה) */
+/* ---------- Buttons --------------------------------------------------- */
 :root[data-theme="dark"] .btn-primary {
-  background: linear-gradient(90deg, var(--accent-2), var(--accent));
-  color: #0b1220;
+  background: linear-gradient(90deg, var(--btn-grad-start), var(--btn-grad-end));
+  color: var(--btn-fg);
   box-shadow: var(--shadow-md);
 }
 
-/* --- דוגמאות לאזורים שכדאי שיהיו כהים במצב Dark בלבד, בלי לשבור ברירת מחדל --- */
-/* רק אם העמודים הללו קיימים אצלך; כולם scoped ל-dark בלבד */
+/* ---------- Page-level backgrounds you already use -------------------- */
 :root[data-theme="dark"] .admin-container,
 :root[data-theme="dark"] .contact-page,
 :root[data-theme="dark"] .faq-container,
 :root[data-theme="dark"] .reviews-page,
 :root[data-theme="dark"] .store-screen-page {
-  background: radial-gradient(1200px 500px at 50% -100px, rgba(0, 150, 255, .12), transparent 60%),
-              linear-gradient(180deg, #0f2027, #203a43, #2c5364);
+  background:
+    radial-gradient(1200px 500px at 50% -100px, rgba(0,150,255,.12), transparent 60%),
+    linear-gradient(180deg, #0f2027, #203a43, #2c5364);
   color: var(--text);
 }
 
-/* כרטיסים/קופסאות נפוצות בתוך העמודים (אם יש מחלקות כאלה) */
+/* ---------- Common cards/menus used across pages ---------------------- */
 :root[data-theme="dark"] .card,
 :root[data-theme="dark"] .dropdown-menu {
   background: var(--surface);
   border: 1px solid var(--border);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow);
   color: var(--text);
 }
 
-/* הידור עדין לטבלאות */
-:root[data-theme="dark"] table {
-  color: var(--text);
-}
+/* ---------- Tables ---------------------------------------------------- */
+:root[data-theme="dark"] table { color: var(--text); }
 :root[data-theme="dark"] th {
+  /* NOTE: color-mix requires modern browsers; if you must support very old,
+     swap for a flat rgba() or gradient. */
   background: color-mix(in srgb, var(--accent), transparent 40%);
   color: #fff;
 }
-:root[data-theme="dark"] td {
-  border-bottom: 1px solid var(--border);
-}
+:root[data-theme="dark"] td { border-bottom: 1px solid var(--border); }

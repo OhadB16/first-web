@@ -1,143 +1,212 @@
-/* ProductCard.css */
+/* ProductCard.css
+   Glassy product card with gradient CTA.
+   - A11y: focus-visible rings, forced-colors support
+   - Motion safety: prefers-reduced-motion
+   - Fallbacks for aspect-ratio
+*/
 
+/* =============================
+   CARD CONTAINER
+============================= */
 .product-card {
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  padding: 16px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  position: relative;
+  isolation: isolate; /* contain shadows/effects inside card */
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  color: white;
-}
 
+  /* Glass */
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 16px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+
+  /* Depth */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+
+  /* Spacing & text */
+  padding: 16px;
+  color: #fff;
+
+  /* Motion */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 .product-card:hover {
   transform: scale(1.03);
   box-shadow: 0 8px 24px rgba(0, 198, 255, 0.3);
 }
 
+/* Provide a visible focus style when any child is focused */
+.product-card:focus-within {
+  outline: 2px solid transparent;
+  box-shadow:
+    0 0 0 3px rgba(0, 198, 255, 0.35),
+    0 6px 20px rgba(0, 0, 0, 0.28);
+}
+
+/* =============================
+   IMAGE
+============================= */
 .product-image {
   width: 100%;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 16 / 9;     /* keeps consistent boxes */
   object-fit: contain;
   background: #111;
   border-radius: 12px;
   margin-bottom: 12px;
 }
 
-/* Product Name */
+/* Fallback if aspect-ratio is not supported */
+@supports not (aspect-ratio: 16 / 9) {
+  .product-image {
+    height: 180px; /* reasonable default */
+  }
+}
+
+/* =============================
+   TEXT
+============================= */
 .product-card h3 {
+  margin: 0 0 8px;
   font-size: 18px;
   font-weight: 600;
-  margin: 0 0 8px;
   color: #ffffff;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
-/* Description */
 .product-card p {
+  margin: 0 0 12px;
   font-size: 14px;
   color: #cce7ff;
-  margin: 0 0 12px;
 }
 
+/* =============================
+   FOOTER (price + CTA)
+============================= */
 .product-footer {
-  display: flex;
-  flex-direction: column;         /* ← Stack items vertically */
-  align-items: center;            /* ← Center horizontally */
-  gap: 10px;                      /* ← Add spacing between items */
   margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
   text-align: center;
 }
 
-
-/* Price */
 .price {
   font-size: 18px;
   font-weight: bold;
   color: #00c6ff;
 }
 
-/* Add to Cart Button */
+/* CTA button */
 .product-footer button {
-  background: linear-gradient(90deg, #031b22, #0072ff);
-  color: white;
-  border: none;
-  border-radius: 10px;
-  padding: 10px 20px;
-  font-weight: 600;
-  font-size: 15px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 14px rgba(0, 198, 255, 0.2);
   width: 100%;
   max-width: 180px;
+  padding: 10px 20px;
+
+  background: linear-gradient(90deg, #031b22, #0072ff);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+
+  box-shadow: 0 4px 14px rgba(0, 198, 255, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
   text-align: center;
 }
-
-
 .product-footer button:hover {
   background: linear-gradient(to right, #00c6ff, #0072ff);
   transform: scale(1.05);
   box-shadow: 0 0 14px rgba(0, 198, 255, 0.4);
 }
+/* Keyboard focus ring */
+.product-footer button:focus-visible {
+  outline: 2px solid transparent;
+  box-shadow:
+    0 0 0 3px rgba(0, 198, 255, 0.45),
+    0 4px 14px rgba(0, 198, 255, 0.2);
+}
+/* Disabled (future-proof) */
+.product-footer button:disabled {
+  opacity: 0.6;
+  cursor: default;
+  transform: none;
+  box-shadow: none;
+}
 
-/* In Cart Count */
+/* In-cart count */
 .in-cart-count {
+  min-height: 20px;
   margin-top: 8px;
   font-size: 14px;
   font-weight: 500;
   color: #00c6ff;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  min-height: 20px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
 }
-/* ==== DARK MODE ONLY (append-only) ===================================== */
-/* לא נוגע ב-Light. מופעל רק אם על <html> יש data-theme="dark" */
 
+/* =============================
+   REDUCED MOTION
+============================= */
+@media (prefers-reduced-motion: reduce) {
+  .product-card,
+  .product-footer button {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+/* =============================
+   HIGH CONTRAST / FORCED COLORS
+============================= */
+@media (forced-colors: active) {
+  .product-card {
+    background: Canvas;
+    color: CanvasText;
+    border: 1px solid ButtonBorder;
+    box-shadow: none;
+  }
+  .product-image { background: Canvas; }
+  .product-footer button {
+    background: ButtonFace;
+    color: ButtonText;
+    border: 1px solid ButtonBorder;
+    box-shadow: none;
+  }
+}
+
+/* =============================
+   DARK THEME OVERRIDES
+   (triggered when <html data-theme="dark">)
+============================= */
 :root[data-theme="dark"] .product-card {
-  background: rgba(16, 20, 28, 0.86);            /* זכוכית כהה יותר */
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(16, 20, 28, 0.86);
+  border: 1px solid rgba(255,255,255,0.18);
   color: #eaf2ff;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.45);
 }
-
 :root[data-theme="dark"] .product-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.55);
+  box-shadow: 0 16px 34px rgba(0,0,0,0.55);
 }
-
-:root[data-theme="dark"] .product-image {
-  background: #0a0f16;                           /* משטח תמונה כהה */
-}
-
+:root[data-theme="dark"] .product-image { background: #0a0f16; }
 :root[data-theme="dark"] .product-card h3 {
   color: #f6f9ff;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.35);
 }
-
-:root[data-theme="dark"] .product-card p {
-  color: #b6c7dc;
-}
-
-:root[data-theme="dark"] .price {
-  color: #73caff;                                 /* תכלת עדינה */
-}
+:root[data-theme="dark"] .product-card p { color: #b6c7dc; }
+:root[data-theme="dark"] .price { color: #73caff; }
 
 :root[data-theme="dark"] .product-footer button {
   background: linear-gradient(90deg, #0a2340, #0a6ad8);
-  box-shadow: 0 6px 20px rgba(10, 106, 216, 0.28);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 6px 20px rgba(10,106,216,0.28);
 }
-
 :root[data-theme="dark"] .product-footer button:hover {
   background: linear-gradient(90deg, #0e7aff, #3a8bfd);
   transform: translateY(-1px);
-  box-shadow: 0 10px 26px rgba(10, 122, 255, 0.35);
+  box-shadow: 0 10px 26px rgba(10,122,255,0.35);
 }
-
-:root[data-theme="dark"] .in-cart-count {
-  color: #73caff;
-}
+:root[data-theme="dark"] .in-cart-count { color: #73caff; }

@@ -1,8 +1,35 @@
-/* src/pages/ThankYouPage.css */
+/* src/pages/ThankYouPage.css
+   Thank You screen — centered hero message + primary action.
+   - Tokenized colors and shadows
+   - Responsive typography with clamp()
+   - A11y: clear :focus-visible ring
+   - Dark mode via theme token mapping
+   - Reduced motion friendly
+*/
+
+/* =========================
+   PAGE WRAPPER & TOKENS
+   ========================= */
 .thank-you-container {
+  /* Color tokens */
+  --ink: #ffffff;                  /* primary text on gradient */
+  --muted: rgba(255,255,255,0.9);  /* secondary text */
+  --btn-fg: #ffffff;
+  --btn-grad-start: #4facfe;
+  --btn-grad-end: #00f2fe;
+
+  /* Surfaces & effects */
+  --page-bg: linear-gradient(to bottom, #000428, #004e92);
+  --ring: 0 0 0 3px rgba(79, 172, 254, 0.35);
+  --shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+
+  /* Layout */
+  --container: min(900px, 92vw);
+  --radius: 12px;
+
   height: 100vh;
-  background: linear-gradient(to bottom, #000428, #004e92);
-  color: white;
+  background: var(--page-bg);
+  color: var(--ink);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -12,27 +39,88 @@
   padding: 20px;
 }
 
+/* Optional inner width constraint if content grows */
+.thank-you-container > * {
+  max-width: var(--container);
+}
+
+/* =========================
+   TYPOGRAPHY
+   ========================= */
 .thank-you-container h1 {
-  font-size: 36px;
-  margin-bottom: 16px;
+  font-size: clamp(28px, 4vw, 42px);
+  margin: 0 0 12px;
+  letter-spacing: 0.2px;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.25);
 }
 
 .thank-you-container p {
-  font-size: 18px;
-  margin-bottom: 32px;
+  font-size: clamp(16px, 2vw, 18px);
+  margin: 0 0 28px;
+  color: var(--muted);
+  line-height: 1.7;
 }
 
+/* =========================
+   PRIMARY ACTION BUTTON
+   ========================= */
 .store-btn {
   padding: 12px 24px;
-  background: linear-gradient(to right, #4facfe, #00f2fe);
+  background: linear-gradient(to right, var(--btn-grad-start), var(--btn-grad-end));
   border: none;
-  color: white;
+  color: var(--btn-fg);
   font-size: 16px;
-  border-radius: 8px;
+  font-weight: 700;
+  border-radius: var(--radius);
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: transform .15s ease, box-shadow .2s ease, background .25s ease;
+  box-shadow: var(--shadow);
 }
 
 .store-btn:hover {
-  background: linear-gradient(to right, #00f2fe, #4facfe);
+  background: linear-gradient(to right, var(--btn-grad-end), var(--btn-grad-start));
+  transform: translateY(-1px);
+}
+
+.store-btn:focus-visible {
+  outline: 2px solid transparent;
+  box-shadow: var(--ring), var(--shadow);
+}
+
+.store-btn:active {
+  transform: translateY(0);
+}
+
+.store-btn:disabled {
+  opacity: .6;
+  cursor: default;
+  transform: none;
+}
+
+/* =========================
+   DARK THEME (token mapping)
+   Activated via: <html data-theme="dark">
+   ========================= */
+:root[data-theme="dark"] .thank-you-container {
+  /* Map to your global theme tokens if present */
+  --ink: var(--text, #eaf2ff);
+  --muted: var(--muted, #cbd5e1);
+  --btn-fg: var(--btn-fg, #ffffff);
+  --btn-grad-start: var(--btn-grad-start, #0e7aff);
+  --btn-grad-end: var(--btn-grad-end, #3a8bfd);
+
+  --page-bg:
+    var(--bg, radial-gradient(1000px 420px at 50% -220px, rgba(14,122,255,.10), transparent 65%)),
+    var(--bg2, linear-gradient(180deg, #0b1220, #0c1b2a, #0a0f16));
+  --ring: 0 0 0 3px rgba(14,122,255,.35);
+}
+
+/* =========================
+   REDUCED MOTION
+   ========================= */
+@media (prefers-reduced-motion: reduce) {
+  .thank-you-container * {
+    transition: none !important;
+    animation: none !important;
+  }
 }

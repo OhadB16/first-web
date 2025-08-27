@@ -1,23 +1,65 @@
-/* ContactPage.css – matches your gradient/glass look and fixes input spacing */
+/* src/pages/ContactPage.css
+   Contact page — premium gradient + glass, tidy spacing, a11y focus.
+   - All rules scoped under .contact-page
+   - Design tokens + dark-mode via token reassignment (no !important)
+*/
+
+/* =========================
+   TOKENS & PAGE WRAPPER
+   ========================= */
 .contact-page {
+  /* Colors */
+  --ink: #eef2f6;                /* primary text on dark */
+  --muted: rgba(255,255,255,.9); /* labels / secondary */
+  --accent: #7ec3ff;
+  --accent-strong: #9ad7ff;
+  --error: #ff6b6b;
+
+  /* Surfaces */
+  --page-bg:
+    radial-gradient(1200px 500px at 50% -100px, rgba(0, 150, 255, .15), transparent 60%),
+    linear-gradient(180deg, #0f2027, #203a43, #2c5364);
+  --surface: rgba(255,255,255,.10);
+  --card-bg: rgba(255,255,255,.10);
+  --card-fg: #ffffff;
+  --border: rgba(255,255,255,.16);
+
+  /* Inputs (light-style inputs on dark background) */
+  --input-bg: rgba(255,255,255,.96);
+  --input-fg: #0e2433;
+  --input-border: #0f172a;
+
+  /* Effects */
+  --shadow: 0 8px 24px rgba(0,0,0,.35);
+  --inset: 0 2px 8px rgba(0,0,0,.25) inset, 0 2px 6px rgba(0,0,0,.15);
+  --focus-ring: 0 0 0 3px rgba(126,195,255,.25);
+
+  /* Layout */
+  --container-w: min(960px, 94vw);
+
   min-height: 100vh;
   padding: 40px 16px 80px;
-  background: radial-gradient(1200px 500px at 50% -100px, rgba(0, 150, 255, .15), transparent 60%),
-              linear-gradient(180deg, #0f2027, #203a43, #2c5364);
-  color: #eef2f6;
+  background: var(--page-bg);
+  color: var(--ink);
   font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
+/* Optional centered inner container (use in JSX if desired) */
+.contact-page ._container { width: var(--container-w); margin: 0 auto; }
+
+/* =========================
+   HERO
+   ========================= */
 .contact-hero {
   text-align: center;
   margin: 16px 0 22px;
 }
 .contact-hero h1 {
   margin: 0 0 8px;
-  font-size: 40px;
+  font-size: clamp(28px, 5vw, 40px);
   letter-spacing: .5px;
 }
 .contact-hero p {
@@ -25,24 +67,44 @@
   color: rgba(255,255,255,.85);
 }
 
-/* consistent gaps between all fields (fixes “white containers touching each other”) */
-.field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
-.field > span { font-size: .95rem; color: rgba(255,255,255,.9); }
+/* =========================
+   FORM FIELDS
+   ========================= */
+/* Consistent gaps between all fields (no double margins) */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.field > span { font-size: .95rem; color: var(--muted); }
 
+/* Text inputs, textarea, select — no extra bottom margin (field handles spacing) */
 .contact-page input:not([type="checkbox"]):not([type="radio"]),
 .contact-page textarea,
 .contact-page select {
   width: 100%;
-  padding: 12px 1px;
-  border: none;
+  padding: 12px 14px;
+  border: 1px solid var(--input-border);
   border-radius: 10px;
-  background: rgba(255,255,255,.95);
-  color: #0e2433;
+  background: var(--input-bg);
+  color: var(--input-fg);
   font-size: 15px;
-  box-shadow: 0 2px 8px rgba(0,0,0,.25) inset, 0 2px 6px rgba(0,0,0,.15);
-  margin-bottom: 14px;     /* ← ensures vertical gap between boxes */
+  box-shadow: var(--inset);
+  margin-bottom: 0; /* spacing is owned by .field */
 }
-/* (Optional) tidy checkboxes if you ever add one on the contact page */
+.contact-page input::placeholder,
+.contact-page textarea::placeholder { color: #6b7280; }
+.contact-page input:focus-visible,
+.contact-page textarea:focus-visible,
+.contact-page select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  box-shadow: var(--focus-ring);
+  border-color: var(--accent);
+}
+
+/* (Optional) tidy checkboxes if you add them here */
 .contact-page input[type="checkbox"] {
   width: auto;
   padding: 0;
@@ -50,16 +112,21 @@
   border-radius: 0;
   box-shadow: none;
   background: transparent;
+  accent-color: var(--accent);
 }
 
 textarea { resize: vertical; }
 
+/* Actions row (buttons under form) */
 .actions {
   display: flex;
   gap: 12px;
   margin-top: 6px;
 }
-/* Admin list */
+
+/* =========================
+   ADMIN LIST / TOOLBAR (reused styles)
+   ========================= */
 .admin-toolbar {
   display: flex;
   justify-content: space-between;
@@ -69,28 +136,41 @@ textarea { resize: vertical; }
 .tabs { display: inline-flex; gap: 8px; }
 .tab {
   background: rgba(255,255,255,.14);
-  border: none;
-  color: white;
+  border: 1px solid var(--border);
+  color: var(--ink);
   padding: 8px 14px;
   border-radius: 999px;
   cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
 }
+.tab:hover { transform: translateY(-1px); }
 .tab.active { background: rgba(59,130,246,.6); }
+.tab:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
 
 .refresh {
   background: rgba(255,255,255,.16);
-  color: white;
-  border: none;
+  color: var(--ink);
+  border: 1px solid var(--border);
   padding: 8px 12px;
   border-radius: 10px;
   cursor: pointer;
 }
+.refresh:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
 
 .message-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
 .message-item {
-  background: rgba(255,255,255,.1);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 14px;
+  color: var(--card-fg);
+  box-shadow: var(--shadow);
 }
 .meta { opacity: .95; margin-bottom: 6px; }
 .meta .date { opacity: .8; margin-left: 8px; font-size: .9rem; }
@@ -106,52 +186,57 @@ textarea { resize: vertical; }
   background: linear-gradient(90deg, #f59e0b, #ea580c);
   color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer;
 }
+.btn-ok:focus-visible,
+.btn-warn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
 
-.loading, .empty { text-align: center; padding: 28px 0; color: rgba(255,255,255,.9); }
+.loading, .empty { text-align: center; padding: 28px 0; color: var(--ink); }
 
-/* Responsive */
+/* =========================
+   UTILITIES
+   ========================= */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* =========================
+   RESPONSIVE
+   ========================= */
 @media (max-width: 720px) {
   .grid-2 { grid-template-columns: 1fr; }
 }
-/* === THEME OVERRIDES (ContactPage) === */
+
+/* =========================
+   DARK THEME
+   Activated via: <html data-theme="dark">
+   Reassign tokens to your global theme vars with fallbacks.
+   ========================= */
 :root[data-theme="dark"] .contact-page {
-  background: var(--bg) !important;
-  color: var(--text) !important;
+  --ink: var(--text, #eaf2ff);
+  --muted: var(--text, #eaf2ff);
+  --accent: var(--accent, #7ec3ff);
+  --accent-strong: var(--accent-strong, #a9d6ff);
+  --error: var(--error, #ff6b6b);
+
+  --page-bg: var(--bg,
+    radial-gradient(1000px 420px at 50% -200px, rgba(14,122,255,.10), transparent 60%)),
+    var(--bg2, linear-gradient(180deg, #0b1220, #0c1b2a, #0a0f16));
+  --surface: var(--surface, rgba(255,255,255,.10));
+  --card-bg: var(--surface, rgba(255,255,255,.10));
+  --card-fg: var(--text, #f6fbff);
+  --border: var(--border, rgba(255,255,255,.16));
+
+  --input-bg: var(--input-bg, rgba(17, 24, 39, 0.96));
+  --input-fg: var(--input-fg, #e6eef7);
+  --input-border: var(--input-border, rgba(255,255,255,0.28));
+
+  --shadow: var(--shadow, 0 10px 28px rgba(0,0,0,.5));
+  --focus-ring: 0 0 0 3px rgba(126,195,255,.25);
 }
 
-:root[data-theme="dark"] .field > span {
-  color: var(--text) !important;
-  opacity: .9 !important;
-}
-
-:root[data-theme="dark"] .contact-page input:not([type="checkbox"]):not([type="radio"]),
-:root[data-theme="dark"] .contact-page textarea,
-:root[data-theme="dark"] .contact-page select {
-  background: var(--input-bg) !important;
-  color: var(--input-fg) !important;
-  border: 1px solid var(--input-border) !important;
-  box-shadow: none !important;
-}
-
-:root[data-theme="dark"] .refresh,
-:root[data-theme="dark"] .tab {
-  background: rgba(255,255,255,.08) !important;
-  color: var(--text) !important;
-  border: 1px solid var(--border) !important;
-}
-:root[data-theme="dark"] .tab.active {
-  background: color-mix(in srgb, var(--accent), transparent 40%) !important;
-}
-
-:root[data-theme="dark"] .message-item {
-  background: var(--surface) !important;
-  border: 1px solid var(--border) !important;
-  color: var(--text) !important;
-}
-
-:root[data-theme="dark"] .btn-ok {
-  background: linear-gradient(90deg, var(--accent-3), color-mix(in srgb, var(--accent-3), black 20%)) !important;
-}
-:root[data-theme="dark"] .btn-warn {
-  background: linear-gradient(90deg, #f59e0b, #ea580c) !important;
+/* =========================
+   REDUCED MOTION
+   ========================= */
+@media (prefers-reduced-motion: reduce) {
+  .contact-page * { transition: none !important; animation: none !important; }
 }

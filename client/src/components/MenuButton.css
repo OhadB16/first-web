@@ -1,36 +1,62 @@
-/* src/components/MenuButton.css - modern gradient style + theme toggle */
+/* src/components/MenuButton.css
+   Menu button + dropdown (glass/gradient), with optional theme toggle.
+   - Uses your global theme tokens when present (var(--...)), else falls back
+   - A11y: :focus-visible rings
+   - Reduced motion friendly
+   - No !important; easy to override
+*/
 
-/* שורה חדשה: שיהיה מקום גם לכפתור הטוגל */
+/* =========================
+   WRAPPER (fixed, room for toggle)
+   ========================= */
 .menu-button-wrapper {
   position: fixed;
-  top: 20px;
-  right: 20px;
+  top: calc(20px + env(safe-area-inset-top));
+  right: calc(20px + env(safe-area-inset-right));
   z-index: 1000;
-  display: flex;         /* NEW */
-  gap: 10px;             /* NEW */
+  display: flex;         /* allow hamburger + theme toggle side-by-side */
+  gap: 10px;
+  align-items: center;
 }
 
+/* =========================
+   HAMBURGER BUTTON
+   ========================= */
 .hamburger {
-  background: linear-gradient(90deg, #031b22, #0072ff);
-  color: white;
+  background: linear-gradient(
+    90deg,
+    var(--btn-grad-start, #031b22),
+    var(--btn-grad-end,   #0072ff)
+  );
+  color: var(--btn-fg, #fff);
   border: none;
   padding: 12px 18px;
   font-size: 16px;
   border-radius: 10px;
   cursor: pointer;
   font-weight: bold;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  transition: all 0.3s ease;
+  box-shadow: var(--shadow, 0 4px 12px rgba(0, 0, 0, 0.3));
+  transition: all var(--t, 0.25s ease);
   backdrop-filter: blur(4px);
 }
-
 .hamburger:hover {
   transform: scale(1.05);
-  background: linear-gradient(90deg, #0072ff, #00c6ff);
-  box-shadow: 0 0 12px rgba(0, 198, 255, 0.5);
+  background: linear-gradient(
+    90deg,
+    var(--accent,   #00c6ff),
+    var(--accent-2, #0072ff)
+  );
+}
+.hamburger:focus-visible {
+  outline: 2px solid transparent;
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--accent, #00c6ff), transparent 60%),
+    var(--shadow, 0 4px 12px rgba(0,0,0,0.3));
 }
 
-/* NEW: כפתור החלפת ערכת־נושא */
+/* =========================
+   THEME TOGGLE (optional, same visual language)
+   ========================= */
 .theme-toggle {
   padding: 12px 14px;
   font-size: 16px;
@@ -40,99 +66,43 @@
   border: 1px solid var(--card-border, rgba(255,255,255,0.25));
   background: var(--card-bg, rgba(255,255,255,0.12));
   color: var(--text, #fff);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+  box-shadow: var(--shadow, 0 4px 12px rgba(0,0,0,0.3));
+  transition: transform var(--t, .2s ease), box-shadow var(--t, .2s ease), background var(--t, .2s ease);
   backdrop-filter: blur(4px);
 }
 .theme-toggle:hover {
   transform: scale(1.05);
   box-shadow: 0 0 12px rgba(0,0,0,0.35);
 }
+.theme-toggle:focus-visible {
+  outline: 2px solid transparent;
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--accent, #00c6ff), transparent 60%),
+    var(--shadow, 0 4px 12px rgba(0,0,0,0.3));
+}
 
-/* משתמש במשתני נושא כדי שיעבוד בלייט/דארק */
+/* =========================
+   DROPDOWN MENU (glass)
+   ========================= */
 .dropdown-menu {
   position: absolute;
   top: 56px;
   right: 0;
-  background: var(--menu-bg, rgba(255,255,255,0.1));
-  border-radius: 12px;
-  backdrop-filter: blur(10px);
-  display: flex;
-  flex-direction: column;
-  padding: 12px;
-  width: 200px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-  border: 1px solid var(--card-border, rgba(2, 0, 5, 0.2));
-  z-index: 1002;
-}
-
-.dropdown-menu button {
-  background: transparent;
-  border: none;
-  text-align: left;
-  padding: 12px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  color: var(--text, #111);           /* CHANGED: לא שחור קשיח */
-  border-radius: 8px;
-  transition: background 0.3s, color 0.3s;
-}
-
-.dropdown-menu button:hover {
-  background: var(--hover-bg, rgba(255,255,255,0.2));
-  color: var(--text, #fff);           /* CHANGED */
-}
-
-.dropdown-menu .logout {
-  color: #ff4e50;
-  font-weight: bold;
-}
-/* src/components/MenuButton.css */
-
-.menu-button-wrapper {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 1000;
-}
-
-.hamburger {
-  background: linear-gradient(90deg, var(--btn-grad-start), var(--btn-grad-end));
-  color: var(--btn-fg);
-  border: none;
-  padding: 12px 18px;
-  font-size: 16px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: bold;
-  box-shadow: var(--shadow);
-  transition: all var(--t);
-  backdrop-filter: blur(4px);
-}
-
-.hamburger:hover {
-  transform: scale(1.05);
-  background: linear-gradient(90deg, var(--accent), var(--accent-2));
-}
-
-.dropdown-menu {
-  position: absolute;
-  top: 56px;
-  right: 0;
-  background: var(--menu-bg);
-  color: var(--menu-fg);
-  border-radius: 12px;
-  backdrop-filter: blur(10px);
-  display: flex;
-  flex-direction: column;
-  padding: 12px;
   width: 220px;
-  box-shadow: var(--shadow);
-  border: 1px solid var(--border);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+
+  background: var(--menu-bg, rgba(255,255,255,0.10));
+  color: var(--menu-fg, #111);
+  border: 1px solid var(--border, rgba(2, 0, 5, 0.2));
+  border-radius: 12px;
+  box-shadow: var(--shadow, 0 8px 24px rgba(0,0,0,0.3));
+  backdrop-filter: blur(10px);
   z-index: 1002;
 }
 
+/* Menu items */
 .dropdown-menu button {
   background: transparent;
   border: none;
@@ -141,18 +111,36 @@
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  color: var(--menu-fg);
+  color: var(--menu-fg, #111);
   border-radius: 8px;
-  transition: background var(--t), color var(--t), transform var(--t);
+  transition:
+    background var(--t, 0.25s ease),
+    color var(--t, 0.25s ease),
+    transform var(--t, 0.25s ease);
 }
-
 .dropdown-menu button:hover {
-  background: var(--menu-item-hover);
+  background: var(--menu-item-hover, rgba(255,255,255,0.2));
+  color: var(--text, #fff);
   transform: translateX(2px);
 }
+.dropdown-menu button:focus-visible {
+  outline: 2px solid transparent;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent, #00c6ff), transparent 60%);
+}
 
 .dropdown-menu .logout {
-  color: var(--error);
+  color: var(--error, #ff4e50);
   font-weight: bold;
 }
 
+/* =========================
+   REDUCED MOTION
+   ========================= */
+@media (prefers-reduced-motion: reduce) {
+  .hamburger,
+  .theme-toggle,
+  .dropdown-menu button {
+    transition: none !important;
+    transform: none !important;
+  }
+}

@@ -1,12 +1,43 @@
+/* src/pages/MyItemsPage.css
+   Items page — premium gradient + glass, responsive grid, a11y focus.
+   - All rules scoped under .items-page-container
+   - Design tokens + dark mode via token reassignment (no !important)
+*/
+
+/* =========================
+   TOKENS & PAGE WRAPPER
+   ========================= */
 .items-page-container {
+  /* Colors */
+  --ink: #ffffff;
+  --muted: #cce7ff;
+  --accent: #00c6ff;
+  --accent-2: #66ccff;
+
+  /* Surfaces */
+  --page-bg: linear-gradient(to bottom, #000000, #203a43, #2c5364);
+  --card-bg: rgba(255,255,255,0.06);
+  --card-fg: #ffffff;
+  --border: rgba(255,255,255,0.10);
+
+  /* Effects */
+  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.25);
+  --shadow-hover: 0 8px 24px rgba(0, 198, 255, 0.4);
+  --focus-ring: 0 0 0 3px rgba(0, 198, 255, 0.28);
+
+  /* Layout */
+  --radius-lg: 16px;
+
   padding: 32px;
-  font-family: 'Inter', 'Segoe UI', sans-serif;
-  color: white;
-  background: linear-gradient(to bottom, #000000, #203a43, #2c5364);
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: var(--ink);
+  background: var(--page-bg);
   min-height: 100vh;
 }
 
-/* HEADER */
+/* =========================
+   HEADER
+   ========================= */
 .items-header {
   display: flex;
   align-items: center;
@@ -14,58 +45,69 @@
   margin-bottom: 24px;
 }
 
-/* EMPTY MESSAGE */
+/* =========================
+   EMPTY STATE
+   ========================= */
 .empty-message {
-  color: #ccc;
+  color: var(--muted);
   font-size: 18px;
   text-align: center;
   margin-top: 40px;
 }
 
-/* BACK BUTTON */
+/* =========================
+   BACK BUTTON
+   ========================= */
 .back-btn {
   background: transparent;
-  border: 2px solid #00c6ff;
-  color: #00c6ff;
+  border: 2px solid var(--accent);
+  color: var(--accent);
   font-size: 14px;
   font-weight: 600;
   padding: 8px 16px;
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease, color .2s ease;
+  box-shadow: 0 2px 6px rgba(0, 198, 255, 0.2);
 }
-
 .back-btn:hover {
-  background: #00c6ff;
+  background: var(--accent);
   color: #000;
-  transform: scale(1.03);
+  transform: translateY(-1px);
   box-shadow: 0 0 12px rgba(0, 198, 255, 0.4);
 }
+.back-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
 
-/* GRID */
+/* =========================
+   GRID
+   ========================= */
 .items-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 20px;
 }
 
-/* ITEM CARD */
+/* =========================
+   ITEM CARD
+   ========================= */
 .item-card {
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--card-bg);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  border-radius: 16px;
-  color: white;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  border-radius: var(--radius-lg);
+  color: var(--card-fg);
+  box-shadow: var(--shadow-md);
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid var(--border);
+  transition: transform .2s ease, box-shadow .2s ease;
   text-align: center;
 }
-
 .item-card:hover {
-  transform: scale(1.04);
-  box-shadow: 0 8px 24px rgba(0, 198, 255, 0.4);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
 }
 
 /* ITEM IMAGE */
@@ -73,67 +115,61 @@
   width: 100%;
   height: 160px;
   object-fit: cover;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--border);
 }
 
 /* ITEM INFO */
-.item-info {
-  padding: 16px;
-}
-
+.item-info { padding: 16px; }
 .item-info h3 {
   margin: 0 0 8px;
   font-size: 18px;
   font-weight: 600;
-  color: #ffffff;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  color: var(--ink);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
-
 .item-info p {
   font-size: 14px;
-  color: #cce7ff;
+  color: var(--muted);
   margin: 0 0 12px;
 }
-
 .item-info .price {
   font-size: 16px;
-  font-weight: bold;
-  color: #00c6ff;
+  font-weight: 700;
+  color: var(--accent);
 }
-/* === THEME OVERRIDES (MyItemsPage) === */
+
+/* =========================
+   DARK THEME
+   Activated via: <html data-theme="dark">
+   Reassign tokens to your global theme vars with fallbacks.
+   ========================= */
 :root[data-theme="dark"] .items-page-container {
-  background: var(--bg) !important;
-  color: var(--text) !important;
+  --ink: var(--text, #eaf2ff);
+  --muted: var(--muted, #9fb3c8);
+  --accent: var(--accent, #7ec3ff);
+  --accent-2: var(--accent-2, var(--accent, #7ec3ff));
+
+  --page-bg: var(--bg,
+    radial-gradient(1000px 420px at 50% -200px, rgba(14,122,255,.10), transparent 60%)),
+    var(--bg2, linear-gradient(180deg, #0b1220, #0c1b2a, #0a0f16));
+  --card-bg: var(--card-bg, rgba(255,255,255,0.07));
+  --card-fg: var(--card-fg, #f6fbff);
+  --border: var(--border, rgba(255,255,255,0.16));
+
+  --shadow-md: 0 10px 28px rgba(0,0,0,0.5);
+  --shadow-hover: 0 8px 22px rgba(0,0,0,0.45);
 }
 
-:root[data-theme="dark"] .item-card {
-  background: var(--card-bg) !important;
-  color: var(--card-fg) !important;
-  border: 1px solid var(--border) !important;
-  box-shadow: var(--shadow) !important;
+/* =========================
+   RESPONSIVE & REDUCED MOTION
+   ========================= */
+@media (max-width: 640px) {
+  .items-page-container { padding: 24px; }
 }
 
-:root[data-theme="dark"] .item-image {
-  border-bottom: 1px solid var(--border) !important;
-}
-
-:root[data-theme="dark"] .item-info h3 {
-  color: var(--card-fg) !important;
-  text-shadow: none !important;
-}
-:root[data-theme="dark"] .item-info p {
-  color: var(--muted) !important;
-}
-:root[data-theme="dark"] .item-info .price {
-  color: var(--accent-2) !important;
-}
-
-:root[data-theme="dark"] .back-btn {
-  background: transparent !important;
-  border: 2px solid var(--accent-2) !important;
-  color: var(--accent-2) !important;
-}
-:root[data-theme="dark"] .back-btn:hover {
-  background: var(--accent-2) !important;
-  color: #000 !important;
+@media (prefers-reduced-motion: reduce) {
+  .items-page-container * {
+    transition: none !important;
+    animation: none !important;
+  }
 }

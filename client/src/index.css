@@ -1,84 +1,96 @@
-/* ========== index.css (base only) ======================================= */
-/* Reset עדין שלא שובר עמודים קיימים */
+/* ========== index.css (base only) =======================================
+   - Gentle reset that won’t break existing pages
+   - A11y-friendly focus + screen-reader helpers
+   - Safe-area aware placement for top controls
+   - Minimal, tokenized z-indexes to avoid collisions
+   - Reduced motion + high-contrast fallbacks
+========================================================================= */
+
+/* ---- Root tokens (keep tiny) ---------------------------------------- */
+:root {
+  /* Layering for floating controls */
+  --z-theme-toggle: 1100;
+  --z-menu-button: 1200;
+
+  /* Allow UA widgets to auto-adapt in light/dark */
+  color-scheme: light dark;
+}
+
+/* ---- Gentle reset ---------------------------------------------------- */
 *,
 *::before,
 *::after { box-sizing: border-box; }
 
-html, body {
-  height: 100%;
-}
+html, body { height: 100%; }
 
 body {
   margin: 0;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, Inter, Arial, sans-serif;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
 
-/* תמונות/וידאו לא שוברים לייאאוט */
+/* Media shouldn’t overflow */
 img, picture, video, canvas, svg {
   display: block;
   max-width: 100%;
 }
 
-/* טפסים יורשים פונט */
-input, button, textarea, select {
-  font: inherit;
-}
+/* Form controls inherit typography */
+input, button, textarea, select { font: inherit; }
 
-/* פוקוס נגיש ולא אגרסיבי */
+/* Accessible, not-too-aggressive focus ring */
 :focus-visible {
-  outline: 2px solid rgba(0, 114, 255, .7);
+  outline: 2px solid rgba(0,114,255,.7);
   outline-offset: 2px;
 }
 
-/* מחלקת נגישות שימושית */
-.visually-hidden {
+/* Screen-reader helpers (two common aliases) */
+.visually-hidden,
+.sr-only {
   position: absolute !important;
   width: 1px; height: 1px;
   padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0, 0, 1px, 1px);
   white-space: nowrap; border: 0;
 }
-/* ===== Fixed positions for top controls ===== */
+
+/* Text selection (subtle) */
+::selection { background: rgba(0,114,255,.18); }
+
+/* ---- Floating controls: positions only (keep styles in component CSS) */
 .theme-toggle-anchor {
-  position: fixed;
+  position: fixed; /* anchor to viewport */
   top: max(12px, env(safe-area-inset-top));
   left: max(12px, env(safe-area-inset-left));
-  z-index: 1100; /* גבוה מספיק כדי להיות קליקבילי */
+  z-index: var(--z-theme-toggle);
+  pointer-events: none; /* anchor ignores clicks; button handles them */
 }
 
-/* ממקמים את כפתור התפריט בצד ימין למעלה כדי שלא יחפוף */
+/* The button itself should receive clicks */
+.theme-toggle-anchor .theme-toggle-btn { pointer-events: auto; }
+
+/* Menu button wrapper lives top-right.
+   Styling for the button/menu stays in MenuButton.css to avoid specificity wars. */
 .menu-button-wrapper {
   position: fixed;
   top: max(12px, env(safe-area-inset-top));
   right: max(12px, env(safe-area-inset-right));
-  z-index: 1200; /* מעט מעל ה-Toggle ליתר ביטחון */
+  z-index: var(--z-menu-button);
 }
 
-/* אם התפריט נפתח כ-dropdown, ניישר אותו לימין */
+/* If the menu opens as a dropdown, align it to the right edge */
 .menu-button-wrapper .dropdown-menu {
   position: absolute;
   right: 0;
   left: auto;
   margin-top: 8px;
 }
-/* --- Theme toggle anchor & button placement --- */
-.theme-toggle-anchor {
-  position: fixed;   /* עוגן לוויופורט */
-  top: 16px;
-  left: 16px;
-  z-index: 10000;    /* מעל התפריט */
-  pointer-events: none; /* שהעוגן לא יתפוס קליקים - רק הכפתור */
-}
 
-/* הכפתור עצמו כן צריך לקבל קליקים */
-.theme-toggle-anchor .theme-toggle-btn {
-  pointer-events: auto;
-}
-
-/* אפשר ללטש קצת מראה הכפתור, בלי מיקום */
+/* (Optional) light styling for the bare theme toggle button.
+   If you already style it elsewhere, you can delete this block. */
 .theme-toggle-btn {
   padding: 8px 12px;
   border-radius: 10px;
@@ -90,7 +102,27 @@ input, button, textarea, select {
   box-shadow: 0 4px 12px rgba(0,0,0,.25);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
+  transition: transform .2s ease;
 }
-.theme-toggle-btn:hover {
-  transform: translateY(-1px);
+.theme-toggle-btn:hover { transform: translateY(-1px); }
+
+/* Make the toggle visible on light backgrounds, when not in dark mode */
+:root:not([data-theme="dark"]) .theme-toggle-btn {
+  background: rgba(0,0,0,0.08);
+  color: #0f172a;
+  border-color: rgba(0,0,0,0.15);
+}
+
+/* ---- Reduced motion & high-contrast safety -------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html:focus-within { scroll-behavior: auto; }
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (forced-colors: active) {
+  :focus-visible { outline: 1px solid Highlight; }
 }

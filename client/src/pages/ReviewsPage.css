@@ -1,23 +1,45 @@
 /* src/pages/ReviewsPage.css
-   Premium reviews page styled to match your dark gradient aesthetic.
+   Reviews Page — premium gradient, glass cards, responsive grid.
+   - Clean token model + dark-mode via token reassignment
+   - Strong :focus-visible across interactive elements
+   - Reduced motion friendly
+   - Keeps all existing class names (no JSX changes needed)
 */
 
+/* =========================
+   TOKENS & PAGE WRAPPER
+   ========================= */
 .reviews-page {
+  /* Core palette */
   --ink: #e8f4ff;
   --muted: #b8d7ee;
   --accent: #66ccff;
   --accent-strong: #9ad7ff;
+
+  /* Surfaces & effects */
   --card: rgba(255,255,255,0.06);
-  --gradient: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
-  background: var(--gradient);
+  --page-bg: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
+  --border: rgba(255,255,255,0.18);
+  --shadow-sm: 0 6px 20px rgba(0,0,0,0.25);
+  --shadow-md: 0 8px 22px rgba(0,0,0,0.28);
+  --focus-ring: 0 0 0 3px rgba(126,195,255,0.28);
+
+  /* Layout */
+  --container: min(1200px, 94vw);
+  --radius: 14px;
+
+  background: var(--page-bg);
   color: var(--ink);
   min-height: 100vh;
   font-family: 'Segoe UI', Inter, system-ui, -apple-system, sans-serif;
   padding-bottom: 40px;
 }
 
+/* =========================
+   HERO
+   ========================= */
 .reviews-hero {
-  width: min(1200px, 94vw);
+  width: var(--container);
   margin: 24px auto 10px;
   text-align: center;
 }
@@ -32,33 +54,28 @@
   line-height: 1.7;
 }
 
-/* === Toolbar =========================================================== */
+/* =========================
+   TOOLBAR (filters + KPIs)
+   ========================= */
 .toolbar {
-  width: min(1200px, 94vw);
+  width: var(--container);
   margin: 18px auto 8px;
   background: var(--card);
-  border-radius: 14px;
+  border-radius: var(--radius);
   padding: clamp(12px, 2vw, 18px);
   display: flex;
   gap: 16px;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  box-shadow: var(--shadow-sm);
   backdrop-filter: blur(4px);
 }
+.toolbar-left { display: flex; gap: 14px; flex-wrap: wrap; }
 
-.toolbar-left {
-  display: flex;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-
-.field {
-  display: grid;
-  gap: 6px;
-  font-size: 14px;
-}
+.field { display: grid; gap: 6px; font-size: 14px; }
 .field span { color: var(--muted); }
+
+/* Inputs/selects with consistent focus */
 .field select,
 .field input {
   background: rgba(255,255,255,0.12);
@@ -68,35 +85,28 @@
   border-radius: 10px;
   outline: none;
   min-width: 220px;
+  transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
+}
+.field select:focus-visible,
+.field input:focus-visible {
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
 }
 
-.toolbar-right {
-  display: flex;
-  gap: 18px;
-  align-items: center;
-}
-.kpi {
-  text-align: right;
-}
-.kpi-label {
-  display: block;
-  font-size: 12px;
-  color: var(--muted);
-}
-.kpi-value {
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+.toolbar-right { display: flex; gap: 18px; align-items: center; }
+.kpi { text-align: right; }
+.kpi-label { display: block; font-size: 12px; color: var(--muted); }
+.kpi-value { font-weight: 700; display: flex; align-items: center; gap: 8px; }
 
 /* Stars */
 .stars { font-size: 16px; letter-spacing: 1px; }
 .stars-dim { opacity: 0.25; }
 
-/* === Grid ============================================================== */
+/* =========================
+   GRID & REVIEW CARDS
+   ========================= */
 .reviews-grid {
-  width: min(1200px, 94vw);
+  width: var(--container);
   margin: 12px auto 0;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -104,12 +114,15 @@
 }
 
 .review-card {
+  position: relative; /* for inline delete button */
   background: var(--card);
-  border-radius: 14px;
+  border-radius: var(--radius);
   padding: 16px;
-  box-shadow: 0 8px 22px rgba(0,0,0,0.28);
+  box-shadow: var(--shadow-md);
   display: grid;
   gap: 8px;
+  border: 1px solid var(--border);
+  backdrop-filter: blur(4px);
 }
 
 .review-head {
@@ -130,27 +143,38 @@
   font-size: 18px;
   font-weight: 700;
 }
-.review-text {
-  color: var(--ink);
-  opacity: 0.92;
-  line-height: 1.6;
+.review-text { color: var(--ink); opacity: 0.92; line-height: 1.6; }
+.review-foot { display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; }
+
+/* Inline delete (admin) */
+.delete-btn {
+  position: absolute; top: .5rem; right: .5rem;
+  background: transparent; border: 0; cursor: pointer;
+  font-size: 18px; opacity: .7; border-radius: 8px; padding: 4px 6px;
+  transition: opacity .15s ease, box-shadow .15s ease, transform .15s ease;
 }
-.review-foot {
-  display: flex;
-  justify-content: space-between;
-  color: var(--muted);
-  font-size: 12px;
+.delete-btn:hover { opacity: 1; transform: translateY(-1px); }
+.delete-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  box-shadow: var(--focus-ring);
 }
+
+/* =========================
+   EMPTY / LOADING STATES
+   ========================= */
 .empty, .loading {
-  width: min(1200px, 94vw);
+  width: var(--container);
   margin: 32px auto;
   text-align: center;
   color: var(--muted);
 }
 
-/* Footer actions */
+/* =========================
+   FOOTER ACTIONS
+   ========================= */
 .footer-actions {
-  width: min(1200px, 94vw);
+  width: var(--container);
   margin: 8px auto 0;
   display: flex;
   justify-content: flex-end;
@@ -158,38 +182,36 @@
 .back-btn {
   margin-top: 12px;
   padding: 12px 18px;
-  border: none;
+  border: 1px solid var(--border);
   border-radius: 10px;
   background: rgba(255,255,255,0.18);
   color: white;
   cursor: pointer;
-  transition: transform .2s ease, box-shadow .2s ease;
+  transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease, color .2s ease;
 }
 .back-btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 6px 18px rgba(0,0,0,0.35);
 }
+.back-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
 
-/* Responsive */
-@media (max-width: 980px) {
-  .reviews-grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 620px) {
-  .toolbar { flex-direction: column; align-items: stretch; }
-  .kpi { text-align: left; }
-  .reviews-grid { grid-template-columns: 1fr; }
-}
-/* Post-a-Review form */
+/* =========================
+   POST-A-REVIEW FORM
+   ========================= */
 .review-form {
-  width: min(1200px, 94vw);
+  width: var(--container);
   margin: 16px auto;
-  background: rgba(255,255,255,0.06);
-  border-radius: 14px;
+  background: var(--card);
+  border-radius: var(--radius);
   padding: clamp(12px, 2vw, 18px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  box-shadow: var(--shadow-sm);
   backdrop-filter: blur(4px);
   display: grid;
   gap: 12px;
+  border: 1px solid var(--border);
 }
 
 .review-form .form-row {
@@ -209,11 +231,18 @@
   padding: 10px 12px;
   border-radius: 10px;
   outline: none;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.review-form input:focus-visible,
+.review-form select:focus-visible,
+.review-form textarea:focus-visible {
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
 }
 
 .review-form .full { grid-column: 1 / -1; }
 
-.form-actions { display: flex; justify-content: flex-end; }
+.form-actions { display: flex; justify-content: flex-end; gap: 8px; }
 .btn-primary {
   background: linear-gradient(90deg, #00c6ff, #0072ff);
   color: #fff;
@@ -222,22 +251,16 @@
   padding: 10px 16px;
   cursor: pointer;
   font-weight: 700;
+  transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
 }
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(0,0,0,0.35); }
+.btn-primary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .btn-primary:disabled { opacity: 0.6; cursor: default; }
+.form-error { color: #ffbdb2; font-weight: 600; }
 
-.form-error {
-  color: #ffbdb2;
-  font-weight: 600;
-}
-
-/* Responsive tweak */
-@media (max-width: 620px) {
-  .review-form .form-row { grid-template-columns: 1fr; }
-}
-.review-card { position: relative; }
-.delete-btn { position:absolute; top:.5rem; right:.5rem; background:transparent; border:0; cursor:pointer; font-size:18px; opacity:.7; }
-.delete-btn:hover { opacity:1; }
-/* Admin inbox */
+/* =========================
+   ADMIN INBOX (optional)
+   ========================= */
 .inbox-wrap { max-width: 1100px; margin: 0 auto; }
 .inbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
 .msg-card {
@@ -247,6 +270,7 @@
   color: #fff;
   box-shadow: 0 2px 10px rgba(0,0,0,0.3);
   backdrop-filter: blur(6px);
+  border: 1px solid var(--border);
 }
 .msg-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px; }
 .msg-head .row { display: flex; align-items: baseline; gap: 4px; }
@@ -257,42 +281,60 @@
 .delete-button {
   background: linear-gradient(90deg, #ff4e50, #f9d423);
   color: #000; border: none; border-radius: 8px; padding: 10px 14px;
-  font-weight: 700; cursor: pointer; transition: transform .2s ease, box-shadow .2s ease;
+  font-weight: 700; cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
 }
-.delete-button:hover { transform: scale(1.05); box-shadow: 0 0 12px rgba(255,255,255,.3); }
+.delete-button:hover { transform: translateY(-1px); box-shadow: 0 0 12px rgba(255,255,255,.3); }
+.delete-button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-/* שמירה על הריווח שלא ייגעו אחד בשני */
-.contact-form .two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-@media (max-width: 720px){ .contact-form .two { grid-template-columns: 1fr; } }
+/* =========================
+   RESPONSIVE
+   ========================= */
+@media (max-width: 980px) {
+  .reviews-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 620px) {
+  .toolbar { flex-direction: column; align-items: stretch; }
+  .kpi { text-align: left; }
+  .reviews-grid { grid-template-columns: 1fr; }
+  .review-form .form-row { grid-template-columns: 1fr; }
+}
 
-/* === THEME OVERRIDES (ReviewsPage) === */
+/* =========================
+   DARK THEME (token mapping)
+   Activated via: <html data-theme="dark">
+   We reassign tokens here so child components inherit them cleanly.
+   ========================= */
 :root[data-theme="dark"] .reviews-page {
-  /* מיפוי המשתנים הפנימיים ל-theme tokens */
-  --ink: var(--text);
-  --muted: var(--muted);
-  --accent: var(--accent);
-  --accent-strong: var(--accent-2);
-  --card: var(--surface);
-  background: var(--bg) !important;
-  color: var(--text) !important;
+  --ink: var(--text, #eaf2ff);
+  --muted: var(--muted, #9fb3c8);
+  --accent: var(--accent, #7ec3ff);
+  --accent-strong: var(--accent-2, #a9d6ff);
+
+  --card: var(--surface, rgba(255,255,255,0.07));
+  --border: var(--border, rgba(255,255,255,0.16));
+  --page-bg:
+    var(--bg, radial-gradient(1000px 420px at 50% -200px, rgba(14,122,255,.10), transparent 60%)),
+    var(--bg2, linear-gradient(180deg, #0b1220, #0c1b2a, #0a0f16));
+
+  --shadow-sm: var(--shadow, 0 10px 28px rgba(0,0,0,0.5));
+  --shadow-md: var(--shadow, 0 12px 32px rgba(0,0,0,0.55));
 }
 
-:root[data-theme="dark"] .toolbar,
-:root[data-theme="dark"] .review-card,
-:root[data-theme="dark"] .review-form {
-  background: var(--surface) !important;
-  color: var(--text) !important;
-  border: 1px solid var(--border) !important;
-  box-shadow: var(--shadow) !important;
+/* =========================
+   REDUCED MOTION
+   ========================= */
+@media (prefers-reduced-motion: reduce) {
+  .reviews-page * {
+    transition: none !important;
+    animation: none !important;
+  }
 }
 
-:root[data-theme="dark"] .review-aspect {
-  background: color-mix(in srgb, var(--accent), transparent 84%) !important;
-  border-color: color-mix(in srgb, var(--accent), transparent 65%) !important;
-  color: var(--accent-2) !important;
-}
-
-:root[data-theme="dark"] .btn-primary {
-  background: linear-gradient(90deg, var(--btn-grad-start), var(--btn-grad-end)) !important;
-  color: var(--btn-fg) !important;
-}
+/* =========================
+   HOUSEKEEPING
+   - Removed a stray global rule: `.contact-form .two` that leaked styles
+     into ContactPage. Keep that rule inside ContactPage.css instead.
+   - If you truly need it here, scope it as:
+     .reviews-page .contact-form .two { ... }
+   ========================= */

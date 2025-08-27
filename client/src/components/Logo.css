@@ -1,37 +1,77 @@
+/* Logo lockup — centered wordmark with faint airplane glyph behind it
+   - Responsive sizes with clamp()
+   - Gradient text with safe fallbacks
+   - High-contrast friendly
+*/
+
 .logo-container {
+  /* Layout */
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 120px;
+
+  /* Responsive height (≈120px on desktop) */
+  height: clamp(84px, 12vw, 120px);
   margin-bottom: 24px;
 }
 
+/* Background airplane glyph (decorative) */
 .logo-plane {
   position: absolute;
-  font-size: 100px;
+  font-size: clamp(64px, 13vw, 100px);
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) rotate(-10deg);
-  opacity: 0.15;
+  opacity: 0.15;          /* subtle background feel */
   z-index: 1;
-  pointer-events: none;
+  pointer-events: none;   /* ensure clicks pass through */
 }
 
+/* Brand wordmark with gradient fill */
 .logo-text {
-  font-size: 48px;
+  /* Typography */
+  font-size: clamp(32px, 6.5vw, 48px);
   font-weight: 700;
   font-family: 'Segoe UI', 'Inter', sans-serif;
-  background: linear-gradient(90deg, #00c6ff, #0072ff);
-
-  /* ✨ keep both the standard and the prefixed versions */
-  -webkit-background-clip: text;  /* Safari / old Chromium */
-  background-clip: text;          /* Standard */
-  -webkit-text-fill-color: transparent;
-  color: transparent;             /* Standard fallback */
-
-  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-  z-index: 2;
-  position: relative;
+  letter-spacing: 0.5px;
   text-align: center;
+
+  /* Gradient tokens (easy to retheme) */
+  --grad-start: #00c6ff;
+  --grad-end:   #0072ff;
+
+  /* Gradient background (used for the text fill when supported) */
+  background: linear-gradient(90deg, var(--grad-start), var(--grad-end));
+
+  /* Fallback: show a solid color when background-clip:text isn't supported */
+  color: var(--grad-end);
+
+  /* Nice edge definition over busy backgrounds */
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+
+  /* Layer above the plane */
+  position: relative;
+  z-index: 2;
+}
+
+/* Enable true gradient text where supported (Safari + modern browsers) */
+@supports (-webkit-background-clip: text) or (background-clip: text) {
+  .logo-text {
+    /* Keep both standard and prefixed versions */
+    -webkit-background-clip: text;  /* Safari / old Chromium */
+    background-clip: text;          /* Standard */
+    -webkit-text-fill-color: transparent;
+    color: transparent;             /* Standard fallback */
+  }
+}
+
+/* High-contrast / forced colors mode: ensure readable solid text */
+@media (forced-colors: active) {
+  .logo-text {
+    background: none;
+    -webkit-text-fill-color: CanvasText;
+    color: CanvasText;
+    text-shadow: none;
+  }
 }

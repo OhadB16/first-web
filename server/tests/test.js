@@ -1,30 +1,93 @@
 // server/tests/test.js  (או server/test.js)
 /* eslint-disable no-console */
 
-// node-fetch v3 (ESM) טעינה דינמית תחת CommonJS:
-const fetch = (...args) =>
-  import('node-fetch').then(({ default: f }) => f(...args));
+/**
+ * node-fetch v3 (ESM) dynamic load under CommonJS.
+ * Keeping it inline here avoids switching your whole test file to ESM.
+ */
+const fetch = (...args) => import('node-fetch').then(({ default: f }) => f(...args));
 
+/** Base URL for the running API server. */
 const BASE = process.env.BASE_URL || 'http://localhost:3001';
 
-// Cookie jar קטן – מספיק ל"skyUser"
+/* ──────────────────────────────────────────────────────────────────────────
+   Cookie jar (simple, string-based)
+   - Captures one or multiple Set-Cookie headers
+   - Avoids duplicates when the same cookie name is reset
+   ────────────────────────────────────────────────────────────────────────── */
+
 let cookieJar = '';
 
-function setCookieFromResponse(res) {
-  const setCookie = res.headers.get('set-cookie');
-  if (!setCookie) return;
-  const parts = setCookie.split(';')[0]; // רק name=value
-  cookieJar = cookieJar ? `${cookieJar}; ${parts}` : parts;
+/**
+ * Extracts one or more Set-Cookie headers from a node-fetch Response.
+ * Works across node-fetch versions:
+ *  - node-fetch: res.headers.raw()['set-cookie'] → string[]
+ *  - standard:   res.headers.get('set-cookie')   → string | null
+ */
+function getSetCookieArray(res) {
+  try {
+    if (typeof res.headers.raw === 'function') {
+      const raw = res.headers.raw()['set-cookie'];
+      if (Array.isArray(raw)) return raw;
+    }
+  } catch {}
+  const single = res.headers.get('set-cookie');
+  return single ? [single] : [];
 }
 
+/**
+ * Merge Set-Cookie headers into our simple jar string,
+ * replacing existing cookies with the same name.
+ */
+function setCookieFromResponse(res) {
+  const setCookies = getSetCookieArray(res);
+  if (!setCookies.length) return;
+
+  // Convert the existing jar ("k=v; x=y") to a Map for easy replace
+  const map = new Map(
+    cookieJar
+      .split(';')
+      .map(s => s.trim())
+      .filter(Boolean)
+      .map(pair => {
+        const [k, v] = pair.split('=');
+        return [k, v];
+      })
+  );
+
+  for (const line of setCookies) {
+    const [pair] = String(line).split(';'); // only "k=v"
+    const [k, v] = pair.split('=');
+    if (k) map.set(k.trim(), (v ?? '').trim());
+  }
+
+  cookieJar = Array.from(map.entries())
+    .map(([k, v]) => `${k}=${v}`)
+    .join('; ');
+}
+
+/**
+ * Wrapper around fetch that automatically sends cookies and
+ * captures Set-Cookie on the response.
+ */
 async function doFetch(path, opts = {}) {
   const headers = { ...(opts.headers || {}) };
-  if (cookieJar) headers['cookie'] = cookieJar;
+  if (cookieJar) headers.cookie = cookieJar;
   const res = await fetch(`${BASE}${path}`, { ...opts, headers });
   setCookieFromResponse(res);
   return res;
 }
 
+/* ──────────────────────────────────────────────────────────────────────────
+   Tiny expect helper for readable console output
+   ────────────────────────────────────────────────────────────────────────── */
+
+/**
+ * Runs an async predicate; logs PASS/FAIL with a label.
+ * Return true from predicate → PASS
+ * Return a string → FAIL (string is the reason)
+ * Throw → FAIL (message is reason)
+ */
 async function expect(predicate, label) {
   try {
     const ok = await predicate();
@@ -40,13 +103,35 @@ async function expect(predicate, label) {
   }
 }
 
+/** Random user generator for isolation between test runs. */
 function randUser() {
   const n = Math.floor(Math.random() * 1e6);
   return { username: `user_${n}`, password: `P${n}a!`, email: `u${n}@mail.com` };
 }
 
+/**
+ * Waits briefly for the server to become responsive.
+ * Success if /api/me returns 200/401/403 (any means "server is up").
+ */
+async function waitForServerReady(timeoutMs = 3000) {
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    try {
+      const res = await fetch(`${BASE}/api/me`);
+      if ([200, 401, 403].includes(res.status)) return;
+    } catch {}
+    await new Promise(r => setTimeout(r, 100));
+  }
+  throw new Error('Server did not become ready in time');
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Test run
+   ────────────────────────────────────────────────────────────────────────── */
+
 (async function run() {
   console.log(`\n🔎 Testing server at ${BASE}\n`);
+  await waitForServerReady();
 
   const u = randUser();
 
@@ -90,14 +175,14 @@ function randUser() {
     return Array.isArray(j);
   }, 'GET /api/products returns an array');
 
-  // 5) Contact – create public message  ✅ תוקן: בודקים id/message ולא ok:true
+  // 5) Contact – create public message
   const contactSubject = 'Test from test.js ' + Date.now();
   const contactMessage = 'Hello from automated tests';
   await expect(async () => {
     const res = await doFetch('/api/contact', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      // שדות חובה לפי ה־router: fullName, email, message (גם אם מחוברים)
+      // Router allows logged-in users to send message-only, but including fields is fine.
       body: JSON.stringify({
         fullName: 'Test Runner',
         email: 'runner@example.com',
@@ -111,7 +196,6 @@ function randUser() {
     });
     if (res.status !== 201) return `status ${res.status}`;
     const j = await res.json();
-    // ה־API מחזיר את הרשומה שנוצרה (עם id, createdAt, וכו') — לא { ok:true }
     return j && j.id && j.message === contactMessage ? true : 'missing id/message';
   }, 'POST /api/contact creates a message');
 
@@ -195,7 +279,7 @@ function randUser() {
     return j?.ok === true;
   }, 'DELETE /api/reviews/:id removes a review (admin)');
 
-  // 12) Purchases – get
+  // 12) Purchases – get (sanity)
   await expect(async () => {
     const res = await doFetch(`/api/purchase/${u.username}`);
     if (!res.ok) return `status ${res.status}`;
@@ -211,9 +295,9 @@ function randUser() {
       body: JSON.stringify({ username: u.username }),
     });
     return res.ok;
-  }, 'Logout route exists (POST or GET)');
+  }, 'Logout route exists (POST)');
 
-  // 14) Products admin CRUD — create
+  // 14) Products admin CRUD — create then delete (cleanup)
   let createdProductId = null;
   await expect(async () => {
     const res = await doFetch('/api/products', {
@@ -234,6 +318,16 @@ function randUser() {
     createdProductId = j?.id;
     return !!createdProductId;
   }, 'Products admin CRUD — create');
+
+  await expect(async () => {
+    if (!createdProductId) return 'no product created';
+    const res = await doFetch(`/api/products/${encodeURIComponent(createdProductId)}`, {
+      method: 'DELETE',
+      headers: { 'X-Username': 'admin' },
+    });
+    if (!res.ok) return `status ${res.status}`;
+    return true;
+  }, 'Products admin CRUD — delete (cleanup)');
 
   console.log('\n✅ Done.\n');
 })();

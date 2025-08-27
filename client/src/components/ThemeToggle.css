@@ -1,25 +1,106 @@
+/* ThemeToggle.css
+   Floating “theme” FAB that flips <html data-theme="dark"> on/off.
+   - A11y: visible :focus-visible ring, aria-pressed state
+   - Motion safety: prefers-reduced-motion
+   - High contrast: forced-colors overrides
+   - Uses your existing tokens if present, with sensible fallbacks
+*/
+
+/* ===== Base (light OR dark) ========================================= */
+.theme-fab,  /* ← rename to avoid clashes with MenuButton.css */
 .theme-toggle {
   position: fixed;
   top: 14px;
   right: 14px;
   z-index: 9999;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
   padding: 8px 12px;
-  border: 1px solid rgba(255,255,255,0.25);
   border-radius: 999px;
-  background: rgba(255,255,255,0.14);
-  color: #fff;
+
+  /* Token-aware with fallbacks */
+  background: var(--surface, rgba(255,255,255,0.14));
+  color: var(--text, #fff);
+  border: 1px solid var(--border, rgba(255,255,255,0.25));
+
   font-weight: 700;
   cursor: pointer;
+  -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
+
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease,
+    background-color .2s ease,
+    border-color .2s ease;
 }
+
+.theme-fab:hover,
 .theme-toggle:hover {
   transform: translateY(-1px);
   box-shadow: 0 8px 20px rgba(0,0,0,0.3);
 }
 
-/* כשהמצב בהיר כברירת מחדל, נעשה את הכפתור מעט כהה-כהה כדי שייראה גם על רקע לבן */
+/* Keyboard focus ring */
+.theme-fab:focus-visible,
+.theme-toggle:focus-visible {
+  outline: 2px solid transparent;
+  box-shadow:
+    0 0 0 3px rgba(14,122,255,0.35),
+    0 8px 20px rgba(0,0,0,0.35);
+}
+
+/* Pressed/active feedback */
+.theme-fab:active,
+.theme-toggle:active {
+  transform: translateY(0) scale(.98);
+}
+
+/* ===== Light default tweak (your original intent) =================== */
+:root:not([data-theme="dark"]) .theme-fab,
 :root:not([data-theme="dark"]) .theme-toggle {
-  background: rgba(0,0,0,0.08);
-  color: #0f172a;
-  border-color: rgba(0,0,0,0.15);
+  background: var(--surface, rgba(0,0,0,0.08));
+  color: var(--text, #0f172a);
+  border-color: var(--border, rgba(0,0,0,0.15));
+}
+
+/* ===== Dark (maps to your tokens if present) ======================== */
+:root[data-theme="dark"] .theme-fab,
+:root[data-theme="dark"] .theme-toggle {
+  background: var(--surface, rgba(255,255,255,0.14));
+  color: var(--text, #eaf2ff);
+  border-color: var(--border, rgba(255,255,255,0.25));
+}
+
+/* ===== ARIA pressed (visual cue when dark mode is ON) =============== */
+.theme-fab[aria-pressed="true"],
+.theme-toggle[aria-pressed="true"] {
+  /* Subtle emphasis; if you prefer a stronger style, use your button gradient: 
+     background: linear-gradient(90deg, var(--btn-grad-start, #0e7aff), var(--btn-grad-end, #3a8bfd));
+     color: var(--btn-fg, #fff);
+  */
+  border-color: color-mix(in srgb, currentColor, transparent 50%);
+}
+
+/* ===== Reduced motion =============================================== */
+@media (prefers-reduced-motion: reduce) {
+  .theme-fab,
+  .theme-toggle {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+/* ===== High-contrast / forced-colors ================================ */
+@media (forced-colors: active) {
+  .theme-fab,
+  .theme-toggle {
+    background: ButtonFace;
+    color: ButtonText;
+    border: 1px solid ButtonBorder;
+    box-shadow: none;
+  }
 }

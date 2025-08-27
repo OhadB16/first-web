@@ -1,33 +1,38 @@
 // server/server.js
 const path = require('path');
-// Load core libraries
+// Core libs
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const rateLimit = require('express-rate-limit');
 
-// Custom helper functions to persist data to disk
+// Disk persistence helpers
 const { loadJSON, saveJSON } = require('./helpers/persist_module');
 
-// Import modular routes — each returns an Express Router
-const loginRoutes = require('./routes/login');
-const registerRoutes = require('./routes/register');
-const cartRoutes = require('./routes/cart');
-const purchaseRoutes = require('./routes/purchase');
-const activityRoutes = require('./routes/activity');
-const productsRoutes = require('./routes/products');
-const meRoutes = require('./routes/me');
-const logoutRoutes = require('./routes/logout');
-const reviewsRoutes = require('./routes/reviews');
-const contactRoutes = require('./routes/contact');
+// Modular routes
+const loginRoutes     = require('./routes/login');
+const registerRoutes  = require('./routes/register');
+const cartRoutes      = require('./routes/cart');
+const purchaseRoutes  = require('./routes/purchase');
+const activityRoutes  = require('./routes/activity');
+const productsRoutes  = require('./routes/products');
+const meRoutes        = require('./routes/me');
+const logoutRoutes    = require('./routes/logout');
+const reviewsRoutes   = require('./routes/reviews');
+const contactRoutes   = require('./routes/contact');
 
 const PUBLIC_DIR = path.join(__dirname, 'public');
 
 const app = express();
 
-// ======================
-// 🛡️ MIDDLEWARE SETUP
-// ======================
+/* ──────────────────────────────────────────────────────────────────────────
+   MIDDLEWARE
+   - CORS for the React app
+   - Basic rate limiting
+   - JSON body parsing (with 5MB cap)
+   - Cookies for auth/admin helpers
+   - Static public pages (/public, /readme, /llm)
+   ────────────────────────────────────────────────────────────────────────── */
 app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true,
@@ -45,49 +50,44 @@ app.use(limiter);
 app.use(express.json({ limit: '5mb' }));
 app.use(cookieParser());
 
-// serve everything in /server/public at /public/*
 app.use('/public', express.static(PUBLIC_DIR, { index: false }));
+app.get(['/readme', '/readme.html'], (req, res) => res.sendFile(path.join(PUBLIC_DIR, 'readme.html')));
+app.get(['/llm', '/llm.html'],       (req, res) => res.sendFile(path.join(PUBLIC_DIR, 'llm.html')));
 
-app.get(['/readme', '/readme.html'], (req, res) => {
-  res.sendFile(path.join(PUBLIC_DIR, 'readme.html'));
-});
+// Simple readiness probe for tests/ops
+app.get('/health', (req, res) => res.json({ ok: true }));
 
-app.get(['/llm', '/llm.html'], (req, res) => {
-  res.sendFile(path.join(PUBLIC_DIR, 'llm.html'));
-});
-
-// ======================
-// 📦 IN-MEMORY DATA STORE
-// ======================
+/* ──────────────────────────────────────────────────────────────────────────
+   IN-MEMORY STATE (hydrated from disk on boot)
+   ────────────────────────────────────────────────────────────────────────── */
 let users = [];
 let carts = [];
 let purchases = [];
 let activityLog = [];
 
-// ======================
-// 💾 LOAD DATA FROM DISK
-// ======================
+/* ──────────────────────────────────────────────────────────────────────────
+   LOAD & SAVE (disk)
+   ────────────────────────────────────────────────────────────────────────── */
 const loadAllData = async () => {
   try {
     const loadedUsers = await loadJSON('users.json');
     users.splice(0, users.length, ...loadedUsers);
 
-    // Ensure 'admin' user exists
+    // Ensure admin exists
     const adminUser = { username: 'admin', email: 'admin@example.com', password: 'admin' };
-    const adminExists = users.some(u => u.username.toLowerCase() === adminUser.username);
+    const adminExists = users.some(u => u.username.toLowerCase() === 'admin');
     if (!adminExists) {
       users.push(adminUser);
-      console.log('👑 Admin user added to users.json');
       await saveJSON('users.json', users);
+      console.log('👑 Admin user added to users.json');
     }
 
-    const loadedCarts = await loadJSON('carts.json');
+    const loadedCarts      = await loadJSON('carts.json');
+    const loadedPurchases  = await loadJSON('purchases.json');
+    const loadedActivity   = await loadJSON('activity.json');
+
     carts.splice(0, carts.length, ...loadedCarts);
-
-    const loadedPurchases = await loadJSON('purchases.json');
     purchases.splice(0, purchases.length, ...loadedPurchases);
-
-    const loadedActivity = await loadJSON('activity.json');
     activityLog.splice(0, activityLog.length, ...loadedActivity);
 
     console.log('✅ Loaded all data!');
@@ -97,9 +97,6 @@ const loadAllData = async () => {
   }
 };
 
-// ======================
-// 💾 SAVE DATA TO DISK
-// ======================
 const saveAllData = async () => {
   try {
     await saveJSON('users.json', users);
@@ -113,28 +110,37 @@ const saveAllData = async () => {
 
 console.log('activityLog is:', typeof activityLog);
 
-// ======================
-// 🛣️ ATTACH ROUTES
-// ======================
+/* ──────────────────────────────────────────────────────────────────────────
+   ROUTES
+   ────────────────────────────────────────────────────────────────────────── */
 try {
-  app.use('/api/login',     loginRoutes(users, activityLog));
-  app.use('/api/register',  registerRoutes(users, activityLog, saveAllData));
-  app.use('/api/cart',      cartRoutes(carts, activityLog));
-  app.use('/api/purchase',  purchaseRoutes(purchases, carts, activityLog, saveAllData));
-  app.use('/api/products',  productsRoutes(loadJSON, saveJSON)); // includes 405 for DELETE /
+  // Auth
+  app.use('/api/login',    loginRoutes(users, activityLog));
+  app.use('/api/register', registerRoutes(users, activityLog, saveAllData));
+  app.use('/api/logout',   logoutRoutes(activityLog));      // ✅ pass activityLog
+
+  // Me
+  app.use('/api/me', meRoutes(users));
+
+  // Store & orders
+  app.use('/api/products', productsRoutes(loadJSON, saveJSON));
+  app.use('/api/cart',     cartRoutes(carts, activityLog, saveAllData)); // ✅ pass saveAllData
+  app.use('/api/purchase', purchaseRoutes(purchases, carts, activityLog, saveAllData));
+
+  // Content / comms
+  app.use('/api/reviews',  reviewsRoutes(loadJSON, saveJSON));
+  app.use('/api/contact',  contactRoutes(loadJSON, saveJSON));
+
+  // Admin
   app.use('/api/admin/activity', activityRoutes(loadJSON));
-  app.use('/api/me',        meRoutes(users));
-  app.use('/api/logout',    logoutRoutes());
-  app.use('/api/reviews',   reviewsRoutes(loadJSON, saveJSON));
-  app.use('/api/contact',   contactRoutes(loadJSON, saveJSON));
 } catch (err) {
   console.error('Error attaching routes:', err);
 }
 
-// ======================
-// ⚠️ GLOBAL ERROR HANDLER
-// ======================
-// keep original status codes (e.g., 413 for too large bodies)
+/* ──────────────────────────────────────────────────────────────────────────
+   GLOBAL ERROR HANDLER
+   - keeps 413 for large payloads
+   ────────────────────────────────────────────────────────────────────────── */
 app.use((err, req, res, next) => {
   if (err && (err.type === 'entity.too.large' || err.status === 413)) {
     return res.status(413).json({ error: 'Payload too large' });
@@ -144,19 +150,35 @@ app.use((err, req, res, next) => {
   res.status(status).json({ error: message });
 });
 
-// (Optional) legacy fallback to catch mis-wiring of /api/register:
+// Optional fallback to detect mis-wiring of /api/register
 app.post('/api/register', (req, res) => {
   console.log('⚠️ Fallback register route hit');
   res.status(500).json({ error: 'Fallback route used. Real route failed to load.' });
 });
 
-// ======================
-// 🚀 START SERVER
-// ======================
+/* ──────────────────────────────────────────────────────────────────────────
+   START + GRACEFUL SHUTDOWN
+   ────────────────────────────────────────────────────────────────────────── */
 loadAllData().then(() => {
-  app.listen(3001, () => {
+  const server = app.listen(3001, () => {
     console.log('Server running on http://localhost:3001');
   });
+
+  const shutdown = async (signal) => {
+    try {
+      console.log(`\n${signal} received. Saving data…`);
+      await saveAllData();
+    } catch (e) {
+      console.error('Save on shutdown failed:', e);
+    } finally {
+      server.close(() => process.exit(0));
+      // Force-exit if close hangs
+      setTimeout(() => process.exit(0), 2000).unref();
+    }
+  };
+
+  process.on('SIGINT',  () => shutdown('SIGINT'));
+  process.on('SIGTERM', () => shutdown('SIGTERM'));
 }).catch(err => {
   console.error('Failed to start server:', err);
 });
