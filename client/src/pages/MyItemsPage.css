@@ -5,7 +5,8 @@
   padding: 32px;
   font-family: 'Inter', 'Segoe UI', sans-serif;
   color: white;
-  background: linear-gradient(to bottom, #000000, #203a43, #2c5364);
+background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+  min-height: 100vh;
   min-height: 100vh;
 }
 
@@ -24,26 +25,6 @@
   text-align: center;
   margin-top: 40px;
 }
-
-/* BACK BUTTON */
-.back-btn {
-  background: transparent;
-  border: 2px solid #00c6ff;
-  color: #00c6ff;
-  font-size: 14px;
-  font-weight: 600;
-  padding: 8px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-.back-btn:hover {
-  background: #00c6ff;
-  color: #000;
-  transform: scale(1.03);
-  box-shadow: 0 0 12px rgba(0, 198, 255, 0.4);
-}
-
 /* GRID */
 .items-grid {
   display: grid;
@@ -125,14 +106,4 @@
 }
 :root[data-theme="dark"] .item-info .price {
   color: var(--accent-2) !important;
-}
-
-:root[data-theme="dark"] .back-btn {
-  background: transparent !important;
-  border: 2px solid var(--accent-2) !important;
-  color: var(--accent-2) !important;
-}
-:root[data-theme="dark"] .back-btn:hover {
-  background: var(--accent-2) !important;
-  color: #000 !important;
 }

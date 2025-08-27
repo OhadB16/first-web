@@ -1053,5 +1053,15 @@
     "username": "admin",
     "datetime": "8/27/2025, 12:42:10 PM",
     "activity": "Completed purchase of 1 items"
+  },
+  {
+    "username": "alon",
+    "activity": "login",
+    "datetime": "2025-08-27T20:59:30.114Z"
+  },
+  {
+    "username": "alon",
+    "datetime": "8/28/2025, 12:00:06 AM",
+    "activity": "Completed purchase of 2 items"
   }
 ]

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import './PayScreen.css';
+import Logo from '../components/Logo';
+
 
 /**
  * getCookie
@@ -141,13 +143,8 @@ function PayScreen({ total, cart, user, onBack, onConfirm, onClearCart, setPurch
   // --- UI ---
   return (
     <div className="pay-screen">
-      <div className="top-back-container">
-        <button type="button" className="back-btn" onClick={onBack}>
-          ← Back to Cart
-        </button>
-      </div>
-
       <form className="payment-form" onSubmit={handleSubmit}>
+        <Logo />
         <h2 className="payment-title">Confirm Payment</h2>
         <p className="payment-total">
           Total: <strong>${total.toLocaleString()}</strong>
@@ -208,6 +205,11 @@ function PayScreen({ total, cart, user, onBack, onConfirm, onClearCart, setPurch
             Pay Now
           </button>
         </div>
+        <div className="back-btn-container">
+  <button type="button" className="back-btn" onClick={onBack}>
+    ← Back to Cart
+  </button>
+</div>
       </form>
     </div>
   );

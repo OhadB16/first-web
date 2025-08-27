@@ -16,7 +16,7 @@
 /* Root container for the Store page (full-viewport gradient + base typography) */
 .store-screen-page {
   min-height: 100vh;
-  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+  background: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
   color: #005eeb;
   font-family: 'Inter', 'Segoe UI', sans-serif;
 }

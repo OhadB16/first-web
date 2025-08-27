@@ -50,7 +50,6 @@ function CartPage({ cart, onBack, onRemove, onCheckout }) {
     <div className="cart-page-container">
       <Logo />
       <header className="cart-header">
-        <button className="back-btn" onClick={onBack}>← Back to Store</button>
       </header>
       <h2> My Cart</h2>
  
@@ -101,6 +100,11 @@ function CartPage({ cart, onBack, onRemove, onCheckout }) {
             </button>
           </>
         )}
+      </div>
+      <div className="back-btn-container">
+      <button type="button" className="back-btn" onClick={onBack}>
+        ← Back to Cart
+      </button>
       </div>
     </div>
   );

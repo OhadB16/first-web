@@ -33,7 +33,7 @@ input[type="file"],
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
-.image-drop-area {
+.image-drop-are2a {
   border: 2px dashed rgba(255,255,255,0.4);
   padding: 24px;
   background-color: rgba(255,255,255,0.1);
@@ -92,10 +92,6 @@ input[type="file"],
   color: black;
 }
 
-.back-btn {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-}
 
 .add-button:hover,
 .delete-button:hover,
@@ -197,11 +193,6 @@ input[type="file"],
   box-shadow: none;
 }
 
-:root[data-theme="dark"] .back-btn {
-  background: rgba(255,255,255,0.14);
-  color: #f6fbff;
-  box-shadow: none;
-}
 
 :root[data-theme="dark"] .add-button {
   background: linear-gradient(90deg, #0094ff, #3b82f6);

@@ -1,14 +1,9 @@
-/* src/pages/ContactPage.css
-   Contact page styling – Light (default) + Dark mode overrides.
-*/
-
-/* === BASE =============================================================== */
+/* ContactPage.css – matches your gradient/glass look and fixes input spacing */
 .contact-page {
   min-height: 100vh;
   padding: 40px 16px 80px;
-  background:
-    radial-gradient(1200px 500px at 50% -100px, rgba(0,150,255,.15), transparent 60%),
-    linear-gradient(180deg, #0f2027, #203a43, #2c5364);
+  background: radial-gradient(1200px 500px at 50% -100px, rgba(0, 150, 255, .15), transparent 60%),
+              linear-gradient(180deg, #0f2027, #203a43, #2c5364);
   color: #eef2f6;
   font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   display: flex;
@@ -16,19 +11,23 @@
   align-items: center;
 }
 
-.contact-hero { text-align: center; margin: 16px 0 22px; }
-.contact-hero h1 { margin: 0 0 8px; font-size: 40px; letter-spacing: .5px; }
-.contact-hero p { margin: 0; color: rgba(255,255,255,.85); }
+.contact-hero {
+  text-align: center;
+  margin: 16px 0 22px;
+}
+.contact-hero h1 {
+  margin: 0 0 8px;
+  font-size: 40px;
+  letter-spacing: .5px;
+}
+.contact-hero p {
+  margin: 0;
+  color: rgba(255,255,255,.85);
+}
 
-/* === FORM FIELDS ======================================================== */
-.field {
-  display: flex; flex-direction: column;
-  gap: 8px; margin-bottom: 14px;
-}
-.field > span {
-  font-size: .95rem;
-  color: rgba(255,255,255,.9);
-}
+/* consistent gaps between all fields (fixes “white containers touching each other”) */
+.field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.field > span { font-size: .95rem; color: rgba(255,255,255,.9); }
 
 .contact-page input:not([type="checkbox"]):not([type="radio"]),
 .contact-page textarea,
@@ -40,12 +39,10 @@
   background: rgba(255,255,255,.95);
   color: #0e2433;
   font-size: 15px;
-  box-shadow:
-    0 2px 8px rgba(0,0,0,.25) inset,
-    0 2px 6px rgba(0,0,0,.15);
-  margin-bottom: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.25) inset, 0 2px 6px rgba(0,0,0,.15);
+  margin-bottom: 14px;     /* ← ensures vertical gap between boxes */
 }
-
+/* (Optional) tidy checkboxes if you ever add one on the contact page */
 .contact-page input[type="checkbox"] {
   width: auto;
   padding: 0;
@@ -57,19 +54,25 @@
 
 textarea { resize: vertical; }
 
-/* === ACTIONS ============================================================ */
-.actions { display: flex; gap: 12px; margin-top: 6px; }
-
-/* === ADMIN LIST ========================================================= */
+.actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+}
+/* Admin list */
 .admin-toolbar {
-  display: flex; justify-content: space-between; align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 12px;
 }
 .tabs { display: inline-flex; gap: 8px; }
 .tab {
   background: rgba(255,255,255,.14);
-  border: none; color: white;
-  padding: 8px 14px; border-radius: 999px;
+  border: none;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 999px;
   cursor: pointer;
 }
 .tab.active { background: rgba(59,130,246,.6); }
@@ -77,8 +80,10 @@ textarea { resize: vertical; }
 .refresh {
   background: rgba(255,255,255,.16);
   color: white;
-  border: none; padding: 8px 12px;
-  border-radius: 10px; cursor: pointer;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
 }
 
 .message-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
@@ -95,21 +100,20 @@ textarea { resize: vertical; }
 .row-actions { margin-top: 10px; display: flex; gap: 8px; }
 .btn-ok {
   background: linear-gradient(90deg, #22c55e, #16a34a);
-  color: white; border: none; padding: 8px 12px;
-  border-radius: 8px; cursor: pointer;
+  color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer;
 }
 .btn-warn {
   background: linear-gradient(90deg, #f59e0b, #ea580c);
-  color: white; border: none; padding: 8px 12px;
-  border-radius: 8px; cursor: pointer;
+  color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer;
 }
 
 .loading, .empty { text-align: center; padding: 28px 0; color: rgba(255,255,255,.9); }
 
-/* === RESPONSIVE ========================================================= */
-@media (max-width: 720px) { .grid-2 { grid-template-columns: 1fr; } }
-
-/* === DARK MODE OVERRIDES =============================================== */
+/* Responsive */
+@media (max-width: 720px) {
+  .grid-2 { grid-template-columns: 1fr; }
+}
+/* === THEME OVERRIDES (ContactPage) === */
 :root[data-theme="dark"] .contact-page {
   background: var(--bg) !important;
   color: var(--text) !important;
@@ -146,51 +150,51 @@ textarea { resize: vertical; }
 }
 
 :root[data-theme="dark"] .btn-ok {
-  background: linear-gradient(
-    90deg,
-    var(--accent-3),
-    color-mix(in srgb, var(--accent-3), black 20%)
-  ) !important;
+  background: linear-gradient(90deg, var(--accent-3), color-mix(in srgb, var(--accent-3), black 20%)) !important;
 }
 :root[data-theme="dark"] .btn-warn {
   background: linear-gradient(90deg, #f59e0b, #ea580c) !important;
 }
+/* === Dark mode: clear outlines for inputs + Send button ========== */
 
-/* === DARK MODE: CLEAR OUTLINES ========================================= */
+/* טוקנים לדארק־מוד (אם לא קיימים כבר במקום אחר) */
 :root[data-theme="dark"] {
-  --input-bg: rgba(17,24,39,0.96);
+  --input-bg: rgba(17, 24, 39, 0.96);
   --input-fg: #e6eef7;
   --input-border: #2f323d;
-  --input-border-strong: #000;
+  --input-border-strong: #000000;
 }
 
+/* שדות טופס עם קווי מתאר ברורים */
 :root[data-theme="dark"] .contact-page input:not([type="checkbox"]):not([type="radio"]),
 :root[data-theme="dark"] .contact-page textarea,
 :root[data-theme="dark"] .contact-page select {
+  background: var(--input-bg) !important;
+  color: var(--input-fg) !important;
   border: 1.5px solid var(--input-border) !important;
-  box-shadow: 0 0 0 1px #0004f01d inset !important;
+  box-shadow: 0 0 0 1px #0004f01d inset !important; /* קו פנימי עדין */
 }
 
+/* פוקוס נגיש ומודגש */
 :root[data-theme="dark"] .contact-page input:focus,
 :root[data-theme="dark"] .contact-page textarea:focus,
 :root[data-theme="dark"] .contact-page select:focus {
   outline: none !important;
   border-color: var(--input-border-strong) !important;
   box-shadow:
-    0 0 0 2px hsla(0,0%,0%,0.65) inset,
+    0 0 0 2px hsla(0, 0%, 0%, 0.65) inset,
     0 0 0 3px color-mix(in srgb, var(--accent), transparent 60%) !important;
 }
 
-/* SEND BUTTON */
+/* “Send Message” – כפתור עם קווי מתאר */
 :root[data-theme="dark"] .contact-page .btn-primary {
   border: 1.5px solid var(--input-border) !important;
-  box-shadow: 0 6px 16px rgba(168,143,143,0.55) !important;
+  box-shadow: 0 6px 16px rgba(168, 143, 143, 0.55) !important;
 }
 
+/* (רשות) מצב hover/active מעט מודגש יותר */
 :root[data-theme="dark"] .contact-page .btn-primary:hover,
 :root[data-theme="dark"] .contact-page .btn-primary:focus {
   border-color: var(--input-border-strong) !important;
-  box-shadow:
-    0 8px 10px rgba(2,24,93,0.6),
-    0 0 0 2px rgba(15,21,74,0.4) inset !important;
+  box-shadow: 0 8px 10px rgba(2, 24, 93, 0.6), 0 0 0 2px rgba(15, 21, 74, 0.4) inset !important;
 }

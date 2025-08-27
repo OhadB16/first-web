@@ -62,19 +62,25 @@
 
 /* === CTA Button ========================================================= */
 .btn-outline {
-  padding: 12px 18px;
-  border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.6);
-  background: rgba(255,255,255,0.12);
-  color: #fff;
-  font-weight: 700;
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: rgba(61, 61, 78, 0.14);
+  color: #0a87c5;
+  border: 1px solid rgba(0,0,0,0.15);
+  font-weight: 600;
   cursor: pointer;
   transition: transform .12s ease, box-shadow .2s ease, background .2s ease;
+  display: block;
 }
 .btn-outline:hover {
+  background: linear-gradient(#77d6ffd6, #1391bbec, #72b2ffc7);
+  color: #f3eded;
+  box-shadow:
+    0 0 10px #56a4d4,
+    0 0 20px #8df5ff,
+    0 0 30px rgb(106,158,221);
   transform: translateY(-1px);
-  background: rgba(255,255,255,0.18);
-  box-shadow: 0 10px 24px rgba(0,0,0,0.4);
 }
 
 /* === THEME OVERRIDES (Dark) ============================================= */
@@ -93,4 +99,24 @@
   border: 1px solid var(--border) !important;
   background: linear-gradient(90deg, var(--btn-grad-start), var(--btn-grad-end)) !important;
   color: var(--btn-fg) !important;
+}
+/* Dark mode */
+:root[data-theme="dark"] .btn-back,
+:root[data-theme="dark"] .back-btn {
+  background: rgba(243,243,244,0.208);
+  color: var(--text);
+  border: 1.5px solid #2f323d;
+  border-radius: 10px; /* שמרנו על אותו ויזואל */
+}
+
+:root[data-theme="dark"] .btn-back:hover,
+:root[data-theme="dark"] .back-btn:hover,
+:root[data-theme="dark"] .btn-back:focus-visible,
+:root[data-theme="dark"] .back-btn:focus-visible {
+  border-color: transparent;
+  box-shadow:
+    0 0 0 2px rgba(34,77,184,0.6),
+    0 0 18px #00c6ff,
+    0 0 28px #0072ff;
+  transform: translateY(-1px);
 }

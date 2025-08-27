@@ -1,6 +1,12 @@
-/* src/pages/PayScreen.css – Gradient glass style with theme support */
+/* ==========================================================================
+   src/pages/PayScreen.css — Gradient glass style with theme support
+   --------------------------------------------------------------------------
+   Purpose:
+   - Styles the checkout/payment screen with a clean card look.
+   - Includes gradient background, glassmorphism, and full dark mode overrides.
+   ========================================================================== */
 
-/* === BASE =============================================================== */
+/* === BASE (light default) =============================================== */
 .pay-screen {
   position: relative;
   background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
@@ -12,21 +18,46 @@
   padding: 20px;
 }
 
+/* === Place the back button BELOW the card and match card width ========== */
+/* This replaces the old absolute-positioned block */
 .top-back-container {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  z-index: 1000;
+  position: static;            /* no absolute positioning */
+  width: 100%;
+  max-width: 500px;            /* match .payment-form max-width */
+  margin-top: 16px;            /* space under the card */
   display: flex;
-  justify-content: flex-start;
-  margin-bottom: 16px;
+  justify-content: center;     /* center the button container */
+  align-items: stretch;
 }
 
+/* Make the back button span the full card width and have a clear outline */
+.back-btn {
+  width: 100%;                 /* same width as the form/card */
+  padding: 12px 16px;
+  border-radius: 12px;
+background: linear-gradient(90deg, #aabbd8, #61e8ef) !important;
+  color: #040000 !important;
+  border: 1px solid #365c8a86 !important;
+  box-shadow:
+    0 0 10px #39b3d5,
+    0 0 20px #1b61b7,
+    0 0 30px rgba(0,114,255,0.7) !important;
+  transform: translateY(-1px);
+  transition: all 0.25s ease;
+}
 .back-btn:hover {
-  background-color: #ffffff;
-  color: #000000;
-  box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
-  transform: scale(1.03);
+  width: 100%;                 /* same width as the form/card */
+  padding: 12px 16px;
+  border-radius: 12px;
+background: linear-gradient(90deg, #00c6ff, #0072ff) !important;
+  color: #120808 !important;
+  border: 1px solid #0072ff !important;
+  box-shadow:
+    0 0 10px #00c6ff,
+    0 0 20px #0072ff,
+    0 0 30px rgba(0,114,255,0.7) !important;
+  transform: translateY(-1px);
+  transition: all 0.25s ease;
 }
 
 /* === PAYMENT FORM ======================================================= */
@@ -45,7 +76,6 @@
   color: #222;
   text-align: center;
 }
-
 .payment-total {
   font-size: 20px;
   margin-bottom: 30px;
@@ -59,13 +89,11 @@
   display: flex;
   flex-direction: column;
 }
-
 .form-group label {
   margin-bottom: 6px;
   font-size: 14px;
   color: #555;
 }
-
 .form-group input {
   padding: 12px;
   font-size: 16px;
@@ -74,18 +102,12 @@
   outline: none;
   transition: border-color 0.2s ease;
 }
-
 .form-group input:focus {
   border-color: #000507;
 }
 
-.row {
-  display: flex;
-  gap: 16px;
-}
-.half {
-  flex: 1;
-}
+.row { display: flex; gap: 16px; }
+.half { flex: 1; }
 
 /* === BUTTONS ============================================================ */
 .payment-buttons {
@@ -93,7 +115,6 @@
   display: flex;
   justify-content: space-between;
 }
-
 .pay-button {
   padding: 12px 20px;
   font-size: 16px;
@@ -110,19 +131,17 @@
 
 /* === RESPONSIVE ========================================================= */
 @media (max-width: 500px) {
-  .row {
-    flex-direction: column;
-  }
+  .row { flex-direction: column; }
 }
 
-/* === DARK MODE (append-only) ============================================ */
+/* === DARK MODE ========================================================== */
 :root[data-theme="dark"] .pay-screen {
   background: var(--bg) !important;
   color: var(--text) !important;
 }
 
 :root[data-theme="dark"] .payment-form {
-  background: var(--surface) !important;
+  background: rgba(17,24,39,0.9);
   color: var(--text) !important;
   border: 1px solid var(--border) !important;
   box-shadow: var(--shadow-md, 0 8px 24px rgba(0,0,0,.5)) !important;
@@ -137,45 +156,64 @@
   color: var(--text) !important;
   opacity: .92;
 }
-
 :root[data-theme="dark"] .form-group input {
-  background: var(--surface-2, rgba(255,255,255,0.06)) !important;
-  color: var(--text) !important;
-  border: 1px solid var(--border) !important;
+  background: rgba(17,24,39,0.96) !important;
+  color: #e6eef7 !important;
+  border: 1.5px solid #2f323d !important;
   border-radius: 10px;
-  box-shadow: none !important;
+  box-shadow: 0 0 0 1px #000 inset !important;
+}
+:root[data-theme="dark"] .form-group input:hover, 
+:root[data-theme="dark"] .form-group input:focus {
+  background: linear-gradient(90deg, #00c6ff, #0072ff) !important;
+  color: #120808 !important;
+  border: 1px solid #0072ff !important;
+  box-shadow:
+    0 0 10px #00c6ff,
+    0 0 20px #0072ff,
+    0 0 30px rgba(0,114,255,0.7) !important;
+  transform: translateY(-1px);
+  transition: all 0.25s ease;
 }
 :root[data-theme="dark"] .form-group input::placeholder {
-  color: color-mix(in srgb, var(--text), transparent 45%);
+  color: #93a4b7;
 }
 :root[data-theme="dark"] .form-group input:focus {
-  border-color: color-mix(in srgb, var(--accent), transparent 35%) !important;
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent), transparent 80%) !important;
+  border-color: #000 !important;
   outline: none;
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.65) !important;
 }
 
 :root[data-theme="dark"] .pay-button {
-  background: linear-gradient(90deg, var(--accent-2), var(--accent)) !important;
-  color: #fff !important;
-  border: 1px solid var(--border) !important;
+  background: linear-gradient(90deg, var(--btn-grad-start), var(--btn-grad-end)) !important;
+  color: var(--btn-fg, #fff) !important;
+  border: 2px solid #2f323d !important;
   box-shadow: var(--shadow-md, 0 8px 24px rgba(0,0,0,.5)) !important;
 }
 :root[data-theme="dark"] .pay-button:hover {
-  background: linear-gradient(90deg, var(--accent), var(--accent-2)) !important;
+  background: linear-gradient(90deg, var(--btn-grad-end), var(--btn-grad-start)) !important;
   transform: translateY(-1px);
   box-shadow: var(--shadow-lg, 0 12px 36px rgba(0,0,0,.6)) !important;
 }
 
-/* back button – subtle glass outline in dark */
-:root[data-theme="dark"] .back-btn {
-  background: rgba(255,255,255,.08) !important;
-  color: var(--text) !important;
-  border: 1px solid var(--border) !important;
-  border-radius: 10px;
-  padding: 8px 12px;
+/* PayScreen */
+:root[data-theme="dark"] .payment-form:hover {
+  border-color: transparent !important;
+  box-shadow:
+    0 0 0 2px rgba(0,0,0,0.6),
+    0 0 18px #00c6ff,
+    0 0 28px #0072ff !important;
+  transition: box-shadow 0.25s ease;
 }
-:root[data-theme="dark"] .back-btn:hover {
-  background: rgba(255,255,255,.12) !important;
-  color: var(--text) !important;
-  box-shadow: var(--shadow-sm, 0 1px 3px rgba(0,0,0,.35)) !important;
+/* === DARK MODE: Pay button glow effect ============================ */
+:root[data-theme="dark"] .pay-button:hover {
+  background: linear-gradient(90deg, #00c6ff, #0072ff) !important;
+  color: #fff !important;
+  border: 1px solid #0072ff !important;
+  box-shadow:
+    0 0 10px #00c6ff,
+    0 0 20px #0072ff,
+    0 0 30px rgba(0,114,255,0.7) !important;
+  transform: translateY(-1px);
+  transition: all 0.25s ease;
 }

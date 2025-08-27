@@ -1,112 +1,56 @@
-/* src/pages/AlreadyReg.css
-   Login (Already Registered) page styling with light & dark mode support.
-*/
+/* ==========================================================================
+   src/pages/AlreadyReg.css — Full gradient + glassmorphism + dark mode
+   --------------------------------------------------------------------------
+   Purpose:
+   - Style the Login (Already Registered) page to visually match Register.css.
+   - Keep your existing class names/selectors so no JSX changes are required.
+   - Light is the default look; dark mode is activated by data-theme="dark" on <html>.
+   ========================================================================== */
 
-/* === BASE LAYOUT ===================================================== */
+/* === BASE (light default) =============================================== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Segoe+UI:wght@400;700;900&display=swap');
+
 .alreadyreg-page {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+  font-family: 'Inter', 'Segoe UI', sans-serif;
   padding: 20px;
-  font-family: Arial, sans-serif;
 }
 
 .login-form {
-  background: #fff;
-  padding: 32px;
-  border-radius: 8px;
-  width: 100%;
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0,0,0,0.1);
   max-width: 400px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  border: 1px solid #0f172a;
 }
 
-.login-form h2 {
-  margin-bottom: 24px;
-  text-align: center;
-  color: #333;
-}
 
+/* Inputs */
 .form-group {
+  margin-bottom: 16px;
   display: flex;
   flex-direction: column;
-  margin-bottom: 16px;
 }
 
-.form-group label {
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 8px;
-  color: #555;
-}
 
-.form-group input {
-  padding: 12px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
 
-.form-group input:focus {
-  border-color: #007bff;
-  outline: none;
-}
-
-.error {
-  color: #d93025;
-  font-size: 13px;
-  margin-bottom: 12px;
-  text-align: center;
-}
-
-button[type='submit'] {
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-button[type='submit']:hover {
-  background-color: #0056b3;
-}
-
-.switch-link {
-  margin-top: 16px;
-  text-align: center;
-  font-size: 14px;
-}
-
-.link-button {
-  background: none;
-  border: none;
-  color: #007bff;
-  text-decoration: underline;
-  cursor: pointer;
-  font: inherit;
-  padding: 0;
-}
-
-.link-button:hover {
-  color: #0056b3;
-}
-
-/* === THEME OVERRIDES (DARK MODE) ====================================== */
+/* === DARK MODE ========================================================== */
 :root[data-theme="dark"] .alreadyreg-page {
   background: var(--bg) !important;
   color: var(--text) !important;
 }
 
 :root[data-theme="dark"] .login-form {
-  background: var(--surface) !important;
+  background: rgba(17,24,39,0.9);
   color: var(--text) !important;
-  border: 1px solid var(--border) !important;
-  box-shadow: var(--shadow) !important;
+  border: 1.5px solid #000 !important;
+  box-shadow: var(--shadow, 0 6px 20px rgba(0,0,0,.6)) !important;
 }
 
 :root[data-theme="dark"] .login-form h2 {
@@ -118,11 +62,47 @@ button[type='submit']:hover {
   opacity: .95;
 }
 
-:root[data-theme="dark"] .login-form .form-group input {
-  background: var(--input-bg) !important;
-  color: var(--input-fg) !important;
-  border: 1px solid var(--input-border) !important;
-  box-shadow: none !important;
+:root[data-theme="dark"] .login-form .form-group input[type="text"],
+:root[data-theme="dark"] .login-form .form-group input[type="email"],
+:root[data-theme="dark"] .login-form .form-group input[type="password"] {
+  background: rgba(136, 156, 198, 0.96);
+  color: #e6eef7;
+  border: 1.5px solid #2f323d !important;
+  box-shadow: 0 0 0 1px #000 inset;
+}
+:root[data-theme="dark"] .login-form .form-group input[type="text"]:hover,
+:root[data-theme="dark"] .login-form .form-group input[type="email"]:hover,
+:root[data-theme="dark"] .login-form .form-group input[type="password"]:hover
+:root[data-theme="dark"] .login-form .form-group input[type="text"]:hover,
+:root[data-theme="dark"] .login-form .form-group input[type="email"]:hover,
+:root[data-theme="dark"] .login-form .form-group input[type="password"]:hover,
+:root[data-theme="dark"] .login-form .form-group input[type="text"]:focus,
+:root[data-theme="dark"] .login-form .form-group input[type="email"]:focus,
+:root[data-theme="dark"] .login-form .form-group input[type="password"]:focus{
+  background: linear-gradient(90deg, #00c6ff, #0072ff) !important;
+  color: #180303 !important;
+  border: 1px solid #0072ff !important;
+  box-shadow:
+    0 0 10px #00c6ff,
+    0 0 20px #0072ff,
+    0 0 30px rgba(0, 114, 255, 0.7) !important;
+  transform: translateY(-1px);
+  transition: all 0.25s ease;
+}
+
+
+:root[data-theme="dark"] .login-form .form-group input::placeholder {
+  color: #93a4b7;
+}
+
+:root[data-theme="dark"] .login-form .form-group input:focus {
+  border-color: #000 !important;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.65) !important;
+}
+
+:root[data-theme="dark"] .login-form input[type="checkbox"] {
+  accent-color: #60a5fa;
 }
 
 :root[data-theme="dark"] .login-form .error {
@@ -132,6 +112,13 @@ button[type='submit']:hover {
 :root[data-theme="dark"] .login-form button[type='submit'] {
   background: linear-gradient(90deg, var(--btn-grad-start), var(--btn-grad-end)) !important;
   color: var(--btn-fg) !important;
+  border: 2px solid #2f323d !important;
+}
+
+:root[data-theme="dark"] .login-form button[type='submit']:hover,
+:root[data-theme="dark"] .login-form button[type='submit']:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0,0,0,.7), 0 6px 16px rgba(0,0,0,.55);
 }
 
 :root[data-theme="dark"] .login-form .switch-link {
@@ -143,101 +130,53 @@ button[type='submit']:hover {
   text-decoration-color: color-mix(in srgb, var(--accent), transparent 40%) !important;
 }
 
-/* === LIGHT MODE (DEFAULT) ============================================= */
-.alreadyreg-page .login-form {
-  background: #ffffff;
-  border: 1px solid #0f172a;
-  border-radius: 16px;
-}
-
-.alreadyreg-page .login-form .input,
-.alreadyreg-page .login-form input[type="text"],
-.alreadyreg-page .login-form input[type="email"],
-.alreadyreg-page .login-form input[type="password"] {
-  background: #ffffff;
-  color: #0f172a;
-  border: 1px solid #0f172a;
-  border-radius: 10px;
-}
-
-.alreadyreg-page .login-form .input:focus,
-.alreadyreg-page .login-form input[type="text"]:focus,
-.alreadyreg-page .login-form input[type="email"]:focus,
-.alreadyreg-page .login-form input[type="password"]:focus {
-  border-color: #0072ff;
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(0,114,255,0.18);
-}
-
-/* Checkbox */
-.alreadyreg-page .login-form input[type="checkbox"] {
-  accent-color: #0072ff;
-}
-
-/* === DARK MODE – Enhanced Card & Inputs =============================== */
-:root[data-theme="dark"] .alreadyreg-page .login-form {
-  background: rgba(17, 24, 39, 0.82);
-  border: 1px solid rgba(255,255,255,0.18);
-}
-
-:root[data-theme="dark"] .alreadyreg-page .login-form .input,
-:root[data-theme="dark"] .alreadyreg-page .login-form input[type="text"],
-:root[data-theme="dark"] .alreadyreg-page .login-form input[type="email"],
-:root[data-theme="dark"] .alreadyreg-page .login-form input[type="password"] {
-  background: rgba(17, 24, 39, 0.95);
-  color: #e6eef7;
-  border: 1px solid rgba(255,255,255,0.28);
-}
-
-:root[data-theme="dark"] .alreadyreg-page .login-form .input::placeholder,
-:root[data-theme="dark"] .alreadyreg-page .login-form input::placeholder {
-  color: #93a4b7;
-}
-
-:root[data-theme="dark"] .alreadyreg-page .login-form .input:focus,
-:root[data-theme="dark"] .alreadyreg-page .login-form input:focus {
-  border-color: #60a5fa;
-  box-shadow: 0 0 0 3px rgba(96,165,250,0.25);
-}
-
-:root[data-theme="dark"] .alreadyreg-page .login-form input[type="checkbox"] {
-  accent-color: #60a5fa;
-}
-
-/* === DARK MODE – Strong Black Outlines ================================ */
-:root[data-theme="dark"] .alreadyreg-page .login-form {
-  border: 1.5px solid #000 !important;
-  background: rgba(17, 24, 39, 0.9);
-}
-
-:root[data-theme="dark"] .alreadyreg-page .login-form .input,
-:root[data-theme="dark"] .alreadyreg-page .login-form input[type="text"],
-:root[data-theme="dark"] .alreadyreg-page .login-form input[type="email"],
-:root[data-theme="dark"] .alreadyreg-page .login-form input[type="password"] {
-  background: rgba(17, 24, 39, 0.96);
-  color: #e6eef7;
-  border: 1.5px solid #2f323d !important;
-  box-shadow: 0 0 0 1px #000 inset;
-}
-
-:root[data-theme="dark"] .alreadyreg-page .login-form .input:focus,
-:root[data-theme="dark"] .alreadyreg-page .login-form input:focus {
-  border-color: #000 !important;
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(37, 28, 28, 0.65) !important;
-}
-
-:root[data-theme="dark"] .alreadyreg-page .login-form input::placeholder {
-  color: #a8b3c2;
-}
-
-/* === DARK MODE – Login Button Outlines ================================ */
+/* Optional: outline for the primary login button when using .primary-button class */
 :root[data-theme="dark"] .alreadyreg-page .primary-button {
   border: 2px solid #2f323d !important;
 }
-
 :root[data-theme="dark"] .alreadyreg-page .primary-button:hover,
 :root[data-theme="dark"] .alreadyreg-page .primary-button:focus {
   outline: none;
   box-shadow: 0 0 0 2px rgba(0,0,0,.7), 0 6px 16px rgba(0,0,0,.55);
+}
+/* Login (AlreadyReg) */
+:root[data-theme="dark"] .login-form:hover {
+  border-color: transparent !important;
+  box-shadow:
+    0 0 0 2px rgba(0,0,0,0.6),
+    0 0 18px #00c6ff,
+    0 0 28px #0072ff !important;
+  transition: box-shadow 0.25s ease;
+}
+/* === DARK MODE: Login button glow effect =============================== */
+:root[data-theme="dark"] .login-form button[type='submit']:hover {
+  background: linear-gradient(90deg, #00c6ff, #0072ff) !important;
+  color: #fff !important;
+  border: 1px solid #0072ff !important;
+  box-shadow:
+    0 0 10px #00c6ff,
+    0 0 20px #0072ff,
+    0 0 30px rgba(0, 114, 255, 0.7) !important;
+  transform: translateY(-1px);
+  transition: all 0.25s ease;
+}
+/* === FORM INPUTS – LIGHT MODE (default) =============================== */
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"] {
+  background: #ffffff;          /* White background inside */
+  color: #000000;              /* Black text */
+  border: 1.5px solid #000000; /* Black outline */
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+/* On focus (when typing or tabbing into the field) */
+.form-group input:focus {
+  outline: none;
+  border-color: #0072ff; /* Blue glow border */
+  box-shadow: 0 0 0 3px rgba(0, 114, 255, 0.2);
 }

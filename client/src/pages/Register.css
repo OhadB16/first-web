@@ -30,30 +30,20 @@
   font-weight: 600;
 }
 
-.form-group {
-  margin-bottom: 16px;
-  display: flex;
-  flex-direction: column;
-}
-
-.form-group label {
-  font-weight: 500;
-  margin-bottom: 6px;
-  color: #000;
-}
 
 .form-group input[type="text"],
 .form-group input[type="email"],
 .form-group input[type="password"] {
+  color: #ffffff;
   padding: 10px;
   border-radius: 10px;
   border: 1px solid #0f172a;
   font-size: 14px;
 }
 .form-group input:focus {
-  border-color: #0072ff;
+  border-color: #000103;
   outline: none;
-  box-shadow: 0 0 0 3px rgba(0,114,255,0.18);
+  box-shadow: 0 0 0 3px rgba(170, 175, 181, 0.18);
 }
 
 .checkbox-label {
@@ -103,34 +93,6 @@ button[type="submit"]:hover {
   text-align: left;
 }
 
-/* === LOGO =============================================================== */
-.logo-container {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 120px;
-  margin-bottom: 20px;
-}
-.logo-plane {
-  position: absolute;
-  font-size: 100px;
-  top: 50%; left: 50%;
-  transform: translate(-50%,-50%) rotate(-10deg);
-  opacity: 0.15;
-  pointer-events: none;
-}
-.logo-text {
-  font-size: 48px;
-  font-weight: 700;
-  font-family: 'Segoe UI','Inter',sans-serif;
-  background: linear-gradient(90deg,#00c6ff,#0072ff);
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-  position: relative;
-  z-index: 1;
-}
-
 /* === DARK MODE ========================================================== */
 :root[data-theme="dark"] .register-page {
   background: var(--bg) !important;
@@ -157,6 +119,22 @@ button[type="submit"]:hover {
   color: #e6eef7;
   border: 1.5px solid #2f323d !important;
   box-shadow: 0 0 0 1px #000 inset;
+}
+:root[data-theme="dark"] .register-form input[type="text"]:hover,
+:root[data-theme="dark"] .register-form input[type="email"]:hover,
+:root[data-theme="dark"] .register-form input[type="password"]:hover,
+:root[data-theme="dark"] .register-form input[type="text"]:focus,
+:root[data-theme="dark"] .register-form input[type="email"]:focus,
+:root[data-theme="dark"] .register-form input[type="password"]:focus {
+  background: linear-gradient(90deg, #00c6ff, #0072ff) !important;
+  color: #100404 !important;
+  border: 1px solid #0072ff !important;
+  box-shadow:
+    0 0 10px #00c6ff,
+    0 0 20px #0072ff,
+    0 0 30px rgba(0,114,255,0.7) !important;
+  transform: translateY(-1px);
+  transition: all 0.25s ease;
 }
 :root[data-theme="dark"] .register-form input::placeholder {
   color: #93a4b7;
@@ -194,4 +172,45 @@ button[type="submit"]:hover {
   border: 1.5px solid #2f323d !important;
   border-radius: 10px;
   padding: 6px 12px;
+}
+/* Register */
+:root[data-theme="dark"] .register-form:hover {
+  border-color: transparent !important;
+  box-shadow:
+    0 0 0 2px rgba(0,0,0,0.6),
+    0 0 18px #00c6ff,
+    0 0 28px #0072ff !important;
+  transition: box-shadow 0.25s ease;
+}
+/* === DARK MODE: Register button glow effect ============================ */
+:root[data-theme="dark"] .register-form button[type="submit"]:hover {
+  background: linear-gradient(90deg, #00c6ff, #0072ff) !important;
+  color: #fff !important;
+  border: 1px solid #0072ff !important;
+  box-shadow:
+    0 0 10px #00c6ff,
+    0 0 20px #0072ff,
+    0 0 30px rgba(0,114,255,0.7) !important;
+  transform: translateY(-1px);
+  transition: all 0.25s ease;
+}
+/* === FORM INPUTS – LIGHT MODE (default) =============================== */
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"] {
+  background: #ffffff;          /* White background inside */
+  color: #000000;              /* Black text */
+  border: 1.5px solid #000000; /* Black outline */
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+/* On focus (when typing or tabbing into the field) */
+.form-group input:focus {
+  outline: none;
+  border-color: #0072ff; /* Blue glow border */
+  box-shadow: 0 0 0 3px rgba(0, 114, 255, 0.2);
 }
