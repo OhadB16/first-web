@@ -44,7 +44,7 @@
       margin:10px 0 18px;
     }
     h2{margin:.2rem 0 .6rem}
-    h3{margin: .8rem 0 .4rem}
+    h3{margin:.8rem 0 .4rem}
     p{margin:.4rem 0}
     .muted{color:var(--muted)}
     .tag{display:inline-block; padding:4px 10px; border-radius:999px; font-weight:700; font-size:.82rem;}
@@ -55,7 +55,7 @@
     details>summary{cursor:pointer; font-weight:800; list-style:none}
     details>summary::-webkit-details-marker{display:none}
     pre{overflow:auto; background:rgba(255,255,255,.94); color:var(--mono);
-        padding:12px; border-radius:10px; box-shadow: inset 0 2px 8px rgba(0,0,0,.18); }
+        padding:12px; border-radius:10px; box-shadow: inset 0 2px 8px rgba(0,0,0,.18);}
     code{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size:13px}
     .grid{display:grid; gap:10px}
     @media (min-width:760px){ .grid{grid-template-columns:1fr 1fr} }
@@ -84,24 +84,51 @@
       <div>
         <h3>Server</h3>
         <ul class="list">
-          <li><span class="tag gen">generated</span> <code>server/routes/contact.js</code> — REST endpoints (GET/POST/DELETE) persisted to <code>data/messages.json</code>, admin filtering, validation.</li>
-          <li><span class="tag ref">refactored</span> <code>server/routes/reviews.js</code> — added <code>DELETE /api/reviews/:id</code> (admin-only), safer validations, stable date/id creation.</li>
-          <li><span class="tag ref">refactored</span> <code>server/server.js</code> — attached new routes, added CORS header <code>X-Username</code>, and served static files from <code>/public</code> so <code>/readme.html</code> and <code>/llm.html</code> work.</li>
-          <li><span class="tag ref">refactored</span> <code>server/helpers/persist_module.js</code> — unified <code>loadJSON</code>/<code>saveJSON</code> helpers and consistent data pathing.</li>
+          <li><span class="tag gen">generated</span> <code>server/routes/contact.js</code> — REST (GET/POST/DELETE), admin check via header/cookie, validation, persisted to <code>data/messages.json</code>.</li>
+          <li><span class="tag ref">refactored</span> <code>server/routes/reviews.js</code> — added admin <code>DELETE /api/reviews/:id</code>, input limits, stable id/date.</li>
+          <li><span class="tag ref">refactored</span> <code>server/routes/products.js</code> — admin create/hide/delete logic and explicit <code>405</code> for collection DELETE.</li>
+          <li><span class="tag ref">refactored</span> <code>server/routes/purchase.js</code> — normalized usernames, cleaned <code>imageUrl</code>, cleared cart, activity log.</li>
+          <li><span class="tag ref">refactored</span> <code>server/routes/cart.js</code> — safe image URL handling and activity entries for deletes.</li>
+          <li><span class="tag ref">refactored</span> <code>server/routes/login.js</code> — remember-me cookie lifetime & consistent error handling.</li>
+          <li><span class="tag ref">refactored</span> <code>server/routes/register.js</code> — reserved <code>admin</code>, persisted user, cookie set, activity log.</li>
+          <li><span class="tag ref">refactored</span> <code>server/server.js</code> — wired routes, CORS allow <code>X-Username</code>, static docs at <code>/readme.html</code> & <code>/llm.html</code>, 5MB limit + 413 handler.</li>
+          <li><span class="tag ref">refactored</span> <code>server/helpers/persist_module.js</code> — unified <code>loadJSON</code>/<code>saveJSON</code> with safe defaults.</li>
+          <li><span class="tag gen">generated</span> <code>server/tests/test.js</code> & <code>server/tests/e2e.test.js</code> — API smoke tests.</li>
         </ul>
       </div>
       <div>
         <h3>Client</h3>
         <ul class="list">
-          <li><span class="tag gen">generated</span> <code>client/src/pages/ContactPage.jsx</code> + <code>ContactPage.css</code> — split user/admin modes, fixed spacing so inputs don’t touch, wired to API.</li>
-          <li><span class="tag gen">generated</span> <code>client/src/pages/FAQPage.jsx</code> + <code>FAQPage.css</code> — themed like the site.</li>
-          <li><span class="tag ref">refactored</span> <code>client/src/pages/ReviewsPage.jsx</code> — admin-only delete button & call to <code>DELETE /api/reviews/:id</code>.</li>
-          <li><span class="tag ref">refactored</span> <code>client/src/components/MenuButton.jsx</code> — added <em>FAQ</em> and <em>Contact</em> entries, kept style consistent.</li>
-          <li><span class="tag ref">refactored</span> <code>AlreadyReg.css</code> & <code>Register.css</code> — “Remember me” checkbox alignment inside the card on all screens.</li>
-          <li><span class="tag gen">generated</span> <code>server/public/readme.html</code> & <code>server/public/llm.html</code> — static documents per assignment.</li>
+          <li><span class="tag gen">generated</span> <code>src/pages/ContactPage.jsx</code> + <code>ContactPage.css</code> — user/admin modes, proper spacing, wired to new API.</li>
+          <li><span class="tag gen">generated</span> <code>src/pages/FAQPage.jsx</code> + <code>FAQPage.css</code> — themed to match app.</li>
+          <li><span class="tag ref">refactored</span> <code>src/pages/ReviewsPage.jsx</code> — admin delete action calling <code>DELETE /api/reviews/:id</code>.</li>
+          <li><span class="tag ref">refactored</span> <code>src/components/MenuButton.jsx</code> — added links (FAQ, Contact, Admin) and consistent styling.</li>
+          <li><span class="tag ref">refactored</span> Auth UI (<code>Register.jsx</code>/<code>AlreadyReg</code>) — remember-me flow and accessible inputs.</li>
+          <li><span class="tag gen">generated</span> <code>server/public/readme.html</code> & <code>server/public/llm.html</code> — assignment docs served by the API.</li>
         </ul>
       </div>
     </div>
+  </section>
+
+  <section class="card">
+    <h2>👤 Roles &amp; Permissions</h2>
+    <ul class="list">
+      <li><strong>User</strong>
+        <ul class="list">
+          <li>Register/login, add to cart, purchase, view <em>My Items</em>.</li>
+          <li>Submit contact messages, post reviews.</li>
+        </ul>
+      </li>
+      <li><strong>Admin</strong>
+        <ul class="list">
+          <li>Add/remove products; hide base products.</li>
+          <li>View activity (admin endpoints).</li>
+          <li>Moderate: delete reviews and contact messages.</li>
+        </ul>
+      </li>
+      <li><strong>Server enforcement</strong>: Admin endpoints require <code>X-Username: admin</code> (and cookies).</li>
+      <li><strong>UI gating</strong>: Admin controls are hidden for non-admin users.</li>
+    </ul>
   </section>
 
   <section class="card">
@@ -112,106 +139,143 @@
       <pre><code>// server/routes/reviews.js (excerpt)
 router.delete('/:id', async (req, res) =&gt; {
   try {
-    const username = String(req.get('X-Username') || '').toLowerCase();
-    if (username !== 'admin') return res.status(403).json({ error: 'Admin only' });
-    const id = String(req.params.id || '');
+    const who = String(req.header('X-Username') || '').toLowerCase();
+    if (who !== 'admin') return res.status(403).json({ error: 'Only admin can delete reviews.' });
+
+    const id = String(req.params.id);
     const all = await loadJSON('reviews.json');
-    const idx = all.findIndex(r =&gt; r.id === id);
-    if (idx === -1) return res.status(404).json({ error: 'Not found' });
+    const idx = all.findIndex(r =&gt; String(r.id) === id);
+    if (idx === -1) return res.status(404).json({ error: 'Review not found.' });
+
     const [removed] = all.splice(idx, 1);
     await saveJSON('reviews.json', all);
     return res.json({ ok: true, removed });
   } catch (err) {
     console.error('DELETE /api/reviews/:id error:', err);
-    return res.status(500).json({ error: 'Failed to delete' });
+    return res.status(500).json({ error: 'Failed to delete review.' });
   }
 });</code></pre>
     </details>
 
     <details>
-      <summary>2) Contact messages API</summary>
+      <summary>2) Contact messages API (matches final router)</summary>
       <pre><code>// server/routes/contact.js (excerpt)
+const isAdmin = (req) =&gt; {
+  const who = String(req.header('X-Username') || req.query.who || '').toLowerCase();
+  const c = String((req.cookies &amp;&amp; req.cookies.skyUser) || '').toLowerCase();
+  return who === 'admin' || c === 'admin';
+};
+
+// Admin inbox (sorted newest -&gt; oldest)
 router.get('/', async (req, res) =&gt; {
-  const who = String((req.query.who || '')).toLowerCase(); // 'admin' | 'user'
+  if (!isAdmin(req)) return res.status(403).json({ error: 'Forbidden' });
   const all = await loadJSON('messages.json');
-  const list = who === 'admin' ? all : all.filter(m =&gt; m.status !== 'deleted');
-  list.sort((a,b) =&gt; (b.date||'').localeCompare(a.date||''));
-  res.json(list);
+  all.sort((a,b) =&gt; String(b.createdAt||'').localeCompare(String(a.createdAt||'')));
+  return res.json(all);
 });
 
+// Public/Logged-in: send a message
 router.post('/', async (req, res) =&gt; {
-  const { name, email, phone, subject, body, budget, prefer } = req.body || {};
-  if (!name || !email || !body) return res.status(400).json({ error:'name, email, body required' });
-  const all = await loadJSON('messages.json');
-  const created = {
+  const loggedInUser = String((req.cookies &amp;&amp; req.cookies.skyUser) || '').trim();
+  const { fullName, company, email, phone, preferred, budget, subject, message } = req.body || {};
+
+  const isLoggedIn = !!loggedInUser;
+  if (!isLoggedIn &amp;&amp; (!fullName || !email || !message)) {
+    return res.status(400).json({ error: 'Full name, email and message are required.' });
+  }
+  if (isLoggedIn &amp;&amp; !message) {
+    return res.status(400).json({ error: 'Message is required.' });
+  }
+
+  const clean = {
     id: 'm' + Date.now(),
-    date: new Date().toISOString(),
-    name: String(name).slice(0,120),
-    email: String(email).slice(0,160),
-    phone: String(phone||'').slice(0,60),
-    subject: String(subject||'').slice(0,180),
-    body: String(body||'').slice(0,2000),
-    budget: String(budget||'Undisclosed').slice(0,60),
-    prefer: String(prefer||'Email').slice(0,40),
-    status: 'open'
+    fullName: String((isLoggedIn ? (fullName || loggedInUser) : fullName) || '').trim().slice(0,120),
+    company: String(company||'').trim().slice(0,120),
+    email: String((isLoggedIn ? (email || `${loggedInUser}@example.com`) : email) || '').trim().slice(0,160),
+    phone: String(phone||'').trim().slice(0,60),
+    preferred: String(preferred||'').trim().slice(0,40),
+    budget: String(budget||'').trim().slice(0,40),
+    subject: String(subject||'').trim().slice(0,180),
+    message: String(message||'').trim().slice(0,4000),
+    createdAt: new Date().toISOString(),
+    byUser: loggedInUser || null
   };
-  all.push(created); await saveJSON('messages.json', all);
-  res.status(201).json(created);
+
+  const all = await loadJSON('messages.json');
+  all.push(clean);
+  await saveJSON('messages.json', all);
+  return res.status(201).json(clean);
 });
 
-router.delete('/:id', async (req,res) =&gt; {
-  const username = String(req.get('X-Username') || '').toLowerCase();
-  if (username !== 'admin') return res.status(403).json({ error:'Admin only' });
-  const id = String(req.params.id||'');
+// Admin delete
+router.delete('/:id', async (req, res) =&gt; {
+  if (!isAdmin(req)) return res.status(403).json({ error: 'Forbidden' });
+  const id = String(req.params.id || '');
   const all = await loadJSON('messages.json');
-  const idx = all.findIndex(m =&gt; m.id === id);
-  if (idx === -1) return res.status(404).json({ error:'Not found' });
-  const [removed] = all.splice(idx,1);
-  await saveJSON('messages.json', all);
-  res.json({ ok:true, removed });
+  const next = all.filter(m =&gt; String(m.id) !== id);
+  if (next.length === all.length) return res.status(404).json({ error: 'Not found' });
+  await saveJSON('messages.json', next);
+  return res.json({ ok: true });
 });</code></pre>
     </details>
 
     <details>
       <summary>3) Admin delete button in <code>ReviewsPage.jsx</code></summary>
-      <pre><code>// client/src/pages/ReviewsPage.jsx (excerpt)
+      <pre><code>// src/pages/ReviewsPage.jsx (excerpt)
 const isAdmin = (user?.username || '').toLowerCase() === 'admin';
+
 const handleDelete = async (id) =&gt; {
   if (!isAdmin) return;
   if (!window.confirm('Delete this review?')) return;
-  const res = await fetch(`http://localhost:3001/api/reviews/${id}`, {
-    method: 'DELETE',
-    headers: { 'X-Username': user.username }, credentials: 'include'
-  });
-  if (!res.ok) throw new Error((await res.json()).error || 'Failed to delete');
-  setReviews(prev =&gt; prev.filter(r =&gt; r.id !== id));
+  try {
+    const res = await fetch(`http://localhost:3001/api/reviews/${id}`, {
+      method: 'DELETE',
+      headers: { 'X-Username': user.username },
+      credentials: 'include',
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() =&gt; ({}));
+      throw new Error(err.error || 'Failed to delete review.');
+    }
+    setReviews(prev =&gt; prev.filter(r =&gt; r.id !== id));
+  } catch (e) {
+    alert(e.message);
+  }
 };</code></pre>
     </details>
 
     <details>
-      <summary>4) Serving static docs from <code>/public</code></summary>
+      <summary>4) Serving the static docs correctly</summary>
       <pre><code>// server/server.js (excerpt)
 const path = require('path');
-app.use(express.static(path.join(__dirname, 'public')));
-app.get('/readme.html', (req,res) =&gt; res.sendFile(path.join(__dirname,'public','readme.html')));
-app.get('/llm.html',    (req,res) =&gt; res.sendFile(path.join(__dirname,'public','llm.html')));</code></pre>
+const PUBLIC_DIR = path.join(__dirname, 'public');
+
+// serve everything in /server/public at /public/*
+app.use('/public', express.static(PUBLIC_DIR, { index: false }));
+
+app.get(['/readme', '/readme.html'], (req, res) =&gt; {
+  res.sendFile(path.join(PUBLIC_DIR, 'readme.html'));
+});
+app.get(['/llm', '/llm.html'], (req, res) =&gt; {
+  res.sendFile(path.join(PUBLIC_DIR, 'llm.html'));
+});</code></pre>
     </details>
   </section>
 
   <section class="card">
     <h2>How I Used the LLM</h2>
     <ul class="list">
-      <li>Debugging &amp; refactoring: reduce duplication, fix CORS and path issues, improve error messages.</li>
-      <li>Scaffolding: create full feature slices (Contact page, FAQ) consistent with my project’s look and state model.</li>
-      <li>Security &amp; roles: simple admin-only guards on sensitive routes and UI actions.</li>
-      <li>Polish: consistent CSS, spacing, and component structure.</li>
+      <li>Debugging &amp; refactoring: reduce duplication, fix CORS/header issues, consistent errors.</li>
+      <li>Scaffolding: contact + FAQ pages and their server routes, aligned with the project’s styling.</li>
+      <li>Security &amp; roles: simple admin guards on sensitive routes and UI actions.</li>
+      <li>Polish: consistent CSS spacing, themed cards, accessible inputs.</li>
     </ul>
-    <p class="muted">Note: many files are a blend of my original code and LLM suggestions. I reviewed, edited, and tested every change.</p>
+    <p class="muted">Many files are a blend of my original code and LLM suggestions. I reviewed, edited, and tested every change.</p>
   </section>
 
   <section class="card footer">
-    <strong>Project:</strong> SKY • <strong>Author:</strong> Alon Bar Shimon • <strong>Date:</strong> 2025-08  
-    <br />If you have questions about what was generated vs. hand-written, see the list above or the git history.
+    <strong>Project:</strong> SKY • <strong>Author:</strong> Alon Bar Shimon • <strong>Date:</strong> 2025-08
+    <br/>Docs are also available at <a href="/readme.html">/readme.html</a>.
   </section>
 </body>
 </html>
