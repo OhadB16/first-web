@@ -1,6 +1,12 @@
 // server/routes/activity.js
 const express = require('express');
 
+extract logic also for controllers folder and utils for logic
+more informative var names 
+add folder for featre root 
+add also junit tests
+migrate this project to type script 
+
 /**
  * activityRoutes
  * --------------
