@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <!-- i dont thin you need this favicon.ico -->
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta name="color-scheme" content="dark light" />
@@ -18,12 +19,14 @@
       (function () {
         try {
           var t = localStorage.getItem('ui.theme');
+          // more informative name than 't' and store const in dedeciated file + logic js should not be store in html content 
           if (!t) {
             t =
               window.matchMedia &&
               window.matchMedia('(prefers-color-scheme: dark)').matches
                 ? 'dark'
                 : 'light';
+            // same for const the for the t name - what is t ?
           }
           document.documentElement.setAttribute('data-theme', t);
         } catch (e) {
