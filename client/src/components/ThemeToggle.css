@@ -6,6 +6,7 @@
   top: 14px;
   right: 14px;
   z-index: 9999;
+  is not god practice to use max z-index 9999 try the minimum for you needs in order to see it 
   padding: 8px 12px;
   border: 1px solid rgba(255,255,255,0.25);
   border-radius: 999px;
