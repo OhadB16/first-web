@@ -13,6 +13,12 @@ import horizon700 from '../assets/jets/Horizon700.png';
 import aeroSwift from '../assets/jets/AeroSwift.png';
 import cloudCruiser from '../assets/jets/CloudCruiser.png';
 
+comments for all those page :
+One comp per file.
+  add folders to store similar componentes logic lik About / Admin
+no need page name because the parent store it. 
+  refactor it and reuse same logic with render method for button , slice etc
+
 /**
  * Slice
  * -----
