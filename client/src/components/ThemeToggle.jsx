@@ -31,6 +31,9 @@ export default function ThemeToggle({ onToggle }) {
     localStorage.setItem('ui.theme', mode);
   }, [mode]);
 
+  create custom hook for this mode and set mode use effect and store in the right place path
+  reuse consts 
+
   /**
    * handleClick
    * ------------
