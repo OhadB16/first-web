@@ -34,6 +34,7 @@ function MenuButton({ user, onNavigate, onLogout, theme = 'light', onToggleTheme
     onNavigate(target); // Delegate routing to parent
     setOpen(false);     // Close the dropdown after navigation
   };
+  use custom hook for this open state and handle click and store in under hooks/menu/useOpenNavigate hook.
 
   return (
     <div className="menu-button-wrapper">
@@ -44,6 +45,11 @@ function MenuButton({ user, onNavigate, onLogout, theme = 'light', onToggleTheme
 
       {open && (
         <div className="dropdown-menu" role="menu">
+          
+          reuse this button comp in render method and store the consts in src/constants/mentu/index.ts 
+          const renderButton = () =>
+          add also type script for this project and use types 
+          
           <button type="button" onClick={() => handleClick('store')}>🏪 Store</button>
           <button type="button" onClick={() => handleClick('cart')}>🛒 Cart</button>
           <button type="button" onClick={() => handleClick('myItems')}>🧾 My Items</button>
@@ -51,10 +57,13 @@ function MenuButton({ user, onNavigate, onLogout, theme = 'light', onToggleTheme
           <button type="button" onClick={() => handleClick('reviews')}>⭐ Reviews</button>
           <button type="button" onClick={() => handleClick('faq')} role="menuitem">❓ FAQ</button>
           <button type="button" onClick={() => handleClick('contact')} role="menuitem">✉️ Contact</button>
+
+          store this const in  also
           <button type="button" onClick={() => window.open('http://localhost:3001/readme.html', '_blank')}>📄 README</button>
           <button type="button" onClick={() => window.open('http://localhost:3001/llm.html', '_blank')}>🤖 LLM Code</button>
 
           {/* ✅ Admin only */}
+          // store 'admin' in const and reuse
           {user?.username === 'admin' && (
             <button type="button" onClick={() => handleClick('admin')}>🧑‍💻 Admin</button>
           )}
