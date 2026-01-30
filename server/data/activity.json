@@ -1,4 +1,7 @@
 [
+
+  next step will be to store this data in DB like sql/ mongo db / postgres 
+  field in the db ususally store as user_name 
   {
     "username": "alon",
     "datetime": "7/26/2025, 3:31:34 PM",
