@@ -1,6 +1,9 @@
 import React from 'react';
 import './ProductCard.css';
 
+store under componentes/Product/
+  the product logic and add type script for the projext and use .tsx and index.ts file for every componentes
+
 /**
  * ProductCard
  * ------------
@@ -35,6 +38,8 @@ function ProductCard({ jet, onAddToCart, onRemoveFromCart, countInCart }) {
       <h3>{jet.name}</h3>
       <p>{jet.description}</p>
 
+      store the img h3 and p logic in sepearte component
+
       <div className="product-footer">
         <span className="price">${jet.price.toLocaleString()}</span>
 
@@ -43,14 +48,18 @@ function ProductCard({ jet, onAddToCart, onRemoveFromCart, countInCart }) {
           Add to Cart
         </button>
 
+        read the const from var
+
         {/* Show count if product is already in the cart */}
         {countInCart > 0 && (
           <>
             <div className="in-cart-count">
+              add index to the div for better rendering 
               In Cart: {countInCart} {countInCart === 1 ? 'item' : 'items'}
             </div>
           </>
         )}
+        can be store also in seperte componentes ChartList.tsx
       </div>
     </div>
   );
