@@ -62,6 +62,8 @@
   color: #00c6ff;
 }
 
+read this const colors from theme file with tailwind css and reuse them when possible
+
 /* Add to Cart Button */
 .product-footer button {
   background: linear-gradient(90deg, #031b22, #0072ff);
