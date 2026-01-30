@@ -1,6 +1,10 @@
 import React from 'react';
 import './Logo.css'; // Import shared styles
 
+very nice comp ! short and code - you can create another folder call Logo above this 
+jsx and css file to maitatin better architecture .
+Also consider to use css library like tailwind css / style comp. for better tech stuck
+
 /**
  * Logo
  * ----
