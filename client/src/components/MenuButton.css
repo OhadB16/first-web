@@ -1,5 +1,8 @@
 /* src/components/MenuButton.css */
 
+try not to use !important only if there is no other way. (its not flexibly solution)
+try to use tailwind css for theme file to reuse same colors / css properties 
+
 /* Wrapper placed fixed at top-right; high z-index for clickability */
 .menu-button-wrapper {
   position: fixed;
